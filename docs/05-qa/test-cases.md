@@ -75,6 +75,10 @@
 | IT-40d | 같은 실행에서 안내를 닫았어도, 이후 권한 실패 화면에서는 안내가 강제로 다시 펼쳐진다(닫기 없음) | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | IT-40e | 안내의 복사 버튼: 랜딩은 사이트 주소, 대기실·지원 불가 화면은 초대 링크를 복사하고 안내에는 외부 링크·target이 없다 | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | IT-40f | 화면이 꺼진 동안 카메라 트랙이 끝났으면(ended) 복귀 시 카메라 버튼이 꺼지고 경고 토스트가 뜨며 상대 화면에도 반영된다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40g | 접근성: 안내 바·배너의 이름·역할·상태 속성, 터치 44px, 키보드 순서(안내 → 입력), prefers-reduced-motion에서 전환이 꺼진다 | UX-13, UX-15 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40h | 360×740 대기실: 접힌 안내가 [회의 입장] 버튼을 밀어내는 양은 안내 높이(≤130px) 이내이고(04 §2.3.4 의도적 비용), 펼쳐도 스크롤로 닿을 수 있으며 입장이 막히지 않는다 | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40i | visibilitychange 없이 pageshow(뒤로가기 캐시 복원)만 와도 5초 안에 죽은 소켓을 감지해 같은 자리로 복구한다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40j | 프로브 응답이 NOT_JOINED(소켓이 자리에 안 묶임)면 소켓을 새로 열지 않고 같은 소켓으로 즉시 room:resume을 보낸다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |

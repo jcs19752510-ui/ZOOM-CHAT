@@ -10,11 +10,17 @@
   }
   body {
     @apply bg-bg font-sans text-text antialiased;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
     margin: 0;
     overscroll-behavior: none;
   }
   :focus-visible {
     @apply outline outline-2 outline-offset-2 outline-focus;
+  }
+  h1,
+  h2 {
+    text-wrap: balance;
   }
   button {
     @apply cursor-pointer;

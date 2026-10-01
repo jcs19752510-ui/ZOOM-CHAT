@@ -64,9 +64,19 @@ export function VideoGrid({ state, selfStream, sinkId }: Props) {
   const n = Math.max(1, people.length);
   const cols = narrow ? (n <= 2 ? 1 : 2) : n === 1 ? 1 : n <= 4 ? 2 : 3;
   const rows = Math.ceil(n / cols);
+  // 타일 하나를 2칸으로 잡고, 마지막 줄이 덜 찼으면 가운데로 모은다(예: 3명이면 위 2명, 아래 1명 가운데).
+  const lastCount = n - cols * (rows - 1);
   return (
-    <div className="grid h-full min-h-0 gap-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }} data-testid="gallery" data-count={n}>
-      {people.map((p) => tileFor(p.id, false))}
+    <div className="grid h-full min-h-0 gap-2" style={{ gridTemplateColumns: `repeat(${cols * 2}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }} data-testid="gallery" data-count={n}>
+      {people.map((p, i) => {
+        const firstOfLast = i === cols * (rows - 1);
+        const start = firstOfLast && lastCount < cols ? cols - lastCount + 1 : undefined;
+        return (
+          <div key={p.id} className="min-h-0 min-w-0" style={{ gridColumn: start ? `${start} / span 2` : 'span 2' }}>
+            {tileFor(p.id, false)}
+          </div>
+        );
+      })}
     </div>
   );
 }

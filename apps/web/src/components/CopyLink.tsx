@@ -25,9 +25,9 @@ export function CopyLink({ roomId, compact, onCopied }: { roomId: string; compac
 
   return (
     <div className="flex flex-col gap-2">
-      <button type="button" className={compact ? 'btn-secondary' : 'btn-secondary w-full'} onClick={() => void copy()}>
+      <button type="button" aria-label={state === 'copied' ? S.lobby.copied : S.lobby.copyLink} data-testid="copy-link" className={compact ? 'btn-secondary whitespace-nowrap px-3' : 'btn-secondary w-full'} onClick={() => void copy()}>
         {state === 'copied' ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
-        {state === 'copied' ? S.lobby.copied : S.lobby.copyLink}
+        <span className={compact ? 'hidden sm:inline' : ''}>{state === 'copied' ? S.lobby.copied : S.lobby.copyLink}</span>
       </button>
       {state === 'failed' ? (
         <div>

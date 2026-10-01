@@ -9,7 +9,7 @@ import { DeviceSheet } from '../components/DeviceSheet';
 import { ParticipantsPanel } from '../components/ParticipantsPanel';
 import { Toasts } from '../components/Toasts';
 import { VideoGrid } from '../components/VideoGrid';
-import { Lock } from '../components/icons';
+import { Lock, Settings } from '../components/icons';
 import type { LocalMedia } from '../lib/media';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import type { EndReason, MeetingController } from '../state/MeetingController';
@@ -78,11 +78,16 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
     <div className="flex h-dvh flex-col bg-bg" data-testid="room" data-status={state.status}>
       <header className="flex items-center justify-between gap-2 border-b border-line bg-surface px-3 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="font-bold">{S.app.name}</span>
+          <span className="whitespace-nowrap font-bold">{S.app.name}</span>
           {state.locked ? <Lock size={16} className="text-warning" aria-label={S.room.locked} /> : null}
           <ConnectionBadge state={state} />
         </div>
-        <CopyLink roomId={roomId} compact />
+        <div className="flex items-center gap-1">
+          <CopyLink roomId={roomId} compact />
+          <button type="button" aria-label={S.devices.title} data-testid="btn-devices-top" className="flex min-h-touch min-w-touch items-center justify-center rounded-md text-muted hover:bg-raised hover:text-text sm:hidden" onClick={() => setDevicesOpen(true)}>
+            <Settings size={20} aria-hidden="true" />
+          </button>
+        </div>
       </header>
 
       {state.status === 'reconnecting' ? (
@@ -95,7 +100,7 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
         </p>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 gap-2 p-2">
+      <div className="relative flex min-h-0 flex-1 gap-2 p-2">
         <main className="relative min-h-0 min-w-0 flex-1" aria-label="회의 화면">
           <VideoGrid state={state} selfStream={selfStream} {...(sinkId ? { sinkId } : {})} />
           {alone ? (
@@ -107,9 +112,9 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
           ) : null}
         </main>
         {panel && !narrow ? <aside className="w-[340px] shrink-0 overflow-hidden rounded-md border border-line bg-surface">{panelBody}</aside> : null}
+        {/* 모바일: 패널은 영상 영역 위에만 덮고 하단 컨트롤바는 계속 쓸 수 있게 둔다 */}
+        {panel && narrow ? <aside className="absolute inset-0 z-30 overflow-hidden rounded-md border border-line bg-surface shadow-pop">{panelBody}</aside> : null}
       </div>
-
-      {panel && narrow ? <aside className="fixed inset-x-0 bottom-0 top-14 z-30 overflow-hidden rounded-t-lg border border-line bg-surface shadow-pop">{panelBody}</aside> : null}
 
       <ControlBar
         micOn={state.micOn}

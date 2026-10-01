@@ -15,7 +15,7 @@ export function ConnectionBadge({ state }: { state: Pick<MeetingState, 'status' 
   if (state.status === 'reconnecting') {
     const left = Math.max(0, Math.ceil(state.graceSec - (now - (state.reconnectingSince ?? now)) / 1000));
     return (
-      <span className="inline-flex items-center gap-1 rounded-pill bg-warning px-3 py-1 text-xs font-semibold text-bg" data-testid="conn-badge" data-state="reconnecting">
+      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-pill bg-warning px-3 py-1 text-xs font-semibold text-bg" data-testid="conn-badge" data-state="reconnecting">
         <WifiOff size={14} aria-hidden="true" />
         {S.room.reconnecting} · {left}s
       </span>
@@ -23,7 +23,7 @@ export function ConnectionBadge({ state }: { state: Pick<MeetingState, 'status' 
   }
   const poor = state.quality === 'poor';
   return (
-    <span className={`inline-flex items-center gap-1 rounded-pill px-3 py-1 text-xs font-semibold ${poor ? 'bg-warning text-bg' : 'bg-raised text-text'}`} data-testid="conn-badge" data-state={poor ? 'poor' : 'live'}>
+    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-pill px-3 py-1 text-xs font-semibold ${poor ? 'bg-warning text-bg' : 'bg-raised text-text'}`} data-testid="conn-badge" data-state={poor ? 'poor' : 'live'}>
       {poor ? <WifiOff size={14} aria-hidden="true" /> : <Wifi size={14} className="text-success" aria-hidden="true" />}
       {poor ? S.room.poor : S.room.live}
     </span>

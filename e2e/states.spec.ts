@@ -63,7 +63,8 @@ test('IT-14 [FR-10,UX-07] 말하는 참가자의 타일이 강조되고, 말이 
   const speakingCount = (): Promise<number> =>
     host.page.evaluate(() => [...document.querySelectorAll('[data-testid^="tile-"]')].filter((el) => el.getAttribute('data-speaking') === 'true' && !el.textContent?.includes('(나)')).length);
   await expect.poll(speakingCount, { timeout: 40_000 }).toBeGreaterThan(0);
-  await expect.poll(speakingCount, { timeout: 40_000 }).toBe(0); // 소리가 멈추면 강조가 풀린다
+  // 합성 음성이 2초 주기(1초 끔)이고 해제 디바운스가 0.7초라 '해제된' 구간이 주기마다 약 0.3초뿐이다. 기본 폴링(최대 1초 간격)은 이 주기와 겹쳐 계속 '켜진' 순간만 볼 수 있으므로 촘촘히 확인한다.
+  await expect.poll(speakingCount, { timeout: 40_000, intervals: [50] }).toBe(0); // 소리가 멈추면 강조가 풀린다
   await ctx.close();
 });
 

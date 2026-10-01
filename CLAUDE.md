@@ -24,7 +24,8 @@
 
 ## 개발 하네스 (HANESS_AUTO) — 이 영역은 읽기 전용
 - **필수 제약: HANESS_AUTO 저장소와 그 복사본(`ORCHESTRATOR.md`, `.claude/agents/`, `templates/`, `automation/`, `docs/harness/HANESS-README.md`, `docs/harness/USAGE-GUIDE.md`)은 수정·추가 금지.** 사용자가 명시적으로 허락하기 전에는 읽기만 한다.
-- 하네스 단계 에이전트는 사용자가 지시할 때만 호출한다. 호출 전 ORCHESTRATOR.md를 읽고, 시작 질문 3종(MCP, 위험도 Tier, 병렬 모드)을 먼저 묻는다(미답변).
+- 하네스 단계 에이전트는 사용자가 지시할 때만 호출한다. 호출 전 ORCHESTRATOR.md를 읽는다.
+- **시작 질문 답변 완료(`docs/harness/decisions.md` DEC-001~003)**: MCP 연동함(GitHub MCP 확인, `tools:` 줄 수정은 사용자 허락 전 보류) / 위험도 **Standard** / 병렬 **P1**(동시 최대 4, 한 게이트·Phase 안에서만).
 - 충돌 시 우선순위: 사용자 직접 지시 > 이 파일의 게이트/Phase 규칙 > ORCHESTRATOR.md. 규칙 A(모르면 질문)·E(배포는 승인 후)·K(임시 정리)는 우회 금지.
 - 프로젝트 고유 내용은 ZOOM-CHAT 고유 파일(`CLAUDE.md`, `docs/01~06`)에만 쓴다.
 
@@ -90,5 +91,5 @@
 - 커밋: `type(scope): 요약`, 한 커밋 한 의도, 비밀값·`.env`·산출물 금지. 개발 브랜치 `ccr-8ebb59a5-vgloup` 외 푸시 금지, PR은 요청 시에만.
 
 ## 현재 진행 상태 (2026-10-01)
-- 하네스(HANESS_AUTO PROD) 복사 완료, 미수정 유지. 하네스 시작 질문 3종은 하네스 사용 시점까지 미답변.
+- 하네스(HANESS_AUTO PROD) 복사 완료, 미수정 유지. 시작 질문 3종 답변 기록 완료(MCP 연동, Standard, P1).
 - **Gate 0-A 작성 완료, 승인 대기.** 이후 게이트·코드는 미착수.

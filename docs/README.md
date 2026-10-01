@@ -59,4 +59,4 @@ runbook · user-guide · CHANGELOG
 |---|---|
 | [plan.md](plan.md) | 2026-10-01 이전의 구 체계 초안. Gate 0-C에서 `03-engineering/plan.md`, `trd.md`, `api-spec.md`로 흡수 후 삭제 |
 | [security.md](security.md) | 구 체계 초안. Gate 0-D에서 `04-security/security.md`로 이전·보강 후 삭제 |
-| [harness/](harness/) | HANESS_AUTO 복사본 가이드. **수정 금지**(읽기 전용) |
+| [harness/](harness/) | HANESS_AUTO 복사본 가이드. **수정 금지**(읽기 전용). 단 `harness/decisions.md`는 이 프로젝트의 결정 로그(DEC-001~003, 우리가 작성) |

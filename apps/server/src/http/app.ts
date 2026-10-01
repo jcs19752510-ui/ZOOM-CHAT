@@ -125,7 +125,7 @@ export function createApp({ config, rooms, logger, now = Date.now }: AppDeps): e
     const dist = path.resolve(config.WEB_DIST);
     app.use(express.static(dist, { index: false, maxAge: '1h' }));
     app.use((req, res, next) => {
-      if (req.method !== 'GET' || req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
+      if ((req.method !== 'GET' && req.method !== 'HEAD') || req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
       res.sendFile(path.join(dist, 'index.html'));
     });
   }

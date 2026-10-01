@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server';
 import { ORIGIN, boot, createRoom } from './helpers';
@@ -113,5 +116,31 @@ describe('REST (EVT-01~03)', () => {
     const res = await fetch(`${base}/nope`);
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual({ code: 'NOT_FOUND' });
+  });
+});
+
+describe('웹 정적 파일 제공 (NFR-07)', () => {
+  it('TC-111 [NFR-07,NFR-08] 웹 빌드를 함께 제공하고 SPA 경로·HEAD 요청도 index.html로 응답한다(API·소켓 경로는 제외)', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'meetlite-web-'));
+    fs.writeFileSync(path.join(dir, 'index.html'), '<!doctype html><title>x</title>');
+    fs.mkdirSync(path.join(dir, 'assets'));
+    fs.writeFileSync(path.join(dir, 'assets', 'a.js'), 'console.log(1)');
+    const web = await boot({ WEB_DIST: dir, RATE_LIMIT_SCALE: '100' });
+    const base = `http://127.0.0.1:${web.port}`;
+    try {
+      for (const method of ['GET', 'HEAD']) {
+        for (const p of ['/', `/r/${'A'.repeat(22)}`]) {
+          const res = await fetch(`${base}${p}`, { method });
+          expect(res.status, `${method} ${p}`).toBe(200);
+          expect(res.headers.get('content-type')).toContain('text/html');
+        }
+      }
+      expect((await fetch(`${base}/assets/a.js`)).status).toBe(200);
+      expect((await fetch(`${base}/api/unknown`)).status).toBe(404);
+      expect((await fetch(`${base}/api/unknown`)).headers.get('content-type')).toContain('application/json');
+    } finally {
+      await web.close();
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

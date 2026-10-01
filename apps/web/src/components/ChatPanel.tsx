@@ -14,14 +14,14 @@ interface Props {
 const time = (ts: number): string => new Date(ts).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
 /** 채팅 본문은 항상 텍스트로만 그린다. 링크는 http/https만 새 탭에서 열고 rel을 지정한다(SEC-07). */
-function Body({ text }: { text: string }) {
+function Body({ text, mine }: { text: string; mine: boolean }) {
   return (
     <p className="whitespace-pre-wrap break-words text-sm" data-testid="chat-text">
       {linkify(text).map((seg, i) =>
         seg.type === 'text' ? (
           <span key={i}>{seg.value}</span>
         ) : (
-          <a key={i} href={seg.href} target="_blank" rel="noopener noreferrer" className="text-focus underline">
+          <a key={i} href={seg.href} target="_blank" rel="noopener noreferrer" className={mine ? 'text-white underline' : 'text-focus underline'}>
             {seg.label}
           </a>
         ),
@@ -77,7 +77,7 @@ export function ChatPanel({ messages, onSend, onClose }: Props) {
                   {m.nickname} · {time(m.ts)}
                 </span>
                 <div className={`mt-0.5 max-w-[85%] rounded-md px-3 py-2 ${m.mine ? 'bg-accent text-white' : 'bg-raised'}`}>
-                  <Body text={m.text} />
+                  <Body text={m.text} mine={m.mine} />
                 </div>
               </li>
             ))}
@@ -100,7 +100,7 @@ export function ChatPanel({ messages, onSend, onClose }: Props) {
             <Send size={18} aria-hidden="true" />
           </button>
         </div>
-        <p className={`mt-1 text-right text-xs ${len > LIMITS.chatMax ? 'text-danger-hover' : 'text-muted'}`}>{S.chat.counter(len)}</p>
+        <p className={`mt-1 text-right text-xs ${len > LIMITS.chatMax ? 'text-danger-text' : 'text-muted'}`}>{S.chat.counter(len)}</p>
       </form>
     </section>
   );

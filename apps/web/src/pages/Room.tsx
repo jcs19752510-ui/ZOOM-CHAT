@@ -101,7 +101,7 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
       ) : null}
 
       <div className="relative flex min-h-0 flex-1 gap-2 p-2">
-        <main className="relative min-h-0 min-w-0 flex-1" aria-label="회의 화면">
+        <main className="relative min-h-0 min-w-0 flex-1" aria-label={S.room.stage}>
           <VideoGrid state={state} selfStream={selfStream} {...(sinkId ? { sinkId } : {})} />
           {alone ? (
             <div className="absolute inset-x-0 bottom-3 mx-auto w-[calc(100%-1.5rem)] max-w-sm rounded-md border border-line bg-surface/95 p-3 text-center shadow-pop" data-testid="alone">

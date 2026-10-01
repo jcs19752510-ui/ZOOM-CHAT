@@ -89,10 +89,10 @@ export function Lobby({ roomId, isHost, needsPassword, initialNickname, media, o
           ) : null}
           <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
             <button type="button" data-testid="lobby-mic" aria-pressed={!media.micOn} aria-label={media.micOn ? S.room.mute : S.room.unmute} disabled={!media.audio} className="flex min-h-touch min-w-touch items-center justify-center rounded-pill bg-overlay hover:bg-raised" onClick={() => media.setMic(!media.micOn)}>
-              {media.micOn && media.audio ? <Mic size={20} aria-hidden="true" /> : <MicOff size={20} className="text-danger-hover" aria-hidden="true" />}
+              {media.micOn && media.audio ? <Mic size={20} aria-hidden="true" /> : <MicOff size={20} className="text-danger-text" aria-hidden="true" />}
             </button>
             <button type="button" data-testid="lobby-camera" aria-pressed={!media.camOn} aria-label={media.camOn ? S.room.cameraOffAction : S.room.cameraOn} className="flex min-h-touch min-w-touch items-center justify-center rounded-pill bg-overlay hover:bg-raised" onClick={() => void media.setCamera(!media.camOn)}>
-              {media.camOn && media.video ? <Video size={20} aria-hidden="true" /> : <VideoOff size={20} className="text-danger-hover" aria-hidden="true" />}
+              {media.camOn && media.video ? <Video size={20} aria-hidden="true" /> : <VideoOff size={20} className="text-danger-text" aria-hidden="true" />}
             </button>
           </div>
         </div>

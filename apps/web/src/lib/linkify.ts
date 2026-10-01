@@ -1,7 +1,8 @@
 export type Segment = { type: 'text'; value: string } | { type: 'link'; href: string; label: string };
 
 const URL_RE = /https?:\/\/[^\s<>"'`]+/gi;
-const TRAILING = /[.,;:!?)\]}'"。，、]+$/;
+// 끝에 붙은 문장부호(전각 마침표·쉼표 포함)는 링크에서 뗀다: 。(3002) ，(FF0C) 、(3001)
+const TRAILING = /[.,;:!?)\]}'"\u3002\uFF0C\u3001]+$/;
 
 /**
  * 채팅 본문을 텍스트와 링크 조각으로 나눈다(SEC-07). http/https만 링크로 만들고 그 밖의 모든 것은 텍스트다.

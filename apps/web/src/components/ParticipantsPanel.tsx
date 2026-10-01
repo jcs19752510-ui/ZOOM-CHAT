@@ -56,11 +56,11 @@ export function ParticipantsPanel({ participants, selfId, hostId, locked, onClos
             </span>
             <span className="flex items-center gap-2 text-muted">
               {p.screen ? <MonitorUp size={16} aria-label={S.people.sharing} /> : null}
-              {p.audio ? <Mic size={16} aria-label={S.people.micOn} /> : <MicOff size={16} className="text-danger-hover" aria-label={S.people.micOff} />}
-              {p.video ? <Video size={16} aria-label={S.people.camOn} /> : <VideoOff size={16} className="text-danger-hover" aria-label={S.people.camOff} />}
+              {p.audio ? <Mic size={16} aria-label={S.people.micOn} /> : <MicOff size={16} className="text-danger-text" aria-label={S.people.micOff} />}
+              {p.video ? <Video size={16} aria-label={S.people.camOn} /> : <VideoOff size={16} className="text-danger-text" aria-label={S.people.camOff} />}
             </span>
             {isHost && p.id !== selfId ? (
-              <button type="button" data-testid={`kick-${p.id}`} aria-label={`${p.nickname} ${S.people.kick}`} className="flex min-h-touch min-w-touch items-center justify-center rounded-md text-muted hover:bg-line hover:text-danger-hover" onClick={() => onKick(p)}>
+              <button type="button" data-testid={`kick-${p.id}`} aria-label={`${p.nickname} ${S.people.kick}`} className="flex min-h-touch min-w-touch items-center justify-center rounded-md text-muted hover:bg-line hover:text-danger-text" onClick={() => onKick(p)}>
                 <UserX size={18} aria-hidden="true" />
               </button>
             ) : null}

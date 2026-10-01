@@ -65,15 +65,15 @@ function Btn({ label, aria, icon, onClick, pressed, active, danger, disabled, ba
 export function ControlBar(p: Props) {
   const canShare = supportsScreenShare();
   return (
-    <nav aria-label="회의 컨트롤" className="flex items-center justify-around gap-0.5 border-t border-line bg-surface px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 sm:justify-center sm:gap-2 sm:px-2">
+    <nav aria-label={S.room.controls} className="flex items-center justify-around gap-0.5 border-t border-line bg-surface px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 sm:justify-center sm:gap-2 sm:px-2">
       <div className="flex items-center">
-        <Btn testId="btn-mic" label={S.room.micLabel} aria={p.micOn ? S.room.mute : S.room.unmute} pressed={!p.micOn} active={!p.micOn} icon={p.micOn ? <Mic size={22} aria-hidden="true" /> : <MicOff size={22} className="text-danger-hover" aria-hidden="true" />} onClick={p.onMic} />
+        <Btn testId="btn-mic" label={S.room.micLabel} aria={p.micOn ? S.room.mute : S.room.unmute} pressed={!p.micOn} active={!p.micOn} icon={p.micOn ? <Mic size={22} aria-hidden="true" /> : <MicOff size={22} className="text-danger-text" aria-hidden="true" />} onClick={p.onMic} />
         <button type="button" aria-label={S.room.deviceMenuMic} onClick={p.onDevices} data-testid="btn-devices" className="hidden min-h-touch min-w-[28px] items-center justify-center rounded-md text-muted hover:bg-raised hover:text-text sm:flex">
           <ChevronUp size={16} aria-hidden="true" />
         </button>
       </div>
       <div className="flex items-center">
-        <Btn testId="btn-camera" label={S.room.cameraLabel} aria={p.camOn ? S.room.cameraOffAction : S.room.cameraOn} pressed={!p.camOn} active={!p.camOn} icon={p.camOn ? <Video size={22} aria-hidden="true" /> : <VideoOff size={22} className="text-danger-hover" aria-hidden="true" />} onClick={p.onCamera} />
+        <Btn testId="btn-camera" label={S.room.cameraLabel} aria={p.camOn ? S.room.cameraOffAction : S.room.cameraOn} pressed={!p.camOn} active={!p.camOn} icon={p.camOn ? <Video size={22} aria-hidden="true" /> : <VideoOff size={22} className="text-danger-text" aria-hidden="true" />} onClick={p.onCamera} />
         <button type="button" aria-label={S.room.deviceMenuCamera} onClick={p.onDevices} className="hidden min-h-touch min-w-[28px] items-center justify-center rounded-md text-muted hover:bg-raised hover:text-text sm:flex">
           <ChevronUp size={16} aria-hidden="true" />
         </button>

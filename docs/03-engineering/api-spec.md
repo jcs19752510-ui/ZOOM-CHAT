@@ -40,7 +40,7 @@
 | EVT-10 | `room:join` | `{ v, roomId, nickname, password?, hostClaim? }` | `{ ok, selfId, token, hostId, locked, participants[], iceServers[], config }` | 누구나 | 소켓 5/0.1 + IP 방별 오답 5회/10분 |
 | EVT-11 | `room:resume` | `{ v, token }` | EVT-10과 동일 | 유효 토큰 | 10/0.2 |
 | EVT-12 | `room:leave` | `{ v }` | `{ ok }` | 참가자 | 3/1 |
-| EVT-13 | `signal:send` | `{ v, to, description? , candidate? }` 중 하나만 | `{ ok }` | 같은 방의 `to` | 60/30 |
+| EVT-13 | `signal:send` | `{ v, to, description? , candidate? }` 중 하나만 | `{ ok }` | 같은 방의 `to` | 120/40 (6명 방의 새 참가자는 짧은 시간에 신호 50개 안팎을 보낸다) |
 | EVT-14 | `chat:send` | `{ v, text }` (1~500자) | `{ ok }` | 참가자 | 5/1.67 |
 | EVT-15 | `media:state` | `{ v, audio, video }` | `{ ok }` | 본인 | 10/5 |
 | EVT-16 | `screen:start` | `{ v }` | `{ ok }` | 공유 중인 사람이 없을 때 | 4/1 |
@@ -68,9 +68,11 @@
 | EVT-29 | `room:kicked` | `{ v, reason }` 후 서버가 소켓을 끊는다 |
 
 ## 5. 세션 토큰과 TURN
-- EVT-30 TURN 임시 자격증명: `username = "<만료 UNIX초>:<참가자ID>"`, `credential = base64(HMAC-SHA1(TURN_SECRET, username))`, 유효 `TURN_TTL_SEC`(기본 3600)(SEC-09). `TURN_SECRET`/`TURN_URLS`가 없으면 STUN만 준다.
-- 세션 토큰: `base64url(payload).base64url(HMAC-SHA256(SESSION_SECRET, payload))`, payload `{ rid, pid, exp }`, 유효 4시간(SEC-03). 서명·만료·방·참가자 존재를 모두 검증한다.
-- 호스트 클레임 토큰: 같은 방식, payload `{ rid, role: "host", exp }`.
+| ID | 항목 | 규칙 |
+|---|---|---|
+| EVT-30 | TURN 임시 자격증명 | `username = "<만료 UNIX초>:<참가자ID>"`, `credential = base64(HMAC-SHA1(TURN_SECRET, username))`, 유효 `TURN_TTL_SEC`(기본 3600). `room:join`/`room:resume` ack의 `iceServers`로 전달한다. `TURN_SECRET`/`TURN_URLS`가 없으면 STUN만 준다. `STUN_URLS`를 비우면 STUN 항목도 만들지 않는다(SEC-09). |
+| EVT-31 | 세션 토큰 | `base64url(payload).base64url(HMAC-SHA256(SESSION_SECRET, payload))`, payload `{ t:"s", rid, pid, exp }`, 유효 4시간. 서명·만료·종류·방·참가자 존재를 모두 검증한다(SEC-03). |
+| EVT-32 | 호스트 클레임 토큰 | 같은 방식, payload `{ t:"h", rid, exp }`, 유효 1시간. `t`로 세션 토큰과 구분하며 첫 호스트 입장에 한 번만 쓸 수 있다(POL-13). |
 
 ## 6. 오류 코드
 `INVALID_PAYLOAD` · `RATE_LIMITED` · `NOT_JOINED` · `ALREADY_JOINED` · `ROOM_NOT_FOUND` · `ROOM_FULL` · `ROOM_LOCKED` · `WRONG_PASSWORD` · `TOO_MANY_ATTEMPTS` · `KICKED` · `HOST_NOT_PRESENT` · `TOKEN_INVALID` · `PARTICIPANT_GONE` · `FORBIDDEN` · `TARGET_NOT_FOUND` · `CANNOT_KICK_SELF` · `SCREEN_BUSY` · `SERVER_BUSY` · `INTERNAL`
@@ -81,6 +83,8 @@
 | FR-01, FR-02, FR-05, FR-23 | EVT-02, EVT-03, EVT-10 |
 | FR-03, FR-06, FR-14, FR-15, FR-16, FR-17 | EVT-10, EVT-18~20, EVT-24, EVT-25, EVT-29 |
 | FR-07, FR-08, FR-09, FR-12 | EVT-13, EVT-15~17, EVT-23, EVT-26 |
+| FR-02, FR-04, FR-10 | 클라이언트 전용 (링크 복사, 장치 미리보기, 오디오 레벨 분석) |
+| FR-13 | EVT-21~23 |
 | FR-11 | EVT-14, EVT-27 |
 | FR-18, FR-19, FR-20, FR-21, FR-22 | EVT-11, EVT-12, EVT-22, EVT-23 |
-| SEC-01~06, SEC-09 | 전 이벤트 공통 규칙, EVT-30 |
+| SEC-01~06, SEC-09 | 전 이벤트 공통 규칙, EVT-30~32 |

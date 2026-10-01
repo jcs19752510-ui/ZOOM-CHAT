@@ -1,6 +1,6 @@
 /**
  * 디자인 토큰 단일 출처(UX-08). 하드코딩 색상은 이 파일 밖에 쓰지 않는다.
- * 대비(WCAG AA 4.5:1 이상 확인): text/surface 약 13:1, textMuted/surface 약 7:1, 흰 글자/accent 약 5.4:1, 흰 글자/danger 약 5.6:1.
+ * 대비(WCAG AA)는 design.test.ts가 계산해 검증한다: 글자 4.5:1, 비텍스트 3:1.
  */
 export const tokens = {
   color: {
@@ -12,9 +12,11 @@ export const tokens = {
     text: '#F2F4F8',
     muted: '#A9B1C1',
     accent: '#3B63D6',
-    'accent-hover': '#4A73E6',
+    'accent-hover': '#2E50BA',
     danger: '#C9323B',
-    'danger-hover': '#DB4650',
+    'danger-hover': '#B02A32',
+    /** 어두운 면 위의 위험 표시(아이콘·글자)용 밝은 색 */
+    'danger-text': '#FF8A8F',
     success: '#2FBF71',
     warning: '#F0B429',
     speaking: '#3DD68C',

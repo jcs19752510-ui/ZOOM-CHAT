@@ -72,7 +72,7 @@ export function VideoTile({ stream, name, peerId, self, host, micOn, camOn, reco
       ) : null}
       <div className="absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/70 to-transparent px-2 pb-1.5 pt-6 text-xs sm:text-sm">
         {host && !screen ? <Crown size={14} className="shrink-0 text-warning" aria-label={S.room.host} /> : null}
-        {!micOn && !screen ? <MicOff size={14} className="shrink-0 text-danger-hover" aria-label={S.people.micOff} /> : null}
+        {!micOn && !screen ? <MicOff size={14} className="shrink-0 text-danger-text" aria-label={S.people.micOff} /> : null}
         <span className="truncate font-medium">{label}</span>
       </div>
     </div>

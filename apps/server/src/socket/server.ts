@@ -51,7 +51,7 @@ const RATE_SPECS: Record<string, [number, number]> = {
   'room:join': [5, 0.1],
   'room:resume': [10, 0.2],
   'room:leave': [3, 1],
-  'signal:send': [60, 30],
+  'signal:send': [120, 40],
   'chat:send': [5, 5 / 3],
   'media:state': [10, 5],
   'screen:start': [4, 1],

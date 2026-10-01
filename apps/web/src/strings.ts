@@ -52,6 +52,8 @@ export const S = {
     unmute: '마이크 켜기',
     cameraOn: '카메라 켜기',
     cameraOffAction: '카메라 끄기',
+    controls: '회의 컨트롤',
+    stage: '회의 화면',
     micLabel: '마이크',
     cameraLabel: '카메라',
     shareLabel: '화면공유',

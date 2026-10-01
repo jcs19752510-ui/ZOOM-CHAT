@@ -25,19 +25,19 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 ### 게이트 보고 (`00-gates/`)
 | 문서 | 용도 | 주도 | 상태 | 버전 |
 |---|---|---|---|---|
-| [00-gates/gate-0A.md](00-gates/gate-0A.md) | Gate 0-A 완료 보고, 5인 검토, 확인 요청 | 전원 | 승인 대기 | 0.1 |
+| [00-gates/gate-0A.md](00-gates/gate-0A.md) | Gate 0-A 완료 보고, 5인 검토, 확인 요청 | 전원 | 승인 | 0.1 |
 
 ### A. 기획 (`01-planning/`) — Gate 0-A
 | 문서 | 용도 | 주도 | 상태 | 버전 |
 |---|---|---|---|---|
-| [01-planning/product-brief.md](01-planning/product-brief.md) | 비전·범위·KPI·비용 가설·위험 | 기획자 | 초안 | 0.1 |
-| [01-planning/prd.md](01-planning/prd.md) | 요구사항(FR/NFR/UX/SEC)·인수 조건·가정 | 기획자 | 초안 | 0.1 |
-| [01-planning/personas-journeys.md](01-planning/personas-journeys.md) | 페르소나·저니·핵심 시나리오 | 기획자 | 초안 | 0.1 |
-| [01-planning/ia-flows.md](01-planning/ia-flows.md) | 정보구조·유저 플로우·방 상태 전이 | 기획자 | 초안 | 0.1 |
-| [01-planning/policies.md](01-planning/policies.md) | 서비스 정책(POL) | 기획자 | 초안 | 0.1 |
-| [01-planning/screen-spec.md](01-planning/screen-spec.md) | 화면 정의서(SCR) | 기획자·디자이너 | 초안 | 0.1 |
-| [01-planning/glossary.md](01-planning/glossary.md) | 용어집 | 기획자 | 초안 | 0.1 |
-| [01-planning/roadmap.md](01-planning/roadmap.md) | MVP 이후 후보 | 기획자 | 초안 | 0.1 |
+| [01-planning/product-brief.md](01-planning/product-brief.md) | 비전·범위·KPI·비용 가설·위험 | 기획자 | 승인 | 0.1 |
+| [01-planning/prd.md](01-planning/prd.md) | 요구사항(FR/NFR/UX/SEC)·인수 조건·가정 | 기획자 | 승인 | 0.1 |
+| [01-planning/personas-journeys.md](01-planning/personas-journeys.md) | 페르소나·저니·핵심 시나리오 | 기획자 | 승인 | 0.1 |
+| [01-planning/ia-flows.md](01-planning/ia-flows.md) | 정보구조·유저 플로우·방 상태 전이 | 기획자 | 승인 | 0.1 |
+| [01-planning/policies.md](01-planning/policies.md) | 서비스 정책(POL) | 기획자 | 승인 | 0.1 |
+| [01-planning/screen-spec.md](01-planning/screen-spec.md) | 화면 정의서(SCR) | 기획자·디자이너 | 승인 | 0.1 |
+| [01-planning/glossary.md](01-planning/glossary.md) | 용어집 | 기획자 | 승인 | 0.1 |
+| [01-planning/roadmap.md](01-planning/roadmap.md) | MVP 이후 후보 | 기획자 | 승인 | 0.1 |
 
 ### B. 디자인 (`02-design/`) — Gate 0-B: 미착수
 design-principles · design-system · wireframes · mockups/ · interaction-spec · content-guide · accessibility-spec

@@ -2,7 +2,7 @@
 # 운영에서는 TLS(turns), 방화벽(3478, 5349, 49160-49200 UDP/TCP), 외부 IP(EXTERNAL_IP)를 반드시 설정하세요.
 services:
   coturn:
-    image: coturn/coturn:4.6
+    image: coturn/coturn:4.9
     network_mode: host
     restart: unless-stopped
     environment:

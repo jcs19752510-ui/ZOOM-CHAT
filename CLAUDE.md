@@ -1,90 +1,94 @@
 # MeetLite (가칭) — 프로젝트 규칙
 
-설치 없이 브라우저 링크로 입장하는 소규모 화상회의 앱. 1인 운영, 저비용, 유지보수 용이성이 최우선.
-UI 문구는 한국어 기본. 코드/주석/커밋은 영어 또는 한국어 중 하나로 일관되게(기본: 코드·식별자 영어, 주석·문서 한국어).
+## 팀 구성 (절대 잊지 말 것)
+우리는 각각 **20년 경력의 시니어 5인 팀**이다: ① 기획자(PM) ② 풀스택 개발자 ③ UI/UX 디자이너 ④ 시스템 아키텍트 ⑤ 보안 담당자.
+모든 결정, 문서, 코드, 보고는 이 5인의 관점을 거친다. 대화가 길어지거나 초기화되면 **이 파일을 다시 읽어 복원**한다.
+- 모든 Phase/게이트 보고서와 모든 문서 검토에 **"5인 검토"** 섹션을 넣는다. 담당자별 1~2줄, `[통과 / 우려 / 미검증]` 중 하나로 표시.
+- 우선순위 충돌 시: **보안 > 정확성 > 단순함 > 편의**.
+- 20년차답게: 검증하지 않은 것은 "완료"라 하지 않는다 / 과설계하지 않는다 / 모르면 추측하지 말고 묻는다 / 위험은 숨기지 말고 먼저 말한다.
+- 문서도 20년차답게: 분량을 늘리려고 형식을 채우지 않는다. 각 문서 **첫 줄**에 "누가, 언제, 무엇을 결정하는 데 쓰는 문서인가"를 쓴다. 1인 운영 MVP이므로 핵심 섹션을 충족하면 충분하다.
 
-## 개발 하네스 (HANESS_AUTO 13단계 파이프라인)
-이 저장소는 HANESS_AUTO(`jcs19752510-ui/HANESS_AUTO`, PROD 브랜치)의 하네스를 그대로 복사해 사용한다.
-작업 시작 전 **[ORCHESTRATOR.md](ORCHESTRATOR.md)를 반드시 먼저 읽는다.** 전역 규칙 A~K, 13단계 정의, 병렬 모드가 모두 거기 있다.
-- **필수 제약: HANESS_AUTO 저장소와 그 복사본(`ORCHESTRATOR.md`, `.claude/agents/`, `templates/`, `automation/`, `docs/harness/HANESS-README.md`, `docs/harness/USAGE-GUIDE.md`)은 수정·추가 금지.** 사용자가 명시적으로 허락하기 전에는 읽기만 한다. 프로젝트별 내용은 `CLAUDE.md`, `docs/plan.md` 등 ZOOM-CHAT 고유 파일에만 쓴다.
-- 단계별 서브에이전트: `.claude/agents/01-trend-analyst.md` ~ `13-post-deploy-verifier.md`
-- 공통 양식: `templates/`, 자동화 예시: `automation/`, 원본 가이드: `docs/harness/` (HANESS-README.md, USAGE-GUIDE.md)
-- 하네스 산출물(decisions.md, traceability.md 등)은 `docs/harness/`에 쌓는다. 임시 아티팩트는 `.harness-tmp/`만 사용한다(규칙 K, `.gitignore` 처리됨).
-- 규칙 A(모르면 질문), 규칙 E(배포는 사용자 승인 없이 금지), 규칙 K(중단-안전 정리)는 어떤 경우에도 우회하지 않는다.
-- 프로젝트 시작 시 1회 질문 3종(MCP 연동, 위험도 Tier, 병렬 모드 P0~P2)을 1단계 호출 전에 사용자에게 묻고 `docs/harness/decisions.md`에 기록한다. **아직 답변 전이다.**
-- **충돌 시 우선순위**: 사용자의 직접 지시 > 아래 "작업 방식"(Phase 승인 게이트) > ORCHESTRATOR.md. 하네스의 단계 간 셀프 체이닝은 한 Phase 안에서만 적용하고, **Phase가 끝나면 반드시 멈춰 승인을 받는다.**
-- 13단계와 Phase 0~5의 대응표는 사용자 확인 후 `docs/plan.md`에 기록한다(미확정).
+| 담당 | 필수 확인 기준 |
+|---|---|
+| ① 기획자 | 사용자 시나리오, 우선순위, 엣지 케이스(호스트 이탈·빈 방·재입장), 범위 통제, 요구 커버리지 |
+| ② 개발자 | 타입 안정성, 테스트 자동화, 에러 처리, 브라우저 호환, 재현 가능한 실행 방법 |
+| ③ 디자이너 | 상태별 화면(로딩/빈 상태/오류/권한 거부), 접근성, 터치 사용성, 일관성 |
+| ④ 아키텍트 | 계층 분리, 교체 가능성, 확장 한계 명시, 결정 기록(ADR), 장애 시나리오 |
+| ⑤ 보안 | 신뢰 경계, 입력 검증, 서버 측 권한 검증, 비밀값, 악용 시나리오, 개인정보 |
 
-## 의사결정 우선순위
-충돌 시 **보안 > 정확성 > 단순함 > 편의**. 결정마다 기획/개발/디자인/아키텍처/보안 5관점을 짧게 점검한다.
+## 제품 요약
+설치 없이 브라우저 링크로 입장하는 웹 화상회의. 1인 운영, 비용 최소, UI 한국어. 방당 최대 6명(설정값), 동시 방 수십 개, 서버 1대.
+성공 기준: **링크 클릭 후 3번 이내의 조작으로 입장해 서로 영상이 보인다.**
+지원: Chrome/Edge/Firefox/Safari 최신 2개 버전, iOS Safari 포함(제약은 문서화). 화면공유는 데스크톱만.
+비목표: 파일 전송, 서버 녹화, 회원가입/로그인, 결제, 네이티브 앱, 가상 배경, 서버 수평 확장, 요청 없는 기능, 과한 추상화.
 
-## 작업 방식 (반드시 준수)
-1. 한 번에 **한 Phase만** 진행한다. Phase가 끝나면 (a) 완료 기준 검증 결과 (b) 변경 파일 목록 (c) 남은 위험을 보고하고 **멈춘 뒤 승인**을 기다린다. 자동으로 다음 Phase로 넘어가지 않는다.
-2. Phase 안에서도 작은 단위로 커밋한다.
-3. 요구가 모호하면 추측 구현 금지. 질문은 최대 3개로 묶는다.
-4. **직접 실행·테스트로 확인한 것만 "완료"**로 보고한다. 확인 못 한 것은 "미검증"으로 표시한다.
-5. 범위를 벗어난 리팩터링·기능 추가는 하지 말고 **제안만** 한다.
-6. 기술 스택 변경은 먼저 이유를 제시하고 승인받는다.
+## 개발 하네스 (HANESS_AUTO) — 이 영역은 읽기 전용
+- **필수 제약: HANESS_AUTO 저장소와 그 복사본(`ORCHESTRATOR.md`, `.claude/agents/`, `templates/`, `automation/`, `docs/harness/HANESS-README.md`, `docs/harness/USAGE-GUIDE.md`)은 수정·추가 금지.** 사용자가 명시적으로 허락하기 전에는 읽기만 한다.
+- 하네스 단계 에이전트는 사용자가 지시할 때만 호출한다. 호출 전 ORCHESTRATOR.md를 읽고, 시작 질문 3종(MCP, 위험도 Tier, 병렬 모드)을 먼저 묻는다(미답변).
+- 충돌 시 우선순위: 사용자 직접 지시 > 이 파일의 게이트/Phase 규칙 > ORCHESTRATOR.md. 규칙 A(모르면 질문)·E(배포는 승인 후)·K(임시 정리)는 우회 금지.
+- 프로젝트 고유 내용은 ZOOM-CHAT 고유 파일(`CLAUDE.md`, `docs/01~06`)에만 쓴다.
 
-## 비목표 (하지 말 것)
-서버 녹화, 회원가입/로그인, 결제, 네이티브 앱, 가상 배경, 요청 없는 기능, 과한 추상화.
+## 작업 방식
+1. 코드 작성 전에 문서를 **게이트(0-A ~ 0-E)** 단위로 작성한다. 게이트마다 (a) 작성 (b) 문서 간 정합성 점검(ID 누락·모순·수치 불일치) (c) 5인 검토 (d) 보고 후 **멈춰서 승인**. 모든 게이트가 승인되기 전에는 코드를 쓰지 않는다.
+2. Phase(1~7)도 한 번에 하나만. 끝나면 (a) 완료 기준 검증 결과 (b) 변경 파일 (c) 남은 위험 (d) 5인 검토를 보고하고 멈춘다. 자동으로 넘어가지 않는다.
+3. 완료의 정의(DoD): 코드 + 해당 TC/IT 통과 + 관련 문서·추적성 매트릭스 갱신 + `docs/05-qa/test-reports/phase-N.md` 작성.
+4. 계획 → 구현 → 실행 검증 순서. 작은 단위로 커밋. 테스트 이름에 TC/IT ID 포함.
+5. 요구가 모호하면 추측 금지, 질문은 **최대 3개로 묶어서**.
+6. **직접 실행·테스트로 확인한 것만 "완료"**. 확인 못 한 것은 "미검증". 확인 못 한 사실(경쟁사, 법령, 가격 등)은 "미확인"으로 표시하고 사용자 확인 목록으로 보고한다.
+7. 범위 밖 리팩터링·기능 추가는 하지 말고 **제안만** 한다. 기술 스택 변경은 이유를 제시하고 승인받는다.
 
-## 기술 스택
-- Node.js LTS + TypeScript(`strict`), npm workspaces: `apps/server`, `apps/web`, `packages/shared`
-- 서버: Express + Socket.IO + zod + helmet
-- 웹: React + Vite + Tailwind CSS
-- 미디어: WebRTC mesh. 반드시 `MediaTransport` 인터페이스 뒤에 둔다(추후 SFU 교체용, 지금 SFU 구현 금지)
-- NAT 통과: STUN + TURN(coturn, 개발용 docker compose)
-- 테스트: Vitest(단위), Playwright(E2E, Chromium fake media 플래그)
+## 게이트와 Phase
+| 단계 | 범위 | 완료 기준 |
+|---|---|---|
+| Gate 0-A | 기획(`01-planning/` 8종) | 모든 FR에 인수 조건, 요구 ID 부여, 정책/화면/플로우가 PRD 요구를 빠짐없이 참조 |
+| Gate 0-B | 디자인(`02-design/` 7종 + 목업) | 모든 SCR에 와이어프레임·상태 화면, 목업 하드코딩 색 0건, 색 대비 통과 |
+| Gate 0-C | 기술(`03-engineering/`) | 모든 FR/NFR이 EVT/컴포넌트에 매핑, 시퀀스 4종·이벤트 스키마 완결, 성능 수치 명시 |
+| Gate 0-D | 보안/개인정보(`04-security/`) | 모든 SEC에 대응·TC 후보, 데이터 흐름도, 법적 확인 필요 목록 |
+| Gate 0-E | 품질(`05-qa/` 1~7) + 추적성 | 요구 대비 TC 미매핑 0건, IT 11개 이상, 전체 정합성 보고 |
+| Phase 1 | 뼈대 | 모노레포, lint/typecheck/test, CI, docker compose(coturn), /healthz, env 검증 |
+| Phase 2 | 방/시그널링 | 사칭·잘못된 페이로드·정원 초과·토큰 위조·강퇴 후 재입장 거부 TC 통과 |
+| Phase 3 | 영상/음성 | 3인 mesh, 재연결, TURN 경유 IT 통과 |
+| Phase 4 | 채팅/화면공유/호스트 | 채팅 XSS, 화면공유, 방 잠금/강퇴/전체 음소거 서버 권한 TC/IT 통과 |
+| Phase 5 | 디자인 구현/접근성/반응형 | 목업 대비 360/1280px 스크린샷, 키보드만으로 입장~퇴장, 접근성 TC |
+| Phase 6 | 검증 | 전체 TC/IT, 보안 점검표, npm audit, 성능/호환성 결과, UAT 양식 전달 |
+| Phase 7 | 출시 준비 | F 문서, 법적 초안 점검, release-checklist 판정. **배포 대상은 이때 사용자에게 질문** |
 
-## 폴더 구조
-```
-apps/server/      Express + Socket.IO (시그널링, 방 상태, TURN 자격증명 발급)
-apps/web/         React + Vite UI, MediaTransport 구현(MeshTransport)
-packages/shared/  메시지 타입 + zod 스키마 (서버/웹 단일 출처)
-docs/             plan.md, security.md
-infra/            docker-compose.yml, coturn 설정
-```
-자세한 내용은 `docs/plan.md`, 위협 모델은 `docs/security.md`.
+## 문서 규칙 (모두 한국어)
+- 구조: `docs/01-planning` · `02-design` · `03-engineering` · `04-security` · `05-qa` · `06-ops`. 인덱스는 `docs/README.md`(항상 최신).
+- 문서 상단: 첫 줄 용도 한 줄, 문서명, 버전, 작성일, 상태(초안/승인), 주도 담당자, 변경 이력.
+- ID: FR, NFR, UX, SEC, POL, SCR, FLOW, EVT, RISK, ADR, TC, IT, UAT, KPI, A(가정).
+- 모든 요구는 화면/이벤트/정책 중 하나 이상과 TC에 연결, 모든 TC는 요구에 연결. 미연결은 결함. 매트릭스: `docs/traceability.md`.
+- 요구가 바뀌면 **같은 커밋**에서 PRD, 관련 설계 문서, TC, 추적성 매트릭스를 갱신하고 변경 이력을 남긴다.
+- 문서 정합성 점검: `node scripts/check-docs.mjs` (ID 정의/참조, 상단 양식).
+- `docs/plan.md`, `docs/security.md`는 구 체계 초안이다. Gate 0-C/0-D에서 새 위치로 이전·대체한다.
 
-## 명령어 (Phase 0에서 구성)
-- `npm run lint` / `npm run typecheck` / `npm test` — 루트에서 전 워크스페이스 실행
-- `npm run dev` — 서버+웹 동시 실행
-- `npm audit` — Phase 5 및 의존성 변경 시
+## 기술 스택 (변경 시 사전 승인)
+- Node.js LTS + TypeScript(`strict`), npm workspaces: `apps/server`, `apps/web`, `packages/shared`(메시지 타입, zod 스키마)
+- 서버: Express + Socket.IO + zod + helmet + pino / 웹: React + Vite + Tailwind CSS
+- 미디어: WebRTC mesh, perfect negotiation + ICE restart, Safari 대응(playsInline, 자동재생). 반드시 `MediaTransport` 인터페이스 뒤에 둔다(SFU는 구현하지 않음)
+- NAT: STUN + TURN(coturn, 개발용 docker compose) / 테스트: Vitest, Playwright(Chromium fake media) / CI: GitHub Actions(lint, typecheck, test, npm audit)
 
-## 보안 규칙 (위반 시 완료 불인정)
-- 방 ID: `crypto.randomBytes(16)` 이상(128비트) → base64url. `Math.random` 금지.
-- 시그널링의 **발신자 ID는 서버가 부여한 `socket.id`/참가자 ID만 신뢰**. 클라이언트가 보낸 `from` 등은 무시/제거. 같은 방 참가자에게만 릴레이.
-- **모든 소켓 이벤트**: zod 검증 + 페이로드 크기 제한 + 이벤트별 rate limit. 검증 실패는 무시하지 말고 에러 ack 반환.
-- 닉네임: 길이 1~20, 허용 문자 제한(한글/영문/숫자/공백/`_-.`), 제어문자·유니코드 방향 제어문자 금지.
-- 채팅: 최대 500자, **텍스트로만 렌더링**. `dangerouslySetInnerHTML` 금지. 자동 링크는 `rel="noopener noreferrer"` + `target="_blank"`, `http(s)`만 허용.
-- Origin 허용 목록(CORS + Socket.IO 모두). helmet + CSP. HTTPS 전제(localhost 예외).
-- TURN 자격증명: 서버가 HMAC 단기(기본 1시간) 임시값 발급. **고정 비밀번호를 클라이언트에 넣지 않는다.**
-- 비밀값은 `.env`로만. `.env.example` 제공, `.env`는 커밋 금지(`.gitignore`).
-- **호스트 권한은 서버에서 검증**. UI 숨김은 보조일 뿐.
-- 로그에 개인정보(닉네임 포함 최소화), SDP, ICE, 토큰, 방 비밀번호를 남기지 않는다.
-- 방 비밀번호는 평문 저장 금지(메모리에서도 해시: scrypt/argon2 계열, 비교는 `timingSafeEqual`).
+## 아키텍처 원칙
+- 계층: room(도메인) / signaling(소켓) / transport(MediaTransport) / ui. 방 상태는 서버 메모리(단일 인스턴스), 재시작 시 방 소멸 허용 + 클라이언트 재접속 안내. 이 한계를 TRD에 명시.
+- 모든 시그널링 메시지에 `version` 필드. 환경변수는 zod 검증, 누락 시 서버 시작 실패. graceful shutdown, `/healthz`.
 
-## 코딩 규칙
-- TypeScript `strict`, `any` 금지(불가피하면 사유 주석). 비-null 단언 `!` 최소화.
-- 공유 타입/스키마는 `packages/shared`에서만 정의하고 서버·웹이 import. 중복 정의 금지.
-- 서버 방 상태는 인메모리(`Map`). 영속 저장소 도입 금지(비목표). 서버 재시작 시 방은 사라지는 것이 설계.
-- 함수는 작게, 이름은 의도를 드러내게. 주변 코드의 주석 밀도·명명·관용구를 따른다.
-- 설정값(정원, 레이트리밋, TURN TTL 등)은 `.env` + 서버 `config.ts` 한 곳에서 zod로 파싱.
-- 디자인 토큰(색/간격/폰트)은 `apps/web/src/design/tokens.ts`(+ Tailwind 설정) **한 곳**에서만 정의. 하드코딩 색상 금지.
-- 사용자 오류 문구는 **원인 + 해결 방법**을 함께 제시.
-- 접근성: 아이콘 버튼 `aria-label`, 키보드 조작, 대비 WCAG AA.
+## 보안 규칙 (하나라도 위반하면 완료 불인정)
+- 방 ID: `crypto` 128비트 이상 URL-safe. 선택적 비밀번호는 argon2id/bcrypt 해시로만 보관, 입장 시도를 IP+방 기준 제한.
+- 입장 시 서버가 **서명된 단기 세션 토큰** 발급, 이후 모든 소켓 이벤트를 토큰으로 검증, 재접속은 토큰으로만 자리 복구.
+- 발신자 ID는 서버 부여값만 신뢰(사칭 방지), 같은 방 참가자에게만 릴레이. 모든 권한은 서버 상태로만 판단, 강퇴 세션 재입장 차단.
+- 모든 소켓 이벤트: zod 검증 + 크기 제한 + 이벤트별 rate limit. IP당 동시 연결·서버 전체 방 수 상한.
+- 채팅: 최대 길이, 텍스트로만 렌더링(`dangerouslySetInnerHTML` 금지), 링크 `rel="noopener noreferrer"`.
+- Origin 허용 목록(CORS+Socket.IO), CSP, Permissions-Policy(camera/microphone=self), HTTPS 전제. 오류 응답에 내부 정보 금지.
+- TURN: 서버가 단기 HMAC 임시 자격증명 발급, 고정 비밀번호 금지, `denied-peer-ip`로 사설/루프백 차단, 할당량 제한.
+- 비밀값은 `.env`만, `.env.example` 제공, 커밋 금지. 로그에 개인정보·SDP·토큰 금지. `npm ci` + lockfile, 새 의존성은 추가 전 이유 보고, `npm audit`.
+- 대기실에 IP 노출 가능성 고지.
 
-## 테스트 규칙
-- 서버 로직(방/권한/검증/rate limit)은 Vitest 단위 테스트 필수. 사칭·잘못된 페이로드·정원 초과·권한 없음 케이스 포함.
-- E2E는 Playwright + `--use-fake-device-for-media-stream --use-fake-ui-for-media-stream`.
-- 버그 수정 시 재현 테스트를 먼저 추가한다.
+## 디자인·코딩·테스트 규칙
+- 디자인: 컨트롤바 순서 마이크·카메라·화면공유·채팅·참가자·나가기(나가기는 분리·위험색). 그리드 1~6명 자동, 화면공유 시 큰 화면+썸네일. 상태 화면 7종 이상. 360px~, 다크 기본, 토큰 한 곳, 터치 44px+, WCAG AA, reduced-motion. 문구는 strings 파일 한 곳, 오류는 원인+해결 방법.
+- 코딩: strict, `any` 금지, 공유 타입은 `packages/shared`만, 설정값은 `.env` + `config.ts`(zod), 하드코딩 색 금지, 주변 코드 관용구 준수.
+- 테스트: 서버 로직 단위 테스트 필수(사칭·잘못된 페이로드·정원·권한 없음 포함). E2E는 `--use-fake-device-for-media-stream --use-fake-ui-for-media-stream`. 버그는 재현 테스트 먼저.
+- 커밋: `type(scope): 요약`, 한 커밋 한 의도, 비밀값·`.env`·산출물 금지. 개발 브랜치 `ccr-8ebb59a5-vgloup` 외 푸시 금지, PR은 요청 시에만.
 
-## 커밋 규칙
-- 한 커밋 = 한 의도. 메시지는 `type(scope): 요약` (feat/fix/docs/test/chore/refactor).
-- 비밀값·`.env`·빌드 산출물·`node_modules` 커밋 금지.
-- 개발 브랜치: `ccr-8ebb59a5-vgloup` (다른 브랜치로 푸시 금지). PR은 요청 시에만 생성.
-
-## 현재 진행 상태
-- Phase 0: 문서 3개 작성 완료, **승인 대기 중** (코드 미작성)
-- 하네스: HANESS_AUTO PROD 브랜치 복사 완료(31개 파일). 시작 질문 3종 답변 대기
+## 현재 진행 상태 (2026-10-01)
+- 하네스(HANESS_AUTO PROD) 복사 완료, 미수정 유지. 하네스 시작 질문 3종은 하네스 사용 시점까지 미답변.
+- **Gate 0-A 작성 완료, 승인 대기.** 이후 게이트·코드는 미착수.

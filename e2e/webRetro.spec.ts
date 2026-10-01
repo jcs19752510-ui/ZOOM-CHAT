@@ -287,9 +287,10 @@ test('IT-55 [UX-10,UX-11,NFR-09] 키보드 포커스 표시(2px 이상, 포커�
   for (let i = 0; i < 4; i++) {
     // reduced-motion 규칙(전환 0.01ms)이 outline 폭에도 걸려 포커스 직후 한 프레임은 0일 수 있어 안정될 때까지 기다린다
     await expect.poll(async () => (await outline()).width, { message: `랜딩 Tab ${i + 1} 포커스 링 폭` }).toBeGreaterThanOrEqual(2);
+    // 색도 전환 중에는 이전 값일 수 있어 목표 색이 될 때까지 기다린다
+    await expect.poll(async () => (await outline()).color, { message: `랜딩 Tab ${i + 1} 포커스 링 색` }).toBe('rgb(143, 180, 255)'); // tokens.color.focus
     const o = await outline();
     expect(o.style, `랜딩 Tab ${i + 1}`).not.toBe('none');
-    expect(o.color).toBe('rgb(143, 180, 255)'); // tokens.color.focus
     expect(o.offset).toBeGreaterThanOrEqual(2);
     await page.keyboard.press('Tab');
   }

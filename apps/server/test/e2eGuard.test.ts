@@ -135,6 +135,9 @@ describe('unit-14 scripts/check-docs.mjs 변이 시험 (소급 6단계)', () => 
     ['문서 인덱스 누락', (d) => edit(d, 'docs/README.md', (t) => t.split('03-engineering/api-spec').join('')), /docs\/README\.md에 없음: 03-engineering\/api-spec\.md/],
     ['api-spec §7 EVT 매핑 삭제', (d) => edit(d, 'docs/03-engineering/api-spec.md', (t) => t.replace(/^\| FR-01(, FR-\d+)* \| EVT-[^|]*\|\s*$/m, '| FR-01 | 없음 |')), /FR-01 EVT 열이 문서와 불일치/],
     ['추적성 매트릭스 수동 변조', (d) => edit(d, 'docs/traceability.md', (t) => t.replace(/(\| FR-01 \|[^\n]*?)IT-01/, '$1IT-77')), /FR-01 TC 열이 문서와 불일치/],
+    ['시험 제목의 요구 태그 오타(FR-99)', (d) => edit(d, 'apps/server/test/config.test.ts', (t) => t.replace(/(it\('TC-\d+[a-z]? \[)[A-Z]+-\d+/, '$1FR-99')), /요구 태그 FR-99가 어떤 문서에도 정의되어 있지 않음/],
+    ['test-cases.md에서 시험 행 삭제', (d) => edit(d, 'docs/05-qa/test-cases.md', (t) => t.replace(/^\| TC-419g \|.*\n/m, '')), /TC-419g가 05-qa\/test-cases\.md에 행이 없음/],
+    ['PRD 요구 목록에 같은 ID 중복 정의', (d) => edit(d, 'docs/01-planning/prd.md', (t) => t.replace(/^(\| FR-01 \| [MSCW] \|.*)\n/m, '$1\n$1\n')), /같은 문서에서 ID를 두 번 정의함: FR-01/],
     ['모든 시험에서 요구 연결을 끊음(M 요구 미연결)', (d) => {
       // SEC-04를 태그한 모든 시험 제목에서 SEC-04를 지운다 → 연결된 TC/IT/UAT/MC가 없는 요구가 생긴다
       for (const dir of ['apps/server/test', 'e2e']) {

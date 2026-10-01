@@ -288,7 +288,7 @@ describe('unit-02 적대·경계 시험', () => {
 
   // DEF-U02-01(Low): WEB_DIST의 절대 경로에 '.'으로 시작하는 디렉터리가 있으면 SPA 폴백(res.sendFile, root 옵션 없음)이 404를 낸다.
   // 수정되면 이 시험이 실패하므로 it.fails를 일반 it으로 바꾸고 결함을 Fixed로 옮긴다.
-  it.fails('TC-429b [NFR-07] (알려진 결함 DEF-U02-01) WEB_DIST 경로에 점 디렉터리가 있어도 SPA 폴백이 index.html을 돌려준다', async () => {
+  it('TC-429b [NFR-07] (DEF-U02-01 수정) WEB_DIST 경로에 점 디렉터리가 있어도 SPA 폴백이 index.html을 돌려준다', async () => {
     const root = path.resolve(process.cwd(), '..', '..', '.harness-tmp');
     fs.mkdirSync(root, { recursive: true });
     const work = fs.mkdtempSync(path.join(root, 'static_06_unit02_'));

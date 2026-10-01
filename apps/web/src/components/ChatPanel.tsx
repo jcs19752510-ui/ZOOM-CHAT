@@ -51,7 +51,7 @@ export function ChatPanel({ messages, onSend, onClose }: Props) {
     const err = await onSend(value);
     if (err) {
       setText((cur) => (cur === '' ? value : cur));
-      setError(err === 'RATE_LIMITED' ? S.chat.rateLimited : err === 'INVALID_PAYLOAD' ? S.chat.tooLong : S.chat.failed);
+      setError(err === 'RATE_LIMITED' ? S.chat.rateLimited : err === 'INVALID_PAYLOAD' ? S.chat.invalid : S.chat.failed);
     }
   };
 
@@ -96,7 +96,7 @@ export function ChatPanel({ messages, onSend, onClose }: Props) {
             {S.chat.placeholder}
           </label>
           <input id="chat-input" data-testid="chat-input" className="input" placeholder={S.chat.placeholder} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" />
-          <button type="submit" data-testid="chat-send" className="btn-primary px-3" aria-label={S.chat.send} disabled={!text.trim()}>
+          <button type="submit" data-testid="chat-send" className="btn-primary min-w-touch px-3" aria-label={S.chat.send} disabled={!text.trim()}>
             <Send size={18} aria-hidden="true" />
           </button>
         </div>

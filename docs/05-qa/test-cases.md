@@ -91,14 +91,14 @@
 | IT-52 | 장치 오류 4종(차단·없음·사용 중·알 수 없음)은 각각 원인과 해결 문구를 role=alert로 보이고 장치 없이 입장할 수 있으며, 다시 확인하면 복구된다 | FR-04, UX-02, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-53 | 호스트 도구 UI: 참가자에게는 도구·내보내기가 하나도 없고, 호스트에게는 자기 자신 외 모두에게 내보내기가 있으며, 확인창에서 취소하면 아무 일도 일어나지 않는다 | FR-14, FR-15, FR-16, SEC-05, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-54 | 포커스 관리: 확인창은 취소에 포커스를 두고 Tab·Shift+Tab을 창 안에 가두며 닫으면 열었던 버튼으로 돌려주고, 장치 시트는 닫기에 포커스를 두고 Esc로 닫힌다 | UX-10, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
-| IT-54b | 장치 시트(aria-modal)도 Tab을 창 안에 가둬야 한다 — 알려진 결함 G-2: 현재는 밖으로 나가므로 실패가 정상(test.fail), 수정되면 이 시험이 빨개져 표시를 지우게 한다 | UX-10, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-54b | 장치 시트(aria-modal)도 Tab을 창 안에 가둬야 한다(G-2 수정) | UX-10, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-55 | 키보드 포커스 표시(2px 이상, 포커스 색)가 랜딩·회의실 버튼에 보이고, prefers-reduced-motion이면 회의실 버튼의 전환도 꺼진다 | UX-10, UX-11, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-56 | 상태 화면: 로딩·오류·방 없음·호스트 대기·잠김·가득 참 화면이 각각 올바른 role·h1·행동 버튼을 갖고, 360px에서 가로 스크롤이 없으며, 오류·호스트 대기는 복구된다 | UX-02, UX-03, FR-06, FR-23 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-57 | 채팅 경계·XSS(360px): 500자(이모지 500개 포함)는 전달되고 501자는 막히며 입력이 보존되고, 초장문·악성 URL이 레이아웃·속성을 깨지 못한다 | FR-11, SEC-07, NFR-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
-| IT-57b | 보이지 않는 문자만 있는 메시지가 서버에서 거부되면 "500자까지"가 아니라 실제 원인에 맞는 안내가 나와야 한다 — 알려진 결함 DEF-W01: 현재는 길이 안내가 나오므로 실패가 정상(test.fail) | FR-11, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-57b | 보이지 않는 문자만 있는 메시지가 서버에서 거부되면 "500자까지"가 아니라 실제 원인에 맞는 안내가 나와야 한다 (DEF-W01 수정) | FR-11, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-57c | 채팅 전송 응답이 오지 않으면(8초 시간 초과) 보낸 글이 입력창에 복원되고 원인·해결 문구가 role=alert로 나온다 | FR-11, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-58 | 360px 터치 타깃: 랜딩·대기실·회의실(채팅·참가자 패널, 확인창, 장치 시트)의 버튼·입력·링크가 44px 이상이다(인라인 링크와 알려진 결함 DEF-W02·W03 제외) | NFR-10, UX-02, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
-| IT-58b | 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 — 알려진 결함 DEF-W02·W03: 현재 42px라 실패가 정상(test.fail) | NFR-10, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-58b | 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 (DEF-W02·W03 수정) | NFR-10, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-59 | 대기실: 닉네임 검증 오류는 입장하지 않고 안내하며, 미리보기 준비 중에는 입장 버튼이 꺼져 있고, 비밀번호 칸은 비밀번호 방의 참가자에게만 보인다 | FR-03, FR-04, FR-05, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-59b | 혼자 있을 때만 "아직 아무도 없어요" 빈 상태 카드와 링크 복사가 보이고, 참가자가 들어오면 사라진다 | FR-02, UX-02, FR-13 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -346,6 +346,7 @@
 | TC-419d | 통계 예외(동기 throw·reject)·getStats 미지원·형식 이상은 조용히 건너뛰고 예외를 밖으로 내지 않으며 처리되지 않은 거부가 없다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
 | TC-419e | 정리: removePeer·close 뒤에는 대기 중 타이머가 없고, 늦게 도착한 통계도 보고하지 않으며, 진행 중 중복 호출은 getStats 1회로 합쳐진다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
 | TC-419f | ack가 오지 않아도 metrics:path 요청은 지정한 시간 뒤 NETWORK 결과로 끝나고 거부(예외)가 나지 않으며, 보낸 페이로드는 {v,path}뿐이다 | NFR-15 | 웹 | `apps/web/src/lib/signalingPathCompat.test.ts` | 자동 |
+| TC-419g | 재시도 대기 중 connected가 다시 와도 앞선 타이머가 남지 않는다: removePeer 뒤 대기 타이머 0개 (unit-19 DEF-001 회귀) | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
 | TC-420 | 스키마 경계값: 토큰·비밀번호·SDP·candidate·sdpMLineIndex·참가자ID·채팅 원문 길이의 상·하한 바로 안/밖 | SEC-06, NFR-12 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
 | TC-420b | 모든 클라이언트→서버 스키마는 strict(추가 키 거부)이고 타입을 강제변환하지 않으며 v가 필수다 | SEC-04, SEC-06, NFR-12 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
 | TC-421 | 닉네임: 분해된 한글(NFC 정규화)·연속 공백 축약·경계 20 코드포인트·거부 문자 | POL-04, SEC-06 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
@@ -363,6 +364,7 @@
 | TC-428 | CORS: 대소문자·후행 슬래시·접미 도메인·null Origin을 모두 거부하고(OPTIONS 포함), Origin이 없으면 CORS 헤더를 붙이지 않는다 | SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
 | TC-428b | 소켓 연결은 Origin 헤더가 허용 목록과 정확히 같을 때만 열린다(변형 Origin 거부) | SEC-06, SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
 | TC-429 | 정적 파일 제공 경계: 경로 순회·숨김 파일로 dist 밖/안의 비공개 파일을 읽을 수 없고, POST·소켓 경로는 index.html로 대체되지 않는다 | SEC-08, NFR-07 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-429b | (DEF-U02-01 수정) WEB_DIST 경로에 점 디렉터리가 있어도 SPA 폴백이 index.html을 돌려준다 | NFR-07 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
 | TC-430 | 만료 경계: exp-1 유효, exp 정각·exp+1 무효. 호스트 클레임(t=h)도 같은 검증을 받는다 | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
 | TC-430b | 서명은 맞지만 내용이 비정상인 토큰은 모두 예외 없이 null: 본문이 JSON이 아님·배열·null·숫자, pid/rid/exp 누락·타입 오류, 알 수 없는 종류 | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
 | TC-430c | 형식 공격: 조각 수·서명 길이·한 글자 변조·거대 입력은 예외 없이 null | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |

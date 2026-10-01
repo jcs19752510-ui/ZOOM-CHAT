@@ -171,6 +171,8 @@ export class MeshTransport implements MediaTransport {
 
   /** 선택된 후보쌍으로 경로를 판정해 처음이거나 바뀐 경우에만 보고한다. 실패·미지원은 조용히 건너뛴다(NFR-15). */
   private async probePath(peer: Peer, attempt: number): Promise<void> {
+    // 재시도 대기 중에 다시 connected가 오면 새 타이머가 참조를 덮어써 앞선 타이머가 removePeer로 지워지지 않는다(unit-19 DEF-001)
+    if (peer.pathTimer) clearTimeout(peer.pathTimer);
     if (peer.pathProbing || typeof peer.pc.getStats !== 'function') return;
     peer.pathProbing = true;
     let path: PathType | null;

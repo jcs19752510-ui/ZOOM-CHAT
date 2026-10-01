@@ -261,8 +261,7 @@ test('IT-54 [UX-10,NFR-09] 포커스 관리: 확인창은 취소에 포커스를
   await expect(p.getByTestId('btn-devices')).toBeFocused();
 });
 
-test('IT-54b [UX-10,NFR-09] 장치 시트(aria-modal)도 Tab을 창 안에 가둬야 한다 — 알려진 결함 G-2: 현재는 밖으로 나가므로 실패가 정상(test.fail), 수정되면 이 시험이 빨개져 표시를 지우게 한다', async ({ browser, env }) => {
-  test.fail(true, 'G-2: DeviceSheet는 ConfirmModal과 달리 Tab 순환이 없다(04 §7.3)');
+test('IT-54b [UX-10,NFR-09] 장치 시트(aria-modal)도 Tab을 창 안에 가둬야 한다(G-2 수정)', async ({ browser, env }) => {
   const host = await hostMeeting(browser, env);
   const p = host.page;
   await p.getByTestId('btn-devices').focus();
@@ -421,8 +420,7 @@ test('IT-57 [FR-11,SEC-07,NFR-10] 채팅 경계·XSS(360px): 500자(이모지 50
   expect(await host.page.getByTestId('chat-panel').locator('img').count()).toBe(0);
 });
 
-test('IT-57b [FR-11,UX-03] 보이지 않는 문자만 있는 메시지가 서버에서 거부되면 "500자까지"가 아니라 실제 원인에 맞는 안내가 나와야 한다 — 알려진 결함 DEF-W01: 현재는 길이 안내가 나오므로 실패가 정상(test.fail)', async ({ browser, env }) => {
-  test.fail(true, 'DEF-W01: INVALID_PAYLOAD를 모두 S.chat.tooLong으로 보여 준다(ChatPanel.tsx submit)');
+test('IT-57b [FR-11,UX-03] 보이지 않는 문자만 있는 메시지가 서버에서 거부되면 "500자까지"가 아니라 실제 원인에 맞는 안내가 나와야 한다 (DEF-W01 수정)', async ({ browser, env }) => {
   const host = await hostMeeting(browser, env);
   await host.page.getByTestId('btn-chat').click();
   await host.page.getByTestId('chat-input').fill('​​');
@@ -442,7 +440,6 @@ test('IT-58 [NFR-10,UX-02,UX-10] 360px 터치 타깃: 랜딩·대기실·회의�
         for (const el of document.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [role="button"]')) {
           if (!el.offsetWidth && !el.offsetHeight) continue;
           if (el.closest('.sr-only')) continue;
-          if (el.getAttribute('data-testid') === 'copy-link' || el.getAttribute('data-testid') === 'chat-send') continue; // 알려진 결함 DEF-W02·W03 — IT-58b가 따로 확인
           if (el.tagName === 'A' && el.closest('p, [data-testid="chat-text"]')) continue; // 문장 속 인라인 링크
           const target = el instanceof HTMLInputElement && el.type === 'checkbox' ? (el.closest('label') ?? el) : el;
           const r = target.getBoundingClientRect();
@@ -483,8 +480,7 @@ test('IT-58 [NFR-10,UX-02,UX-10] 360px 터치 타깃: 랜딩·대기실·회의�
   expect(found, '44px 미만 요소').toEqual([]);
 });
 
-test('IT-58b [NFR-10,UX-10] 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 — 알려진 결함 DEF-W02·W03: 현재 42px라 실패가 정상(test.fail)', async ({ browser, env }) => {
-  test.fail(true, 'DEF-W02/W03: 아이콘만 있는 compact 버튼의 가로가 42px(px-3 + 18px 아이콘)로 min-w-touch가 없다');
+test('IT-58b [NFR-10,UX-10] 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 (DEF-W02·W03 수정)', async ({ browser, env }) => {
   const vp = { width: 360, height: 740 };
   const host = await hostMeeting(browser, env, '호스트', { viewport: vp });
   await host.page.getByTestId('btn-chat').click();

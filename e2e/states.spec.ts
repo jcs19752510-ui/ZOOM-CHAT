@@ -11,14 +11,16 @@ test('IT-13 [FR-09,FR-04] 통화 중 마이크 장치를 바꿔도 통화가 유
   await a.page.getByTestId('btn-devices').click();
   const sel = a.page.locator('#dev-mic');
   await expect(sel).toBeVisible();
+  // 장치 목록은 시트가 열린 뒤 비동기로 채워진다 — 채워질 때까지 기다린 뒤 읽는다(부하가 큰 전체 실행에서 목록이 비어 있던 순간에 실패한 경쟁 조건)
+  await expect.poll(() => sel.locator('option').count(), { message: '마이크 목록이 채워짐' }).toBeGreaterThanOrEqual(2);
   const options = await sel.locator('option').evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value).filter(Boolean));
-  expect(options.length).toBeGreaterThan(0);
+  // Chromium 가짜 장치는 마이크를 3개 제공하므로 전환을 실제로 시험할 수 있다(2개 미만이면 시험이 성립하지 않으니 실패시킨다)
+  expect(options.length, '전환할 마이크가 2개 이상 있어야 한다').toBeGreaterThanOrEqual(2);
   const before = await sel.inputValue();
   const next = options.find((v) => v !== before);
-  if (next) {
-    await sel.selectOption(next);
-    await expect.poll(() => a.page.evaluate(() => navigator.mediaDevices.enumerateDevices().then(() => 'ok'))).toBe('ok');
-  }
+  expect(next, '현재와 다른 마이크').toBeDefined();
+  await sel.selectOption(next as string);
+  await expect(sel).toHaveValue(next as string);
   await a.page.keyboard.press('Escape');
   await expectRemoteMedia(host.page, 1);
   await expectRemoteMedia(a.page, 1);

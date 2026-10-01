@@ -45,9 +45,20 @@ for (const f of PLANNING) if (!exists(f)) err(`[양식] 파일 없음: ${f}`);
 
 // 2) 정의된 ID 수집
 const defined = new Set();
-const rowDef = (text, re) => { for (const m of text.matchAll(re)) defined.add(m[1].replace(/-(\d)$/, '-0$1')); };
+const rowDef = (text, re, dupCheck = true) => {
+  // 같은 문서 안에서 같은 ID를 두 번 정의하면 한쪽이 조용히 묻힌다(예: PRD 표에 FR-07이 두 번)
+  const seen = new Set();
+  for (const m of text.matchAll(re)) {
+    const id = m[1].replace(/-(\d)$/, '-0$1');
+    if (dupCheck && seen.has(id)) err(`[정의] 같은 문서에서 ID를 두 번 정의함: ${id} (정규식 ${re.source.slice(0, 40)})`);
+    seen.add(id);
+    defined.add(id);
+  }
+};
 const prd = read('01-planning/prd.md');
-rowDef(prd, /^\| ((?:FR|NFR|UX|SEC|A|E)-\d+) \|/gm);
+// PRD는 같은 ID를 '요구 목록'과 '인수 조건' 두 표에 한 번씩 쓰므로 일반 중복 검사에서 빼고, 우선순위 표(요구 목록)만 따로 검사한다
+rowDef(prd, /^\| ((?:FR|NFR|UX|SEC|A|E)-\d+) \|/gm, false);
+rowDef(prd, /^\| ((?:FR|NFR|UX)-\d+) \| [MSCW] \|/gm);
 rowDef(read('01-planning/policies.md'), /^## (POL-\d+)/gm);
 rowDef(read('01-planning/screen-spec.md'), /^\| (SCR-\d+) \|/gm);
 rowDef(read('01-planning/ia-flows.md'), /^### (FLOW-\d+)/gm);
@@ -66,7 +77,7 @@ function walk(dir, kind) {
     if (e.isDirectory()) walk(path.join(dir, e.name), kind);
     else if (/\.(test|spec)\.ts$/.test(e.name)) {
       const text = fs.readFileSync(full, 'utf8');
-      for (const m of text.matchAll(/(?:\bit|\btest)\(\s*(['"`])((?:TC|IT)-\d+[a-z]?) \[([^\]]+)\] (.+?)\1\s*,/g)) {
+      for (const m of text.matchAll(/(?:\bit|\btest)(?:\.fails)?\(\s*(['"`])((?:TC|IT)-\d+[a-z]?) \[([^\]]+)\] (.+?)\1\s*,/g)) {
         tests.push({ id: m[2], reqs: m[3].split(',').map((x) => x.trim()), title: m[4].replace(/\s+/g, ' '), file: path.join(dir, e.name), kind: m[2].startsWith('IT') ? 'E2E' : kind });
       }
     }
@@ -86,6 +97,21 @@ for (const [f, pre] of [['05-qa/uat.md', 'UAT'], ['05-qa/manual-checks.md', 'MC'
     defined.add(m[1]);
     extra.push({ id: m[1], title: m[2], reqs: idsIn(m[3]).filter((i) => /^(FR|NFR|UX|SEC)-/.test(i)), file: f, kind: pre });
   }
+}
+// 2-c) 하네스 문서가 정의하는 신규 요구·결정 ID(1단계 도출 요구, DEC-xxx)도 시험 제목의 태그로 쓸 수 있다
+const harnessTag = new Set();
+if (fs.existsSync(path.join(root, 'docs/harness/traceability.md'))) for (const m of fs.readFileSync(path.join(root, 'docs/harness/traceability.md'), 'utf8').matchAll(/^\| ((?:FR|NFR|UX|SEC|POL)-\d+) \|/gm)) harnessTag.add(m[1].replace(/-(\d)$/, '-0$1'));
+if (fs.existsSync(path.join(root, 'docs/harness/03-system-design.md'))) for (const m of fs.readFileSync(path.join(root, 'docs/harness/03-system-design.md'), 'utf8').matchAll(/^\| (EVT-\d+) \|/gm)) harnessTag.add(m[1]);
+if (fs.existsSync(path.join(root, 'docs/harness/decisions.md'))) for (const m of fs.readFileSync(path.join(root, 'docs/harness/decisions.md'), 'utf8').matchAll(/^\| (DEC-\d+) \|/gm)) harnessTag.add(m[1]);
+// 시험 제목의 요구 태그 오타(예: FR-99)는 요구 커버리지를 조용히 왜곡하므로 정의된 ID만 허용한다
+for (const t of tests) for (const r of t.reqs) {
+  const id = r.replace(/-(\d)$/, '-0$1');
+  if (!defined.has(r) && !defined.has(id) && !harnessTag.has(id)) err(`[테스트] ${t.id}의 요구 태그 ${r}가 어떤 문서에도 정의되어 있지 않음 (${t.file})`);
+}
+// 모든 시험은 test-cases.md에 행이 있어야 한다(행을 지워도 시험이 문서에서 사라지지 않도록)
+if (exists('05-qa/test-cases.md')) {
+  const rows = new Set([...read('05-qa/test-cases.md').matchAll(/^\| ((?:TC|IT)-\d+[a-z]?) \|/gm)].map((m) => m[1]));
+  for (const id of uniq(tests.map((t) => t.id))) if (!rows.has(id)) err(`[테스트] ${id}가 05-qa/test-cases.md에 행이 없음`);
 }
 // 요구 ID → TC/IT/UAT/MC
 const coverage = {};

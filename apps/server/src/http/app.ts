@@ -138,7 +138,8 @@ export function createApp({ config, rooms, logger, now = Date.now }: AppDeps): e
     app.use(express.static(dist, { index: false, maxAge: '1h' }));
     app.use((req, res, next) => {
       if ((req.method !== 'GET' && req.method !== 'HEAD') || req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
-      res.sendFile(path.join(dist, 'index.html'));
+      // `root` 옵션을 쓰지 않으면 경로에 점(.)으로 시작하는 폴더가 있을 때 Express가 404로 거부한다(unit-02 DEF-001)
+      res.sendFile('index.html', { root: dist });
     });
   }
 

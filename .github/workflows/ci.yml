@@ -29,6 +29,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      # IT-21·22·46(TURN 경유)은 로컬 turnserver가 필요하다. 설치되지 않으면 시험이 조용히 건너뛰어지므로 설치한다.
+      - run: sudo apt-get update && sudo apt-get install -y coturn
       - run: npm run build
       - run: npm run test:e2e
   coturn:

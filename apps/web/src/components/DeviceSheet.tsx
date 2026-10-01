@@ -15,6 +15,7 @@ interface Props {
 export function DeviceSheet({ media, sinkId, onSwitch, onSink, onClose }: Props) {
   const [devices, setDevices] = useState<DeviceLists>({ audioinput: [], videoinput: [], audiooutput: [] });
   const closeRef = useRef<HTMLButtonElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
   const sinkSupported = typeof HTMLMediaElement !== 'undefined' && 'setSinkId' in HTMLMediaElement.prototype;
 
   useEffect(() => {
@@ -47,9 +48,28 @@ export function DeviceSheet({ media, sinkId, onSwitch, onSink, onClose }: Props)
     </div>
   );
 
+ // aria-modal 창이므로 Tab이 창 밖으로 나가지 않게 순환시킨다(ConfirmModal과 같은 규칙, 04 §7.3 G-2)
+  const onKey = (e: React.KeyboardEvent): void => {
+    if (e.key === 'Escape') return onClose();
+    if (e.key !== 'Tab') return;
+    const items = [...(boxRef.current?.querySelectorAll<HTMLElement>('button, select, input, [href], [tabindex]:not([tabindex="-1"])') ?? [])].filter((el) => !(el as HTMLButtonElement).disabled);
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (!first || !last) return;
+    const active = document.activeElement;
+    const outside = !boxRef.current?.contains(active);
+    if (e.shiftKey && (active === first || outside)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (active === last || outside)) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-overlay p-0 sm:items-center sm:p-4" onKeyDown={(e) => e.key === 'Escape' && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label={S.devices.title} className="w-full max-w-md rounded-t-lg border border-line bg-surface p-5 shadow-pop sm:rounded-lg">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-overlay p-0 sm:items-center sm:p-4" onKeyDown={onKey}>
+      <div ref={boxRef} role="dialog" aria-modal="true" aria-label={S.devices.title} className="w-full max-w-md rounded-t-lg border border-line bg-surface p-5 shadow-pop sm:rounded-lg">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">{S.devices.title}</h2>
           <button ref={closeRef} type="button" aria-label={S.devices.close} className="flex min-h-touch min-w-touch items-center justify-center rounded-md hover:bg-raised" onClick={onClose}>

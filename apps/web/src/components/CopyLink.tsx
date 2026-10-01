@@ -44,7 +44,7 @@ export function CopyLink({
 
   return (
     <div className="flex flex-col gap-2">
-      <button type="button" aria-label={state === 'copied' ? S.lobby.copied : text} data-testid={testId} className={compact || inline ? 'btn-secondary whitespace-nowrap px-3' : 'btn-secondary w-full'} onClick={() => void copy()}>
+      <button type="button" aria-label={state === 'copied' ? S.lobby.copied : text} data-testid={testId} className={compact || inline ? 'btn-secondary min-w-touch whitespace-nowrap px-3' : 'btn-secondary w-full'} onClick={() => void copy()}>
         {state === 'copied' ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
         <span className={compact && !inline ? 'hidden sm:inline' : ''}>{state === 'copied' ? S.lobby.copied : text}</span>
       </button>

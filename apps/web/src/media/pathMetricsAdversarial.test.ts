@@ -279,4 +279,20 @@ describe('MeshTransport 경로 보고 규칙 (NFR-15)', () => {
     c.t.close();
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it('TC-419g [NFR-15] 재시도 대기 중 connected가 다시 와도 앞선 타이머가 남지 않는다: removePeer 뒤 대기 타이머 0개 (unit-19 DEF-001 회귀)', async () => {
+    const a = make();
+    a.pc().next = [];
+    a.pc().setIce('connected');
+    await flush();
+    expect(vi.getTimerCount()).toBe(1); // 통계가 비어 1초 뒤 재시도 예약
+    a.pc().setIce('disconnected');
+    a.pc().setIce('connected'); // 재시도 대기 1초 안에 다시 connected
+    await flush();
+    a.t.removePeer('aaaaaaaa');
+    expect(vi.getTimerCount()).toBe(0);
+    const calls = a.pc().statsCalls;
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(a.pc().statsCalls).toBe(calls); // 폐기된 피어에서 더 이상 통계를 부르지 않는다
+  });
 });

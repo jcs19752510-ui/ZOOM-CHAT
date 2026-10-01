@@ -90,7 +90,8 @@ export function dockerfileIssues(text: string): string[] {
 /** .dockerignore가 반드시 제외해야 하는 항목 중 빠진 것. */
 export function dockerignoreIssues(text: string): string[] {
   const entries = text.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
-  return ['.git', '.env', '.env.*', 'node_modules', '**/node_modules', '**/dist'].filter((r) => !entries.includes(r)).map((r) => `.dockerignore에 ${r} 없음`);
+  // 하위 폴더(apps/server/.env 등)의 .env도 빌드 컨텍스트에 들어가지 않도록 '**/' 형태를 요구한다(unit-13 DEF-002)
+  return ['.git', '**/.env', '**/.env.*', 'node_modules', '**/node_modules', '**/dist'].filter((r) => !entries.includes(r)).map((r) => `.dockerignore에 ${r} 없음`);
 }
 
 describe('unit-13 인프라 불변식 (소급 6단계)', () => {
@@ -163,7 +164,7 @@ describe('unit-13 인프라 불변식 (소급 6단계)', () => {
   it('TC-493 [SEC-10,SEC-09,NFR-07] .dockerignore가 .env·.git·node_modules를 제외하고, compose는 시크릿을 보간으로만 받으며 이미지 태그가 고정되고 점검기는 변이를 잡는다', () => {
     const di = read('.dockerignore');
     expect(dockerignoreIssues(di)).toEqual([]);
-    expect(dockerignoreIssues(di.replace(/^\.env$/m, '')).join()).toContain('.env');
+    expect(dockerignoreIssues(di.replace(/^\*\*\/\.env$/m, '')).join()).toContain('**/.env');
     expect(dockerignoreIssues(di.replace(/^\.git$/m, '')).join()).toContain('.git');
     // compose: 시크릿 리터럴 금지(변수 보간만), 필수 변수는 :? 로 누락 시 기동 거부, 특권·사설 마운트 없음
     expect(compose).toMatch(/TURN_SECRET: \$\{TURN_SECRET:\?[^}]+\}/);

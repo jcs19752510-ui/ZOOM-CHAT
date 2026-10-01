@@ -68,6 +68,8 @@ const selectedTypes = (page: Page): Promise<string[]> =>
   });
 
 test.describe('TURN 경유 (SEC-09)', () => {
+  // CI에서는 coturn이 반드시 설치되어 있어야 한다(조용히 건너뛰면 TURN 경유 시험이 한 번도 실행되지 않는다). 로컬에서만 건너뛴다.
+  if (process.env.CI) expect(hasTurn, 'CI에는 turnserver(coturn)가 설치되어 있어야 한다').toBe(true);
   test.skip(!hasTurn, 'turnserver(coturn)가 설치되어 있지 않아 건너뜀');
   test.afterEach(async () => {
     await closeAll();

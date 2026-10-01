@@ -6,6 +6,7 @@ UI 문구는 한국어 기본. 코드/주석/커밋은 영어 또는 한국어 �
 ## 개발 하네스 (HANESS_AUTO 13단계 파이프라인)
 이 저장소는 HANESS_AUTO(`jcs19752510-ui/HANESS_AUTO`, PROD 브랜치)의 하네스를 그대로 복사해 사용한다.
 작업 시작 전 **[ORCHESTRATOR.md](ORCHESTRATOR.md)를 반드시 먼저 읽는다.** 전역 규칙 A~K, 13단계 정의, 병렬 모드가 모두 거기 있다.
+- **필수 제약: HANESS_AUTO 저장소와 그 복사본(`ORCHESTRATOR.md`, `.claude/agents/`, `templates/`, `automation/`, `docs/harness/HANESS-README.md`, `docs/harness/USAGE-GUIDE.md`)은 수정·추가 금지.** 사용자가 명시적으로 허락하기 전에는 읽기만 한다. 프로젝트별 내용은 `CLAUDE.md`, `docs/plan.md` 등 ZOOM-CHAT 고유 파일에만 쓴다.
 - 단계별 서브에이전트: `.claude/agents/01-trend-analyst.md` ~ `13-post-deploy-verifier.md`
 - 공통 양식: `templates/`, 자동화 예시: `automation/`, 원본 가이드: `docs/harness/` (HANESS-README.md, USAGE-GUIDE.md)
 - 하네스 산출물(decisions.md, traceability.md 등)은 `docs/harness/`에 쌓는다. 임시 아티팩트는 `.harness-tmp/`만 사용한다(규칙 K, `.gitignore` 처리됨).

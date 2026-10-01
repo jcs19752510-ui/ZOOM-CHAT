@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { normalizeNickname } from '@meetlite/shared';
 import { CopyLink } from '../components/CopyLink';
+import { PageShell } from '../components/PageShell';
 import { Mic, MicOff, TriangleAlert, Video, VideoOff } from '../components/icons';
 import { useAudioLevel } from '../lib/audioLevel';
 import { listDevices, type DeviceLists, type LocalMedia, type MediaErrorKind } from '../lib/media';
@@ -78,7 +79,8 @@ export function Lobby({ roomId, isHost, needsPassword, initialNickname, media, o
   };
 
   return (
-    <main className="mx-auto flex min-h-full max-w-5xl flex-col justify-center gap-6 px-4 py-6 md:flex-row md:items-center">
+    <PageShell context="lobby" roomId={roomId}>
+    <main className="mx-auto flex w-full flex-1 max-w-5xl flex-col justify-center gap-6 px-4 py-6 md:flex-row md:items-center">
       <section className="w-full md:flex-1" aria-label={S.lobby.previewLabel}>
         <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-tile ring-1 ring-line" data-testid="preview">
           <video ref={videoRef} autoPlay playsInline muted className={`h-full w-full -scale-x-100 object-cover ${media.video && media.camOn ? '' : 'hidden'}`} data-testid="preview-video" />
@@ -179,5 +181,6 @@ export function Lobby({ roomId, isHost, needsPassword, initialNickname, media, o
         </div>
       </section>
     </main>
+    </PageShell>
   );
 }

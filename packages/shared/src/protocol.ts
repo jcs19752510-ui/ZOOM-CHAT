@@ -6,6 +6,7 @@ import type {
   KickRequest,
   LockRequest,
   MediaStateRequest,
+  MetricsPathRequest,
   ResumeRequest,
   SessionDescription,
   SignalRequest,
@@ -85,6 +86,14 @@ export interface RoomStatusResponse {
   hostPresent: boolean;
 }
 
+/** GET /api/meta: 값이 설정되지 않은 항목은 null이며 클라이언트는 "미정"으로 표시한다. */
+export interface MetaResponse {
+  v: 1;
+  operator: { contact: string | null; privacyOfficer: string | null };
+  legal: { effectiveDate: string | null };
+  network: { stunHosts: string[]; turnHosts: string[] };
+}
+
 // 서버 → 클라이언트 페이로드
 export interface SignalRelay {
   v: 1;
@@ -115,6 +124,7 @@ export interface ClientToServerEvents {
   'host:lock': (p: LockRequest, ack: Cb<object>) => void;
   'host:kick': (p: KickRequest, ack: Cb<object>) => void;
   'host:muteAll': (p: EmptyRequest, ack: Cb<object>) => void;
+  'metrics:path': (p: MetricsPathRequest, ack: Cb<object>) => void;
 }
 
 export interface ServerToClientEvents {
@@ -134,4 +144,5 @@ export interface ServerToClientEvents {
   'chat:message': (p: ChatMessage) => void;
   'host:muteAll': (p: { v: 1; by: string }) => void;
   'room:kicked': (p: { v: 1; reason: string }) => void;
+  'room:closed': (p: { v: 1 }) => void;
 }

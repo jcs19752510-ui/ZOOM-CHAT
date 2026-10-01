@@ -33,4 +33,37 @@ describe('환경변수 검증 (NFR-08)', () => {
     expect(() => loadConfig({ ...baseEnv, NODE_ENV: 'production', TURN_URLS: 'turn:t:3478', TURN_SECRET: 'change-me-turn-secret-change-me' })).toThrow(/예시 비밀값/);
     expect(loadConfig({ ...baseEnv, NODE_ENV: 'development', SESSION_SECRET: placeholder }).SESSION_SECRET).toBe(placeholder);
   });
+  it('TC-301 [POL-19,POL-20] 운영자 설정은 선택이며 빈 값은 없음으로 본다', () => {
+    const c = loadConfig({ ...baseEnv, OPERATOR_CONTACT: '', PRIVACY_OFFICER: ' ', LEGAL_EFFECTIVE_DATE: '', ADMIN_PORT: '', ADMIN_TOKEN: '' });
+    expect([c.OPERATOR_CONTACT, c.PRIVACY_OFFICER, c.LEGAL_EFFECTIVE_DATE, c.ADMIN_PORT, c.ADMIN_TOKEN]).toEqual([undefined, undefined, undefined, undefined, undefined]);
+  });
+  it('TC-301b [POL-19] OPERATOR_CONTACT는 이메일 또는 https URL, 200자 이하만 허용한다', () => {
+    expect(loadConfig({ ...baseEnv, OPERATOR_CONTACT: 'ops@example.com' }).OPERATOR_CONTACT).toBe('ops@example.com');
+    expect(loadConfig({ ...baseEnv, OPERATOR_CONTACT: 'https://example.com/report' }).OPERATOR_CONTACT).toBe('https://example.com/report');
+    for (const bad of ['http://example.com', 'javascript:alert(1)', 'not a contact', 'a@b', `${'a'.repeat(200)}@x.com`]) {
+      expect(() => loadConfig({ ...baseEnv, OPERATOR_CONTACT: bad }), bad).toThrow(/OPERATOR_CONTACT/);
+    }
+  });
+  it('TC-301c [POL-20] LEGAL_EFFECTIVE_DATE는 존재하는 YYYY-MM-DD, PRIVACY_OFFICER는 100자 이하', () => {
+    expect(loadConfig({ ...baseEnv, LEGAL_EFFECTIVE_DATE: '2026-10-01' }).LEGAL_EFFECTIVE_DATE).toBe('2026-10-01');
+    for (const bad of ['2026-13-01', '2026-02-30', '26-10-01', '2026/10/01']) {
+      expect(() => loadConfig({ ...baseEnv, LEGAL_EFFECTIVE_DATE: bad }), bad).toThrow(/LEGAL_EFFECTIVE_DATE/);
+    }
+    expect(() => loadConfig({ ...baseEnv, PRIVACY_OFFICER: 'a'.repeat(101) })).toThrow(/PRIVACY_OFFICER/);
+  });
+  it('TC-301d [POL-19] ADMIN_PORT와 ADMIN_TOKEN은 함께만 허용하고 PORT와 같을 수 없으며 토큰은 32자 이상', () => {
+    const token = 'a'.repeat(32);
+    expect(() => loadConfig({ ...baseEnv, ADMIN_PORT: '3002' })).toThrow(/ADMIN_TOKEN/);
+    expect(() => loadConfig({ ...baseEnv, ADMIN_TOKEN: token })).toThrow(/ADMIN_TOKEN/);
+    expect(() => loadConfig({ ...baseEnv, PORT: '3001', ADMIN_PORT: '3001', ADMIN_TOKEN: token })).toThrow(/ADMIN_PORT/);
+    expect(() => loadConfig({ ...baseEnv, ADMIN_PORT: '3002', ADMIN_TOKEN: 'short' })).toThrow(/ADMIN_TOKEN/);
+    expect(() => loadConfig({ ...baseEnv, ADMIN_PORT: '70000', ADMIN_TOKEN: token })).toThrow(/ADMIN_PORT/);
+    const c = loadConfig({ ...baseEnv, ADMIN_PORT: '3002', ADMIN_TOKEN: token });
+    expect([c.ADMIN_PORT, c.ADMIN_TOKEN]).toEqual([3002, token]);
+  });
+  it('TC-301e [SEC-10] 운영 모드에서는 ADMIN_TOKEN 예시 값도 거부한다', () => {
+    const t = 'change-me-admin-token-change-me-admin';
+    expect(() => loadConfig({ ...baseEnv, NODE_ENV: 'production', ADMIN_PORT: '3002', ADMIN_TOKEN: t })).toThrow(/예시 비밀값/);
+    expect(loadConfig({ ...baseEnv, ADMIN_PORT: '3002', ADMIN_TOKEN: t }).ADMIN_TOKEN).toBe(t);
+  });
 });

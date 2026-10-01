@@ -170,6 +170,8 @@ export const S = {
       title: '회의를 찾을 수 없습니다',
       closed: '이미 종료되었거나 만료된 회의입니다. 링크를 다시 확인하거나 새 회의를 만들어 주세요.',
       restarted: '서비스가 재시작되어 회의가 종료되었습니다. 새 회의를 만들어 다시 시작해 주세요.',
+      operatorTitle: '운영자가 이 회의를 종료했습니다',
+      operator: '이 링크로는 다시 입장할 수 없습니다. 새 회의를 만들어 시작하거나, 이유가 궁금하면 문의 안내를 확인해 주세요.',
       newRoom: '새 회의 만들기',
     },
     unsupported: {
@@ -184,6 +186,64 @@ export const S = {
       rejoin: '다시 입장',
     },
     waitHost: { title: '호스트를 기다리고 있습니다', body: '호스트가 입장하면 자동으로 시작됩니다. 이 화면을 닫지 마세요.', cancel: '처음으로' },
+  },
+  legalLinks: {
+    privacy: '개인정보 처리방침',
+    terms: '이용약관',
+    contact: '문의·신고',
+    nav: '법적 고지와 문의',
+    aria: (name: string): string => `${name} (새 탭에서 열림)`,
+  },
+  inApp: {
+    title: '앱 안의 브라우저로 열었다면 카메라가 막힐 수 있어요',
+    summary: 'Chrome이나 Safari 같은 기본 브라우저에서 여는 것을 권장합니다.',
+    howOpen: '방법 보기',
+    howClose: '방법 접기',
+    steps: [
+      '화면의 메뉴(⋮ 또는 공유 아이콘)에서 "다른 브라우저로 열기" 또는 "기본 브라우저로 열기"를 찾아 누르세요.',
+      '메뉴에 없으면 "링크 복사"를 누른 뒤 Chrome이나 Safari 주소창에 붙여넣으세요.',
+    ],
+    proceed: '이 브라우저에서도 계속 진행할 수 있습니다.',
+    copySite: '주소 복사',
+    dismiss: '안내 닫기',
+    permissionExtra: '앱 안의 브라우저가 카메라·마이크를 막았을 수 있습니다. 위 방법으로 기본 브라우저에서 다시 열어 주세요.',
+  },
+  autoplay: {
+    banner: '일부 참가자의 영상이나 소리가 브라우저 설정 때문에 멈춰 있습니다.',
+    button: '탭하여 재생',
+    started: '재생을 시작했습니다',
+    stillBlocked: '아직 재생되지 않는 영상이 있습니다. 한 번 더 누르거나 브라우저 설정에서 자동 재생을 허용해 주세요.',
+  },
+  background: {
+    returned: '앱으로 돌아와 연결을 다시 확인하고 있습니다. 자리는 잠시 유지됩니다.',
+    mediaLost: (kind: 'camera' | 'mic' | 'both'): string => {
+      const what = kind === 'camera' ? '카메라' : kind === 'mic' ? '마이크' : '카메라와 마이크';
+      return `화면이 꺼져 있는 동안 ${what}가 중단되었습니다. ${what} 버튼을 눌러 다시 켜 주세요.`;
+    },
+    platformNote: '휴대폰은 화면을 끄거나 다른 앱으로 이동하면 통화를 멈출 수 있습니다. 회의 중에는 이 브라우저를 켜 둔 채로 유지해 주세요.',
+  },
+  legal: {
+    home: 'MeetLite 처음으로',
+    navLabel: '문서 목록',
+    tocLabel: '이 문서의 목차',
+    draftRibbon: '초안(법률 검토 전) — 내용이 바뀔 수 있습니다',
+    labels: {
+      contact: '문의 연락처',
+      officer: '개인정보 책임자',
+      effectiveDate: '시행일',
+      stun: 'STUN 서버',
+      turn: 'TURN 서버',
+    },
+    meta: {
+      loading: '불러오는 중…',
+      pending: '운영자가 아직 정하지 않았습니다(공개 전 필수)',
+      officerPending: '지정 전 — 필요 여부는 법률 검토 후 결정합니다',
+      datePending: '시행일이 아직 정해지지 않았습니다(공개 전 필수)',
+      error: '운영자 정보를 불러오지 못했습니다. 잠시 뒤 다시 시도해 주세요. 문서의 나머지 내용에는 영향이 없습니다.',
+      retry: '다시 불러오기',
+      newTab: '(새 탭)',
+      none: '없음',
+    },
   },
 } as const;
 

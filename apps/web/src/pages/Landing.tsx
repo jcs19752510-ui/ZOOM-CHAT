@@ -5,6 +5,7 @@ import { extractRoomId } from '../lib/linkify';
 import { loadNickname, saveHostClaim, saveNickname } from '../lib/storage';
 import { S } from '../strings';
 import { Link2 } from '../components/icons';
+import { PageShell } from '../components/PageShell';
 
 export function Landing({ navigate }: { navigate: (to: string) => void }) {
   const [nickname, setNickname] = useState(loadNickname);
@@ -38,7 +39,8 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
   };
 
   return (
-    <main className="mx-auto flex min-h-full max-w-5xl flex-col justify-center gap-8 px-4 py-8 md:flex-row md:items-center md:gap-14">
+    <PageShell context="landing">
+    <main className="mx-auto flex w-full flex-1 max-w-5xl flex-col justify-center gap-8 px-4 py-8 md:flex-row md:items-center md:gap-14">
       <section className="md:flex-1">
         <p className="text-sm font-bold text-focus">{S.app.name}</p>
         <h1 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">{S.landing.title}</h1>
@@ -107,5 +109,6 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
         </form>
       </section>
     </main>
+    </PageShell>
   );
 }

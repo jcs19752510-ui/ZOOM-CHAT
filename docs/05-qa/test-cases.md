@@ -167,6 +167,20 @@
 | TC-243 | signal은 description과 candidate 중 정확히 하나만 허용한다 | SEC-04, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
 | TC-244 | SDP 16KB 초과를 거부한다 | SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
 | TC-245 | 방 ID 형식이 아니면 거부한다 | SEC-01, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
+| TC-301 | 운영자 설정은 선택이며 빈 값은 없음으로 본다 | POL-19, POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-301b | OPERATOR_CONTACT는 이메일 또는 https URL, 200자 이하만 허용한다 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-301c | LEGAL_EFFECTIVE_DATE는 존재하는 YYYY-MM-DD, PRIVACY_OFFICER는 100자 이하 | POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-301d | ADMIN_PORT와 ADMIN_TOKEN은 함께만 허용하고 PORT와 같을 수 없으며 토큰은 32자 이상 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-301e | 운영 모드에서는 ADMIN_TOKEN 예시 값도 거부한다 | SEC-10 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-302 | metrics:path는 direct/relay만 허용하고 모르는 키(식별자 등)는 거부한다 | NFR-15, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
+| TC-330 | 필수 보안 옵션이 있고 고정 자격증명·무인증이 없다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
+| TC-330b | denied-peer-ip가 사설·루프백·링크로컬·CGNAT·멀티캐스트 IPv4/IPv6 대역을 모두 포함한다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
+| TC-330c | "::"로 시작하는 deny 범위가 없다 (D-1 회귀 방지: 공인 IPv4 peer까지 거부됨) | SEC-12 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
+| TC-330d | compose의 coturn 이미지는 4.9 이상으로 고정되고 로그 로테이션이 있다 (POL-18) | SEC-12 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
+| TC-331 | 양성 대조군: 공인 IPv4 peer는 허용된다 (모두 거부하는 깨진 설정 탐지, D-1) | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
+| TC-332 | 사설·루프백·링크로컬·CGNAT·멀티캐스트 IPv4 peer는 403으로 거부된다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
+| TC-333 | IPv4-mapped IPv6(::ffff:*) peer는 어떤 경우에도 성공하지 않는다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
+| TC-334 | 같은 사용자의 동시 할당이 user-quota(12)를 넘으면 거부된다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

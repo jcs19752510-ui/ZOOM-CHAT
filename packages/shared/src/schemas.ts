@@ -50,6 +50,8 @@ export const ChatSendRequestSchema = z.strictObject({ v, text: z.string().min(1)
 export const MediaStateRequestSchema = z.strictObject({ v, audio: z.boolean(), video: z.boolean() });
 export const LockRequestSchema = z.strictObject({ v, locked: z.boolean() });
 export const KickRequestSchema = z.strictObject({ v, targetId: ParticipantIdSchema });
+// 참가자 ID·IP·시각 없이 경로 종류만 보고한다(NFR-15)
+export const MetricsPathRequestSchema = z.strictObject({ v, path: z.enum(['direct', 'relay']) });
 
 export type CreateRoomRequest = z.infer<typeof CreateRoomRequestSchema>;
 export type JoinRequest = z.infer<typeof JoinRequestSchema>;
@@ -60,5 +62,6 @@ export type ChatSendRequest = z.infer<typeof ChatSendRequestSchema>;
 export type MediaStateRequest = z.infer<typeof MediaStateRequestSchema>;
 export type LockRequest = z.infer<typeof LockRequestSchema>;
 export type KickRequest = z.infer<typeof KickRequestSchema>;
+export type MetricsPathRequest = z.infer<typeof MetricsPathRequestSchema>;
 export type SessionDescription = z.infer<typeof SessionDescriptionSchema>;
 export type IceCandidatePayload = z.infer<typeof IceCandidateSchema>;

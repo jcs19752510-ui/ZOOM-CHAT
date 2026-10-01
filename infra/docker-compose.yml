@@ -5,6 +5,11 @@ services:
     image: coturn/coturn:4.9
     network_mode: host
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TURN_SECRET: ${TURN_SECRET:?TURN_SECRET을 설정하세요(서버 .env와 같은 값)}
       TURN_REALM: ${TURN_REALM:-meetlite.local}

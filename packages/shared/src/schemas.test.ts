@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JoinRequestSchema, SignalRequestSchema } from './schemas';
+import { JoinRequestSchema, MetricsPathRequestSchema, SignalRequestSchema } from './schemas';
 
 const roomId = 'A'.repeat(22);
 
@@ -27,5 +27,12 @@ describe('schemas (SEC-04, SEC-06)', () => {
   it('TC-245 [SEC-01,SEC-06] 방 ID 형식이 아니면 거부한다', () => {
     expect(JoinRequestSchema.safeParse({ v: 1, roomId: 'short', nickname: '민지' }).success).toBe(false);
     expect(JoinRequestSchema.safeParse({ v: 1, roomId: '../../etc/passwd-----', nickname: '민지' }).success).toBe(false);
+  });
+  it('TC-302 [NFR-15,SEC-06] metrics:path는 direct|relay만 허용하고 모르는 키(식별자 등)는 거부한다', () => {
+    expect(MetricsPathRequestSchema.safeParse({ v: 1, path: 'relay' }).success).toBe(true);
+    expect(MetricsPathRequestSchema.safeParse({ v: 1, path: 'direct' }).success).toBe(true);
+    expect(MetricsPathRequestSchema.safeParse({ v: 1, path: 'other' }).success).toBe(false);
+    expect(MetricsPathRequestSchema.safeParse({ v: 1, path: 'relay', peerId: 'abcdefgh' }).success).toBe(false);
+    expect(MetricsPathRequestSchema.safeParse({ v: 2, path: 'relay' }).success).toBe(false);
   });
 });

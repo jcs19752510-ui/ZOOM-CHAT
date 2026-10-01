@@ -4,6 +4,14 @@ const csv = z
   .string()
   .transform((s) => s.split(',').map((x) => x.trim()).filter(Boolean));
 
+// .env에 `KEY=`처럼 빈 값으로 둔 선택 항목은 "없음"으로 본다
+const optional = <T extends z.ZodTypeAny>(schema: T) => z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), schema.optional());
+
+const operatorContact = z
+  .string()
+  .max(200)
+  .refine((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) || /^https:\/\/[^\s/]+\S*$/.test(s), '이메일 주소 또는 https:// 주소여야 합니다');
+
 const EnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -37,10 +45,22 @@ const EnvSchema = z
     RATE_LIMIT_SCALE: z.coerce.number().min(1).max(1000).default(1),
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'silent']).default('info'),
     WEB_DIST: z.string().optional(),
+    // 법률 페이지 운영자 정보(선택). 없으면 /api/meta가 null을 주고 화면은 "미정"을 표시한다(POL-19·20)
+    OPERATOR_CONTACT: optional(operatorContact),
+    PRIVACY_OFFICER: optional(z.string().max(100)),
+    LEGAL_EFFECTIVE_DATE: optional(z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD 형식이어야 합니다').refine((d) => !Number.isNaN(Date.parse(d)) && new Date(d).toISOString().startsWith(d), '존재하는 날짜여야 합니다')),
+    // 운영자 방 폐쇄용 admin 리스너(127.0.0.1 전용). 둘 다 있을 때만 켠다
+    ADMIN_PORT: optional(z.coerce.number().int().min(1).max(65535)),
+    ADMIN_TOKEN: optional(z.string().min(32, '32자 이상이어야 합니다')),
   })
   .refine((e) => !(e.TURN_URLS?.length && !e.TURN_SECRET), { message: 'TURN_URLS를 쓰려면 TURN_SECRET이 필요합니다', path: ['TURN_SECRET'] })
+  .refine((e) => (e.ADMIN_PORT === undefined) === (e.ADMIN_TOKEN === undefined), {
+    message: 'ADMIN_PORT와 ADMIN_TOKEN은 함께 설정해야 합니다',
+    path: ['ADMIN_TOKEN'],
+  })
+  .refine((e) => e.ADMIN_PORT === undefined || e.ADMIN_PORT !== e.PORT, { message: 'ADMIN_PORT는 PORT와 달라야 합니다', path: ['ADMIN_PORT'] })
   // .env.example의 예시 값을 그대로 운영에 쓰는 실수를 막는다(SEC-10)
-  .refine((e) => !(e.NODE_ENV === 'production' && (e.SESSION_SECRET.startsWith('change-me') || e.TURN_SECRET?.startsWith('change-me'))), {
+  .refine((e) => !(e.NODE_ENV === 'production' && (e.SESSION_SECRET.startsWith('change-me') || e.TURN_SECRET?.startsWith('change-me') || e.ADMIN_TOKEN?.startsWith('change-me'))), {
     message: '운영에서는 예시 비밀값(change-me...)을 쓸 수 없습니다. 새 난수로 바꾸세요',
     path: ['SESSION_SECRET'],
   });

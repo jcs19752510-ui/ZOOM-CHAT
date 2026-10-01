@@ -42,7 +42,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: docker pull "$(sed -n 's/^ *image: *//p' infra/docker-compose.yml | head -1)"
+      - run: |
+          IMAGE="$(sed -n 's/^ *image: *//p' infra/docker-compose.yml | head -1)"
+          docker pull "$IMAGE"
       - run: npx vitest run --root apps/server test/coturnLive.test.ts test/coturnConfig.test.ts
         env:
           COTURN_LIVE: '1'

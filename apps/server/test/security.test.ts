@@ -29,6 +29,7 @@ describe('TURN 임시 자격증명 (SEC-09)', () => {
     const now = 1_700_000_000_000;
     const [stun, turn] = buildIceServers(cfg, 'pid123456', now);
     expect(stun?.username).toBeUndefined();
+    expect(stun?.urls).toEqual(['stun:stun.l.google.com:19302']);
     expect(turn?.urls).toEqual(['turn:t.example:3478', 'turns:t.example:5349']);
     expect(turn?.username).toBe(`${1_700_003_600}:pid123456`);
     expect(turn?.credential).toBe(createHmac('sha1', 'turn-secret-turn-secret').update(turn?.username ?? '').digest('base64'));
@@ -37,6 +38,12 @@ describe('TURN 임시 자격증명 (SEC-09)', () => {
     const servers = buildIceServers(makeConfig(), 'pid', Date.now());
     expect(servers).toHaveLength(1);
     expect(JSON.stringify(servers)).not.toMatch(/credential|username/);
+  });
+});
+
+describe('STUN 설정', () => {
+  it('TC-132b [SEC-09] STUN_URLS를 비우면 빈 urls 항목을 만들지 않는다', () => {
+    expect(buildIceServers(makeConfig({ STUN_URLS: '' }), 'pid', Date.now())).toEqual([]);
   });
 });
 

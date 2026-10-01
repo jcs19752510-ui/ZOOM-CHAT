@@ -10,6 +10,8 @@ import type { Config } from './config';
 export interface RunningServer {
   port: number;
   rooms: RoomManager;
+  /** 모든 소켓을 서버 쪽에서 끊는다(네트워크 단절 재현용, 시험에서만 쓴다). */
+  disconnectAll: () => void;
   close: () => Promise<void>;
 }
 
@@ -38,6 +40,7 @@ export async function startServer(config: Config, logger: Logger = createLogger(
   return {
     port,
     rooms,
+    disconnectAll: () => io.disconnectSockets(true),
     close: async () => {
       rooms.dispose();
       await io.close();

@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg font-sans text-text antialiased;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    margin: 0;
+    overscroll-behavior: none;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-focus;
+  }
+  h1,
+  h2 {
+    text-wrap: balance;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  button:disabled {
+    @apply cursor-not-allowed;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-touch items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold transition-colors disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-accent text-white hover:bg-accent-hover;
+  }
+  .btn-secondary {
+    @apply btn bg-raised text-text hover:bg-line;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white hover:bg-danger-hover;
+  }
+  .input {
+    @apply min-h-touch w-full rounded-md border border-line bg-surface px-3 text-base text-text placeholder:text-muted;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

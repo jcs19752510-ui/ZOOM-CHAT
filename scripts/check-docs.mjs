@@ -21,13 +21,27 @@ const idsIn = (text) => [...text.matchAll(ID_RE)].map((m) => `${m[1]}-${m[2].pad
 const uniq = (a) => [...new Set(a)];
 const byNum = (a, b) => a.localeCompare(b, 'en', { numeric: true });
 
-// 1) 문서 상단 양식
-for (const f of PLANNING) {
+// 1) 문서 상단 양식: docs 아래 모든 문서(하네스 복사본과 이미지 제외)
+const DOC_DIRS = ['00-gates', '01-planning', '02-design', '03-engineering', '04-security', '05-qa', '06-ops'];
+const allDocs = [];
+const walkDocs = (rel) => {
+  const abs = docs(rel);
+  if (!fs.existsSync(abs)) return;
+  for (const e of fs.readdirSync(abs, { withFileTypes: true })) {
+    const r = path.join(rel, e.name);
+    if (e.isDirectory()) { if (e.name !== 'screens' && e.name !== 'mockups') walkDocs(r); }
+    else if (e.name.endsWith('.md')) allDocs.push(r);
+  }
+};
+for (const d of DOC_DIRS) walkDocs(d);
+allDocs.push('README.md', 'traceability.md');
+for (const f of allDocs) {
   if (!exists(f)) { err(`[양식] 파일 없음: ${f}`); continue; }
   const t = read(f);
   if (!t.split('\n')[0].startsWith('> **이 문서의 용도**')) err(`[양식] 첫 줄이 용도 한 줄이 아님: ${f}`);
   for (const k of ['버전', '작성일', '상태', '주도', '변경 이력']) if (!t.includes(k)) err(`[양식] '${k}' 누락: ${f}`);
 }
+for (const f of PLANNING) if (!exists(f)) err(`[양식] 파일 없음: ${f}`);
 
 // 2) 정의된 ID 수집
 const defined = new Set();
@@ -228,15 +242,20 @@ for (const id of untested) if (prio[id] === 'M' || id.startsWith('SEC')) err(`[�
 const noEvt = reqs.filter((id) => id.startsWith('FR') && !(evtMap[id]?.length));
 for (const id of noEvt) err(`[기술] FR이 EVT에 매핑되지 않음(api-spec §7): ${id}`);
 
-// 8) 문서 인덱스
+// 8) 문서 인덱스: docs/README.md에 모든 문서 경로가 있어야 한다
 if (!exists('README.md')) err('[인덱스] docs/README.md 없음');
 else {
   const idx = read('README.md');
-  for (const f of PLANNING) if (!idx.includes(f.replace('01-planning/', '01-planning/'))) err(`[인덱스] docs/README.md에 없음: ${f}`);
+  for (const f of allDocs) {
+    if (f === 'README.md') continue;
+    const name = f.split(path.sep).join('/');
+    if (!idx.includes(name) && !idx.includes(name.replace(/\.md$/, ''))) err(`[인덱스] docs/README.md에 없음: ${name}`);
+  }
 }
 
 // 결과
 const count = (t) => reqs.filter((i) => i.startsWith(t)).length;
+console.log(`문서 ${allDocs.length}개 양식 점검`);
 console.log(`요구 ID: FR ${count('FR')} / NFR ${count('NFR')} / UX ${count('UX')} / SEC ${count('SEC')}  (합계 ${reqs.length})`);
 console.log(`정의 ID 합계: ${defined.size} (POL ${[...defined].filter((i) => i.startsWith('POL')).length}, SCR ${[...defined].filter((i) => i.startsWith('SCR')).length}, FLOW ${[...defined].filter((i) => i.startsWith('FLOW')).length})`);
 console.log(`테스트(TC/IT) ${tests.length}개, 수동/UAT ${extra.length}개, 테스트 미연결 요구 ${untested.length}건${untested.length ? ' → ' + untested.join(', ') : ''}`);

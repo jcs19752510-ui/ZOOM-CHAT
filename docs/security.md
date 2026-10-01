@@ -1,3 +1,5 @@
+> ⚠ **구 체계 초안(대체 예정)**: 2026-10-01 새 지시서 이전에 작성됨. 세션 토큰, 방 수명 등 새 요구와 다를 수 있으므로 기준으로 쓰지 말 것. 새 기준은 `docs/README.md`와 `docs/01-planning/prd.md`. Gate 0-D에서 `04-security/security.md`로 이전 후 삭제.
+
 # MeetLite 보안 위협 모델 (security.md)
 
 > 상태: 초안 — 승인 대기. Phase 5에서 실제 구현·점검 결과로 갱신한다.

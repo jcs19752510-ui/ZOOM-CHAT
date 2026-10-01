@@ -20,6 +20,6 @@
 |---|---|---|---|---|
 | MC-01 | 코드 품질 게이트: lint, 타입 검사(strict)가 CI와 같은 명령으로 통과한다 | NFR-11, NFR-08 | `npm run lint && npm run typecheck` | 통과(2026-10-01, 오류 0건) |
 | MC-02 | 의존성 취약점 점검과 lockfile 사용(`npm ci`) | SEC-11 | `npm audit` / `npm ci` | 취약점 0건(2026-10-01). 의존성 목록·사유는 `dev-guide.md` |
-| MC-03 | 운영 빌드 번들이 운영 의존성만 설치한 환경에서 기동하고 HEAD/GET, 정상 종료, 환경변수 누락 시 기동 실패를 만족한다 | NFR-07, NFR-08 | `npm run build`, `node apps/server/dist/index.js` | 통과(2026-10-01). Docker 이미지 빌드는 데몬 부재로 **미검증** |
+| MC-03 | 운영 빌드 번들이 운영 의존성만 설치한 환경에서 기동하고 HEAD/GET, 정상 종료, 환경변수 누락 시 기동 실패를 만족한다 | NFR-07, NFR-08 | `npm run build`, `node apps/server/dist/index.js` | 통과(2026-10-01). Docker 이미지 빌드·컨테이너 기동도 통과(2026-10-01, 아래 비고). **GitHub 서버·실제 배포 환경에서의 실행은 미검증** |
 | MC-04 | 부하 스모크: 100방×6명(600소켓) 신호 3.9만 건 | NFR-04, NFR-07 | `node scripts/load-smoke.mjs 100 6` | 오류 0건, ack p95 42.7ms, 서버 메모리 83→130MB(`performance-test.md`) |
 | MC-05 | 시크릿 스캔: 저장소에 비밀값·토큰이 커밋되지 않았다 | SEC-10 | `git grep -nE "SESSION_SECRET=|TURN_SECRET=" -- . ':!.env.example' ':!docs'` 등 | 실제 값 없음(2026-10-01). 상세는 `security-checklist.md` |

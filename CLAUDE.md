@@ -3,6 +3,17 @@
 설치 없이 브라우저 링크로 입장하는 소규모 화상회의 앱. 1인 운영, 저비용, 유지보수 용이성이 최우선.
 UI 문구는 한국어 기본. 코드/주석/커밋은 영어 또는 한국어 중 하나로 일관되게(기본: 코드·식별자 영어, 주석·문서 한국어).
 
+## 개발 하네스 (HANESS_AUTO 13단계 파이프라인)
+이 저장소는 HANESS_AUTO(`jcs19752510-ui/HANESS_AUTO`, PROD 브랜치)의 하네스를 그대로 복사해 사용한다.
+작업 시작 전 **[ORCHESTRATOR.md](ORCHESTRATOR.md)를 반드시 먼저 읽는다.** 전역 규칙 A~K, 13단계 정의, 병렬 모드가 모두 거기 있다.
+- 단계별 서브에이전트: `.claude/agents/01-trend-analyst.md` ~ `13-post-deploy-verifier.md`
+- 공통 양식: `templates/`, 자동화 예시: `automation/`, 원본 가이드: `docs/harness/` (HANESS-README.md, USAGE-GUIDE.md)
+- 하네스 산출물(decisions.md, traceability.md 등)은 `docs/harness/`에 쌓는다. 임시 아티팩트는 `.harness-tmp/`만 사용한다(규칙 K, `.gitignore` 처리됨).
+- 규칙 A(모르면 질문), 규칙 E(배포는 사용자 승인 없이 금지), 규칙 K(중단-안전 정리)는 어떤 경우에도 우회하지 않는다.
+- 프로젝트 시작 시 1회 질문 3종(MCP 연동, 위험도 Tier, 병렬 모드 P0~P2)을 1단계 호출 전에 사용자에게 묻고 `docs/harness/decisions.md`에 기록한다. **아직 답변 전이다.**
+- **충돌 시 우선순위**: 사용자의 직접 지시 > 아래 "작업 방식"(Phase 승인 게이트) > ORCHESTRATOR.md. 하네스의 단계 간 셀프 체이닝은 한 Phase 안에서만 적용하고, **Phase가 끝나면 반드시 멈춰 승인을 받는다.**
+- 13단계와 Phase 0~5의 대응표는 사용자 확인 후 `docs/plan.md`에 기록한다(미확정).
+
 ## 의사결정 우선순위
 충돌 시 **보안 > 정확성 > 단순함 > 편의**. 결정마다 기획/개발/디자인/아키텍처/보안 5관점을 짧게 점검한다.
 
@@ -75,3 +86,4 @@ infra/            docker-compose.yml, coturn 설정
 
 ## 현재 진행 상태
 - Phase 0: 문서 3개 작성 완료, **승인 대기 중** (코드 미작성)
+- 하네스: HANESS_AUTO PROD 브랜치 복사 완료(31개 파일). 시작 질문 3종 답변 대기

@@ -85,6 +85,22 @@
 | IT-44 | 끊김 유예 중(소켓 없음)인 참가자가 있는 방을 폐쇄하면 복귀한 참가자는 재연결·무한 재시도 없이 종료 안내를 보고 방은 다시 생기지 않는다 | POL-19 | E2E | `e2e/operatorClose-extra.spec.ts` | 자동 |
 | IT-45 | 일반(루프백) 통화에서 각 참가자가 direct를 한 번씩만 보고하고 로그에 식별자가 없다 | NFR-15, KPI-05 | E2E | `e2e/pathMetrics.spec.ts` | 자동 |
 | IT-46 | TURN 릴레이로만 연결되면 각 참가자가 relay를 보고하고 direct 보고는 없다 | NFR-15, KPI-05, SEC-09 | E2E | `e2e/turn.spec.ts` | 자동 |
+| IT-47 | 3인 통화에서 연결 6개 끝(참가자당 2개)이 direct를 정확히 6줄 보고하고, 로그에 식별자가 없으며, 화면에 알림·경고가 뜨지 않는다 | NFR-15, KPI-05 | E2E | `e2e/pathMetrics-extra.spec.ts` | 자동 |
+| IT-50 | 랜딩 입력 검증: 닉네임·비밀번호 길이·링크 형식 오류는 role=alert로 원인과 해결을 알리고, 서버 오류·속도 제한·대기 중 상태가 구분된다 | FR-01, FR-03, UX-03, NFR-01 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-51 | 방 상태 조회와 입장 사이에 정원이 차거나 방이 잠기면, 입력 화면에 갇히지 않고 가득 참·잠김 화면으로 바뀐다 | FR-06, FR-07, POL-01, UX-02 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-52 | 장치 오류 4종(차단·없음·사용 중·알 수 없음)은 각각 원인과 해결 문구를 role=alert로 보이고 장치 없이 입장할 수 있으며, 다시 확인하면 복구된다 | FR-04, UX-02, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-53 | 호스트 도구 UI: 참가자에게는 도구·내보내기가 하나도 없고, 호스트에게는 자기 자신 외 모두에게 내보내기가 있으며, 확인창에서 취소하면 아무 일도 일어나지 않는다 | FR-14, FR-15, FR-16, SEC-05, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-54 | 포커스 관리: 확인창은 취소에 포커스를 두고 Tab·Shift+Tab을 창 안에 가두며 닫으면 열었던 버튼으로 돌려주고, 장치 시트는 닫기에 포커스를 두고 Esc로 닫힌다 | UX-10, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-54b | 장치 시트(aria-modal)도 Tab을 창 안에 가둬야 한다 — 알려진 결함 G-2: 현재는 밖으로 나가므로 실패가 정상(test.fail), 수정되면 이 시험이 빨개져 표시를 지우게 한다 | UX-10, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-55 | 키보드 포커스 표시(2px 이상, 포커스 색)가 랜딩·회의실 버튼에 보이고, prefers-reduced-motion이면 회의실 버튼의 전환도 꺼진다 | UX-10, UX-11, NFR-09 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-56 | 상태 화면: 로딩·오류·방 없음·호스트 대기·잠김·가득 참 화면이 각각 올바른 role·h1·행동 버튼을 갖고, 360px에서 가로 스크롤이 없으며, 오류·호스트 대기는 복구된다 | UX-02, UX-03, FR-06, FR-23 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-57 | 채팅 경계·XSS(360px): 500자(이모지 500개 포함)는 전달되고 501자는 막히며 입력이 보존되고, 초장문·악성 URL이 레이아웃·속성을 깨지 못한다 | FR-11, SEC-07, NFR-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-57b | 보이지 않는 문자만 있는 메시지가 서버에서 거부되면 "500자까지"가 아니라 실제 원인에 맞는 안내가 나와야 한다 — 알려진 결함 DEF-W01: 현재는 길이 안내가 나오므로 실패가 정상(test.fail) | FR-11, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-57c | 채팅 전송 응답이 오지 않으면(8초 시간 초과) 보낸 글이 입력창에 복원되고 원인·해결 문구가 role=alert로 나온다 | FR-11, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-58 | 360px 터치 타깃: 랜딩·대기실·회의실(채팅·참가자 패널, 확인창, 장치 시트)의 버튼·입력·링크가 44px 이상이다(인라인 링크와 알려진 결함 DEF-W02·W03 제외) | NFR-10, UX-02, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-58b | 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 — 알려진 결함 DEF-W02·W03: 현재 42px라 실패가 정상(test.fail) | NFR-10, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-59 | 대기실: 닉네임 검증 오류는 입장하지 않고 안내하며, 미리보기 준비 중에는 입장 버튼이 꺼져 있고, 비밀번호 칸은 비밀번호 방의 참가자에게만 보인다 | FR-03, FR-04, FR-05, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-59b | 혼자 있을 때만 "아직 아무도 없어요" 빈 상태 카드와 링크 복사가 보이고, 참가자가 들어오면 사라진다 | FR-02, UX-02, FR-13 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -315,6 +331,185 @@
 | TC-404 | 잘못된 값·추가 식별자 키·버전 불일치·타입 오류는 INVALID_PAYLOAD로 거부되고 로그가 남지 않으며 서버는 계속 동작한다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
 | TC-405 | 입장하지 않은 소켓은 NOT_JOINED로 거부되고 로그가 남지 않는다 | NFR-15, SEC-03 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
 | TC-406 | 같은 소켓의 짧은 시간 반복은 속도 제한(RATE_LIMITED)되어 로그가 버킷 용량(10)을 넘지 않는다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
+| TC-410 | 적대 페이로드(추가 키·__proto__·타입 혼동·유사 문자·인자 없음·ack 없음)는 거부되고 로그에 흔적이 없으며 서버는 계속 동작한다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-411 | 거대 페이로드: 한도 이내 100KB 문자열은 INVALID_PAYLOAD·로그 없음, 한도(32KiB) 초과 메시지는 연결이 끊기고 다른 소켓과 서버는 영향이 없다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-412 | 입장 상태 경계: 입장 전·퇴장 후·강퇴 후는 기록되지 않고, 다른 방 참가자·재접속(resume) 소켓은 각자 정상이며 로그에 방 ID가 없다 | NFR-15, SEC-03 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-413 | 소켓당 로그 상한: 정확히 20줄까지만 기록되고 21번째부터는 ack ok이지만 기록이 없으며, 다른 소켓의 상한과 독립이다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-414 | 속도 제한 경계: 정확히 10건 성공·11번째 RATE_LIMITED, 시간 경과 후 보충되고, 거부 15회 누적 시 연결 종료(POL-10)·다른 소켓은 영향 없음 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-415 | 로그 전수 검사: 정상·비정상·강퇴·속도 제한 경로에서 디버그 수준 로그 전체에 방 ID·IP·닉네임·참가자 ID·소켓 ID·토큰·SDP·후보 주소·주입 문자열이 없다 | NFR-15, SEC-10, DEC-012 | 서버 | `apps/server/test/metricsPathAdversarial.test.ts` | 자동 |
+| TC-416 | 후보 타입 조합표: 한쪽만 relay여도 relay, host/srflx/prflx 조합은 direct, 하나라도 미상이면 relay가 아닌 한 null이다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-417 | 대소문자·공백·undefined·프로토타입 이름은 인식하지 않는다(오보 금지): RELAY/Host/" host"/constructor/__proto__는 null | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-418 | 선택 규칙: selected 우선·없는 id면 nominated+succeeded 폴백·여러 쌍이면 선택된 쌍만·형식이 틀린 selected/transport는 무시 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419 | 입력 형식: Map.values()·Set·제너레이터도 받고, 빈/잡다한 항목·id 충돌·거대한 통계에서도 예외 없이 제때 끝난다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419b | 연결당 1회: connected/completed가 반복돼도 같은 경로는 1번만, ICE restart 뒤 경로가 바뀌면 1번 더 보고한다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419c | 통계가 늦으면 1초 간격 최대 2회만 재시도하고(총 3회), 그 뒤엔 포기하며 재시도 중 성공하면 1번 보고한다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419d | 통계 예외(동기 throw·reject)·getStats 미지원·형식 이상은 조용히 건너뛰고 예외를 밖으로 내지 않으며 처리되지 않은 거부가 없다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419e | 정리: removePeer·close 뒤에는 대기 중 타이머가 없고, 늦게 도착한 통계도 보고하지 않으며, 진행 중 중복 호출은 getStats 1회로 합쳐진다 | NFR-15 | 웹 | `apps/web/src/media/pathMetricsAdversarial.test.ts` | 자동 |
+| TC-419f | ack가 오지 않아도 metrics:path 요청은 지정한 시간 뒤 NETWORK 결과로 끝나고 거부(예외)가 나지 않으며, 보낸 페이로드는 {v,path}뿐이다 | NFR-15 | 웹 | `apps/web/src/lib/signalingPathCompat.test.ts` | 자동 |
+| TC-420 | 스키마 경계값: 토큰·비밀번호·SDP·candidate·sdpMLineIndex·참가자ID·채팅 원문 길이의 상·하한 바로 안/밖 | SEC-06, NFR-12 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
+| TC-420b | 모든 클라이언트→서버 스키마는 strict(추가 키 거부)이고 타입을 강제변환하지 않으며 v가 필수다 | SEC-04, SEC-06, NFR-12 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
+| TC-421 | 닉네임: 분해된 한글(NFC 정규화)·연속 공백 축약·경계 20 코드포인트·거부 문자 | POL-04, SEC-06 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
+| TC-421b | 채팅 정리: 모든 제어·제로폭·방향 문자 범위 제거, 코드포인트 기준 500자 경계, 줄바꿈 정규화, 공백만 있으면 거부 | POL-07, SEC-07 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
+| TC-421c | 계약 상수 고정: 버전 1, 한도값, 오류 코드 목록(중복 없음·핵심 코드 포함) | NFR-12, SEC-06 | 공유 | `packages/shared/src/protocolBoundary.test.ts` | 자동 |
+| TC-422 | 클라이언트 IP 판정: TRUST_PROXY=0이면 X-Forwarded-For를 무시, N>0이면 오른쪽에서 N번째만 신뢰(왼쪽 위조 값 무시) | SEC-06, SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-422b | 속도 제한은 실제 판정 IP 기준이다: 왼쪽 XFF를 바꿔도 우회되지 않고, 오른쪽(프록시가 붙인) 값이 다르면 별도 버킷이다 | SEC-06 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-423 | 오류 응답 본문은 코드만 담고(정확히 일치), 내부 예외가 나도 메시지·스택을 싣지 않는다 | SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-424 | 설정 경계값: 정원 2~12, 방 수 1~10000, 유예 1~300초, IP 연결 1~1000, 포트 0~65535, TRUST_PROXY 0~5, TURN TTL 60~86400, 배율 1~1000 | NFR-08, NFR-04, SEC-10 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-424b | 설정 오류 메시지는 잘못된 비밀값 자체를 되풀이하지 않는다 | SEC-10, NFR-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-425 | 방 상태 조회도 IP당 속도 제한이 있다(429, 본문은 코드만) | SEC-06 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-426 | 호스트 클레임은 발급 후 1시간 안에만 유효하다(경계: 만료 시각 정각은 무효) | SEC-03, SEC-05 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-427 | 서버 종료(close)는 열린 소켓을 끊고 포트를 반납하며 방 상태를 비운다 | NFR-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-427b | 필수 환경변수가 없으면 프로세스가 종료코드 1로 끝나고 원인만 출력한다, 정상 기동 후 SIGTERM이면 종료코드 0으로 정리한다 | NFR-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-428 | CORS: 대소문자·후행 슬래시·접미 도메인·null Origin을 모두 거부하고(OPTIONS 포함), Origin이 없으면 CORS 헤더를 붙이지 않는다 | SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-428b | 소켓 연결은 Origin 헤더가 허용 목록과 정확히 같을 때만 열린다(변형 Origin 거부) | SEC-06, SEC-08 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-429 | 정적 파일 제공 경계: 경로 순회·숨김 파일로 dist 밖/안의 비공개 파일을 읽을 수 없고, POST·소켓 경로는 index.html로 대체되지 않는다 | SEC-08, NFR-07 | 서버 | `apps/server/test/unit02Adversarial.test.ts` | 자동 |
+| TC-430 | 만료 경계: exp-1 유효, exp 정각·exp+1 무효. 호스트 클레임(t=h)도 같은 검증을 받는다 | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-430b | 서명은 맞지만 내용이 비정상인 토큰은 모두 예외 없이 null: 본문이 JSON이 아님·배열·null·숫자, pid/rid/exp 누락·타입 오류, 알 수 없는 종류 | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-430c | 형식 공격: 조각 수·서명 길이·한 글자 변조·거대 입력은 예외 없이 null | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-430d | 서명 토큰 형식: base64url(본문).base64url(HMAC-SHA256), 참가자가 다르면 토큰도 다르고 본문에 비밀값이 없다 | SEC-03 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-431 | 토큰 버킷: 유휴 시간이 길어도 용량을 넘겨 쌓이지 않고, 소수 보충·무보충·용량 1 경계를 지킨다 | SEC-06 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-431b | 키별 제한기: 키마다 독립 버킷(한 IP가 소진해도 다른 IP는 영향 없음) | SEC-06 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-431c | 시도 제한: 실패 집계 창이 지나면 오래된 실패는 세지 않고, 차단은 정확히 blockMs 뒤 풀리며, 키마다 독립이다 | SEC-02, POL-11 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-432 | bcrypt 비용 10 이상의 해시, 빈 문자열·이모지·1000자도 해시/검증이 일치하고, 잘못된 해시 형식은 false(예외 없음) | SEC-02 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-432b | 식별자: 형식·유일성·엔트로피(참가자 12자, 메시지 8자, 방 22자), 한 자리 위치가 고정되지 않는다 | SEC-01, SEC-04 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-432c | 강퇴용 IP 키: 결정적이고 IP마다 다르며 IPv6도 22자, 원문 IP가 나타나지 않는다 | POL-06, SEC-04 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-433 | TURN 자격증명: 만료는 floor(초)+TTL, 참가자마다 다른 자격증명, username 형식 `<만료>:<참가자>`, 공유 비밀·TURN 비밀번호 상수가 응답에 없다 | SEC-09 | 서버 | `apps/server/test/unit03Adversarial.test.ts` | 자동 |
+| TC-434 | 정원 경계: full 플래그는 정확히 정원일 때만 true, 정원 2(설정 최소)에서도 3번째는 ROOM_FULL, 자리가 나면 다시 입장 가능, joinSeq는 성공한 입장에서만 증가한다 | FR-06, POL-01, NFR-04 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-434b | 정원 6(운영 기본)에서 6명까지만 입장하고 병렬로 쏟아지는 입장 시도에서도 초과하지 않는다 | POL-01, FR-07 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-435 | 호스트 승계: 유예 중(끊긴) 참가자는 건너뛰고 접속 중인 가장 앞선 참가자가 승계한다, 승계 알림은 1회 | FR-17, POL-05 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-435b | 남은 사람이 모두 끊긴 상태에서 호스트가 나가면 호스트 공석, 첫 복귀자가 호스트가 된다(승계 알림 포함) | FR-17, FR-20 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-436 | 끊김·복귀의 이벤트와 유예 시간: 중복 disconnect는 이벤트·유예를 늘리지 않고, 복귀는 connected 이벤트 1회, 이미 접속 중인 resume은 이벤트 없음 | POL-08, FR-20 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-436b | 알 수 없는 방·참가자에 대한 끊김/복귀/퇴장은 예외 없이 안전하게 처리된다 | FR-20 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-437 | 강퇴 상세: 이벤트 순서(퇴장 후 kick), 유예 중 강퇴 시 타이머가 남지 않아 나중에 timeout 퇴장이 또 나오지 않음, 같은 네트워크는 닉네임을 바꿔도 거부, 다른 네트워크는 허용 | FR-15, POL-06, SEC-05 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-437b | 강퇴 기록은 방이 사라지면 함께 사라지고(새 방은 깨끗), 호스트가 아닌 사람은 강퇴·잠금·음소거 어느 것도 못 하며 상태가 변하지 않는다 | FR-15, SEC-05 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-438 | 잠금: 같은 값 반복 설정은 이벤트를 만들지 않고, 변경 때만 locked 이벤트, 호스트 승계 후 새 호스트만 해제할 수 있다 | FR-14, POL-03 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-438b | 호스트 클레임: 클레임 없는 입장은 호스트 첫 입장 전에는 항상 거부, 호스트가 한 번 입장한 뒤에는 호스트가 나가도 "호스트 입장 전" 상태로 돌아가지 않는다 | POL-13, FR-23, SEC-05 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-438c | 비밀번호 방: 호스트 클레임 입장은 검증을 요구하지 않고, 게스트는 검증 실패 시 정원이 남아도 거부, 검증 통과 시 입장 | FR-05, SEC-02 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-439 | 미디어·화면공유 상태: 무변화는 이벤트 없음, 변화는 patch만 전달, SCREEN_BUSY는 기존 공유자를 바꾸지 않고, 공유자 아닌 사람의 중지 요청은 공유를 끊지 못한다 | FR-08, POL-12 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-439b | 전체 음소거: 호스트 마이크는 유지, 이미 꺼진 사람에게는 개별 이벤트가 없고, 영상 상태는 건드리지 않으며, 각자 다시 켤 수 있다 | FR-16, POL-05 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-440 | 방 정리: 마지막 퇴장·유예 만료·강퇴 뒤에 남는 타이머가 없고, 정리된 방은 입장·재접속이 거부되며 방 수 상한 자리가 반환된다 | FR-18, POL-02 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-440b | 중복 닉네임: 번호는 비어 있는 가장 작은 번호부터(퇴장 후 재사용), 유니코드 정규화·대소문자 차이도 같은 이름으로 취급 | POL-04, FR-03 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-440c | 참가자 ID는 서버가 부여하며 입장 입력(닉네임·IP 키)과 무관한 난수이고 방 안에서 유일하다 | SEC-04 | 서버 | `apps/server/test/unit04Adversarial.test.ts` | 자동 |
+| TC-441 | 이미 입장한 소켓의 join·resume은 ALREADY_JOINED, 비밀번호 방에 동시에 두 번 보낸 join은 정확히 한 번만 성공한다 | SEC-03, FR-03 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-442 | 세션 토큰은 4시간 단기 토큰: 본문(t,rid,pid,exp)이 서버 값에 묶이고, 만료 1ms 전 재접속 성공·만료 시각 정각 거부 | SEC-03 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-443 | 이벤트별 속도 제한(api-spec §3): 모든 이벤트가 용량을 넘기면 RATE_LIMITED, 용량 안은 처리된다 | SEC-06, POL-10 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-443b | room:leave 속도 제한(3/1)과 반복 거부(미입장·제한) 누적 시 연결 종료 | SEC-06, POL-10 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-444 | 같은 세션 토큰으로 두 번째 소켓이 resume하면 이전 소켓은 끊기고 참가자는 재접속 중으로 표시되지 않는다 | SEC-03, FR-20 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-444b | room:leave 후 같은 소켓의 이벤트는 NOT_JOINED이고(바인딩 해제), 같은 소켓으로 다시 입장하면 새 참가자 ID를 받는다 | SEC-03 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-444c | IP당 동시 연결 수는 연결이 끊기면 줄어들어 새 연결이 가능하고, 상한을 계속 지킨다 | SEC-06 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-445 | 핸들러 내부 예외는 ack에 일반 코드(INTERNAL)만 싣고 로그에는 예외 종류만 남기며(메시지·경로 없음), 이후에도 연결·서버가 정상이다 | SEC-08, SEC-10 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-445b | ack 콜백이 없거나 함수가 아닌 emit(잘못된 페이로드 포함)을 보내도 서버가 죽지 않고 계속 응답한다 | SEC-06 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-446 | 닉네임은 서버가 정규화한 값으로 저장·표시된다(공백 정리, NFC), 채팅 발신자 이름도 그 값이다 | FR-03, POL-04 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-446b | 신호 릴레이: candidate·description 내용은 그대로 전달되고(from만 서버 값) 다른 종류의 키는 붙지 않으며, 수신자 외에는 받지 못한다 | SEC-04 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-446c | 입장 ack·참가자 알림에 내부 필드가 없다: 토큰은 서버 값에 묶이고, 참가자 객체 키는 공개 항목뿐(IP 키 없음), TURN 자격증명은 임시값이며 비밀값·해시가 응답에 없다 | SEC-03, SEC-09, SEC-10 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-446d | 오류 ack는 {ok,code,message}뿐이고 message는 짧은 일반 문구이다(경로·스택·내부 값 없음) | SEC-08 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-447 | 비밀번호 오답 제한은 IP+방 단위다: 한 방에서 차단돼도 다른 방·다른 IP에는 영향이 없다 | SEC-02, POL-11 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-447b | IP별 입장 시도 제한(30회 버스트): 한 IP가 소진해도 다른 IP는 입장 시도를 할 수 있고, 제한은 새 소켓으로 우회되지 않는다 | SEC-06 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-448 | 방 격리: 다른 방 참가자를 강퇴·음소거·잠금할 수 없고 다른 방 참가자의 상태는 그대로다 | SEC-04, SEC-05 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-448b | 소켓 전송은 websocket만 허용한다: HTTP long-polling 핸드셰이크는 허용 Origin에서도 세션(sid)을 열어 주지 않는다 | SEC-08, SEC-06 | 서버 | `apps/server/test/unit05Adversarial.test.ts` | 자동 |
+| TC-450 | 악성 HTML 페이로드는 이스케이프된 텍스트로만 그려지고 요소·이벤트 속성·링크가 생기지 않는다 | FR-11, SEC-07 | 웹 | `apps/web/src/components/chatPanel.test.ts` | 자동 |
+| TC-451 | http/https 링크만 새 탭·rel noopener noreferrer로 열리고, URL 안의 따옴표·꺾쇠로 속성이 새지 않는다 | FR-11, SEC-07 | 웹 | `apps/web/src/components/chatPanel.test.ts` | 자동 |
+| TC-452 | 목록은 aria-live log이고 이름이 있으며, 빈 상태 문구와 닫기 버튼 이름이 있다 | FR-11, UX-10, UX-12 | 웹 | `apps/web/src/components/chatPanel.test.ts` | 자동 |
+| TC-453 | 닉네임에 HTML이 있어도 이스케이프되고, 초장문 단어는 줄바꿈 가능한 클래스로 그려진다 | FR-11 | 웹 | `apps/web/src/components/chatPanel.test.ts` | 자동 |
+| TC-454 | 닉네임은 localStorage, 호스트 클레임은 방별로 sessionStorage에만 저장되고 지울 수 있다 | FR-01, FR-03 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-454b | 저장소 접근이 막혀 있어도(사생활 보호 모드) 예외 없이 기본값을 돌려준다 | FR-01 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-455 | 순서는 마이크, 카메라, 화면공유, 채팅, 참가자, 나가기이고 나가기는 구분선으로 분리된 위험색이다 | UX-04 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-456 | 마이크·카메라 버튼의 접근 가능한 이름과 aria-pressed는 상태를 따라 바뀐다 | UX-10, FR-08 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-457 | 모든 버튼은 이름이 있고 터치 최소 높이 클래스(min-h-touch)를 가진다 | UX-10, NFR-10 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-458 | 화면공유를 지원하지 않는 환경(모바일·미지원)은 버튼이 비활성이고 이유가 이름·title에 있다 | FR-12, POL-12 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-459 | 읽지 않은 채팅 배지: 0이면 없고 1~99는 숫자, 100 이상은 99+, 채팅이 열려 있으면 없다 | FR-11, UX-12 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-460 | 데스크톱 열 수: 1명 1열, 2~4명 2열, 5~6명 3열이고 타일 수가 참가자 수와 같다 | UX-05 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-461 | 마지막 줄이 덜 찼으면 가운데로 모은다(3명: 2열 중 마지막 1명, 5명: 3열 중 마지막 2명), 꽉 차면 그대로다 | UX-05 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-462 | 다른 사람이 화면을 공유하면 큰 공유 타일과 참가자 썸네일이 나오고 갤러리는 사라진다 | UX-06, FR-12 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-463 | 타일: 카메라 꺼짐은 이니셜 아바타와 "이름: 카메라 꺼짐" 이름, 마이크 꺼짐·호스트는 아이콘 이름, 내 타일은 muted·(나) 표시다 | FR-08, FR-10, UX-10 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-464 | 타일 상태 띠: 상대 연결 실패·끊김과 재연결 중은 role=status 문구, 내 타일과 정상 연결에는 없다 | FR-19 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-465 | 배지는 색뿐 아니라 글자로 연결됨·불안정·재연결 중(남은 시간)을 구분한다 | FR-19 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-466 | 토스트 영역은 알림이 없을 때도 role=status aria-live=polite로 존재하고, 경고는 경고색 테두리다 | UX-12, FR-13 | 웹 | `apps/web/src/components/roomUi.test.ts` | 자동 |
+| TC-466b | 발언 중인 타일은 data-speaking=true와 굵은 강조 링(ring-speaking)이 있고, 아니면 일반 링이다 | FR-10, UX-07 | 웹 | `apps/web/src/components/videoTileSpeaking.test.ts` | 자동 |
+| TC-466c | 화면공유 타일은 발언 강조를 쓰지 않고(레벨 측정 끔), 마이크가 꺼진 타일도 측정하지 않는다 | FR-10 | 웹 | `apps/web/src/components/videoTileSpeaking.test.ts` | 자동 |
+| TC-467 | 방 만들기는 POST /api/rooms에 v:1을 보내고 비밀번호는 있을 때만 포함하며 URL에는 넣지 않는다 | FR-01, SEC-02 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-467b | 오류 응답은 서버 code를 그대로, 모양이 이상하면 INTERNAL, 네트워크 실패는 NETWORK로 돌려주고 예외를 던지지 않는다 | FR-06, UX-03 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-467c | 방 상태 조회는 방 ID를 URL 인코딩하고, 메타 응답이 이상하면 INTERNAL이다 | FR-06, SEC-07 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-467d | 방 경로 파서: 22자 URL-safe ID만 방으로 인식하고 짧은·긴·특수문자·하위 경로는 거부한다 | FR-03 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-468 | 입장 요청은 v:1·방 ID·닉네임(+비밀번호·호스트 클레임은 있을 때만)을 보내고, 성공하면 서버가 준 selfId·호스트·참가자로 live가 된다 | FR-01, FR-03, SEC-03 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468b | 장치가 없으면(트랙 없음) 마이크·카메라는 꺼진 상태로 입장하고 상태가 서버에 전달된다 | FR-03, FR-04 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468c | 입장 거부(정원·잠금·강퇴·비밀번호·방 없음)는 코드를 그대로 돌려주고 소켓을 닫고 idle로 돌아가며, 연결 실패는 NETWORK다 | FR-06 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468d | 세션 토큰은 상태(렌더에 노출되는 값)·토스트에 들어가지 않고 resume 요청에만 쓰인다 | SEC-03 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468e | offer는 입장 순번이 더 늦은 쪽만 만든다(내가 늦으면 모두에게 initiate, 먼저면 대기) | FR-07 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468f | 참가자 입장·퇴장: 목록·알림이 갱신되고 중복 입장 이벤트는 무시하며 퇴장 시 영상·피어를 정리한다(timeout은 별도 문구) | FR-13 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468g | 상태 갱신·호스트 변경·잠금이 반영되고, 갱신 패치의 undefined는 기존 값을 지우지 않는다 | FR-08, FR-17, FR-14 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468h | 채팅 수신: 내 글은 mine이고 안 읽음에 포함하지 않으며, 읽음 처리·최근 200개만 유지된다 | FR-11 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468i | 호스트의 전체 음소거 이벤트는 내 마이크를 끄고 서버에 알리고 경고 토스트를 띄운다 | FR-15, SEC-05 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468j | 강퇴·운영자 폐쇄 이벤트는 회의를 끝내고(이유 구분) 장치·연결을 정리하며 이후 끊김이 재연결을 시작하지 않는다 | FR-16, POL-19 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468k | 끊기면 reconnecting(원인 network)이 되고, 다시 연결되면 토큰으로 resume해 같은 참가자 목록으로 live로 돌아오고 ICE를 다시 시작한다 | FR-20, FR-19 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468l | resume 실패 코드별 종료 사유: ROOM_NOT_FOUND는 restarted, TOKEN_INVALID·PARTICIPANT_GONE은 expired, 일시 오류(NETWORK)는 끊김 상태 유지 | FR-21, FR-20 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468m | 서버가 먼저 끊어 자동 재연결이 없는 경우(active=false) 1.5초마다 직접 다시 연결을 시도하고, 연결되면 멈춘다 | FR-20 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468n | 나가기: room:leave를 보내고 left로 끝나며 자원이 정리되고, 나가는 중의 끊김은 재연결을 시작하지 않는다 | FR-22, FR-03 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468o | 호스트 동작은 서버 요청으로만 처리되고 거부(FORBIDDEN)되면 안내 토스트를 띄우며 로컬 상태를 바꾸지 않는다 | FR-14, FR-15, FR-16, SEC-05 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468p | 채팅 전송은 성공 시 null, 실패 시 서버 코드, 응답 없음은 NETWORK를 돌려준다 | FR-11 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468q | 화면공유: 미지원이면 안내만, 다른 사람이 공유 중이면 getDisplayMedia를 부르지 않고 안내, 서버가 거부하면 트랙을 멈춘다 | FR-12, POL-12 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468r | 토스트는 최대 4개만 남고 4.5초 뒤 사라진다 | UX-12 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468s | WebSocket 전용·무한 재연결·지수 백오프(0.4~3초) 설정으로 연결한다 | FR-20, NFR-03 | 웹 | `apps/web/src/lib/signaling.test.ts` | 자동 |
+| TC-468t | connect는 연결되면 해결, 오류·10초 초과면 거부하며 대기 리스너를 정리하고, 이미 연결돼 있으면 즉시 해결한다 | FR-01, FR-20 | 웹 | `apps/web/src/lib/signaling.test.ts` | 자동 |
+| TC-468u | request는 ack를 그대로 돌려주고, 응답이 없으면 지정 시간(기본 8초) 뒤 NETWORK 오류로 끝나며, 늦은 ack는 결과를 바꾸지 못한다 | FR-20, SEC-03 | 웹 | `apps/web/src/lib/signaling.test.ts` | 자동 |
+| TC-468v | close는 모든 리스너를 제거하고 소켓을 끊는다 | FR-22 | 웹 | `apps/web/src/lib/signaling.test.ts` | 자동 |
+| TC-468w | 네트워크 품질: 연속 2회 poor일 때만 poor로 표시하고 한 번이라도 good이면 즉시 되돌린다(3초 주기) | FR-19 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468x | 화면공유 성공 시 서버에 알리고 sharing이 되며, 브라우저의 공유 중지(onended)가 오면 공유를 끝내고 서버에 알린다 | FR-12 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-468y | 마이크 토글: 켜진 상태를 서버에 알리고, 마이크 트랙이 없으면 새로 열어 보며 실패하면 안내 토스트를 띄운다. 카메라를 못 켜면 상태를 바꾸지 않고 안내한다 | FR-08, UX-03 | 웹 | `apps/web/src/state/meetingController.test.ts` | 자동 |
+| TC-469 | 세션 토큰은 어떤 저장소에도 쓰지 않는다 — 저장소 사용은 lib/storage.ts 한 곳이고 키는 닉네임·호스트 클레임뿐이다(정적 점검) | SEC-03 | 웹 | `apps/web/src/lib/storageApi.test.ts` | 자동 |
+| TC-470 | 호스트에게만 잠금·전체 음소거·내보내기 도구가 보이고, 호스트가 아닌 사람(또는 호스트 불명)에게는 하나도 없다 | FR-14, FR-15, FR-16, SEC-05 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-471 | 호스트도 자기 자신에게는 내보내기 버튼이 없고, 내보내기 버튼 이름에 대상 닉네임이 있다 | FR-16 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-472 | 잠금 버튼은 상태에 따라 문구·aria-pressed가 바뀐다 | FR-14 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-473 | 목록은 입장 순서이고 (나)·호스트 왕관·재연결 중·화면공유·마이크·카메라 상태가 이름 있는 아이콘으로 나온다 | FR-13, FR-17 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-474 | 닉네임의 HTML은 이스케이프되고, 이니셜은 첫 글자(이모지 포함 코드포인트 단위)다 | FR-13, SEC-07 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-475 | 닫기 버튼과 패널에 접근 가능한 이름이 있다 | UX-10 | 웹 | `apps/web/src/components/participantsPanel.test.ts` | 자동 |
+| TC-476 | 임계값(RMS 0.035) 이하의 소리는 아무리 길어도 발언으로 보지 않고, 초과하면 120ms 이상 이어질 때 켜진다 | FR-10, UX-07 | 웹 | `apps/web/src/lib/audioLevel.test.ts` | 자동 |
+| TC-476b | 짧은 소음(120ms 미만)에는 켜지지 않고, 발언이 멈춰도 700ms가 지나야 꺼지며, 그 안에 다시 말하면 꺼지지 않는다 | FR-10, UX-07 | 웹 | `apps/web/src/lib/audioLevel.test.ts` | 자동 |
+| TC-476c | 입력 레벨은 rms×4(최대 1)로 계산되고 거의 변하지 않으면 상태를 갱신하지 않는다 | FR-10 | 웹 | `apps/web/src/lib/audioLevel.test.ts` | 자동 |
+| TC-476d | 비활성(enabled=false)이거나 오디오 트랙이 없으면 오디오 컨텍스트를 만들지 않고 강조 없음을 돌려주며, 정리 시 rAF 취소·연결 해제한다 | FR-10 | 웹 | `apps/web/src/lib/audioLevel.test.ts` | 자동 |
+| TC-476e | 첫 화면에 h1·닉네임·[새 회의 만들기]·링크 입장 폼이 있어 조작 3번 이내(닉네임→만들기→입장)에 닿는다 | FR-01, NFR-01 | 웹 | `apps/web/src/pages/landing.test.ts` | 자동 |
+| TC-476f | 모든 입력에 라벨이 연결돼 있고(for/id), 비밀번호 입력은 체크하기 전에는 없으며, 닉네임 힌트가 aria-describedby로 연결된다 | FR-05, UX-10 | 웹 | `apps/web/src/pages/landing.test.ts` | 자동 |
+| TC-476g | 만들기 버튼은 type=submit이고 두 폼 모두 noValidate(브라우저 기본 팝업 대신 한국어 오류)이며 법률 푸터가 포함된다 | NFR-10, UX-10 | 웹 | `apps/web/src/pages/landing.test.ts` | 자동 |
+| TC-477 | 장치 오류 이름을 denied·notFound·inUse·unknown 4종으로 분류하고 이상한 입력도 unknown이다 | FR-04, UX-03 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-477b | supportsMedia는 보안 컨텍스트·RTCPeerConnection·getUserMedia가 모두 있어야 true다 | NFR-05, POL-14 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-477c | 장치 목록은 이름이 가려진 빈 deviceId 항목을 제외하고, 열거 실패에도 빈 목록을 돌려준다 | FR-09 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478 | 한 번에 얻지 못하면 따로 시도해 되는 것만 켜고, 실패한 종류의 원인을 errors에 남긴다 | FR-04 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478b | 둘 다 거부되면 장치 없이 시작하고 errors에 두 원인이 남으며(입장은 막지 않는다), 다시 시작하면 오류가 초기화된다 | FR-04 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478c | 마이크는 track.enabled로 즉시 음소거되고(장치는 유지), 카메라를 끄면 장치를 해제하며 다시 켜면 새로 연다 | FR-08 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478d | 카메라를 다시 켜지 못하면 false를 돌려주고 camOn은 꺼진 채로 둔다 | FR-08, UX-03 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478e | 장치 전환 실패 시 이전 장치 ID로 되돌리고 false를 돌려주며, 성공하면 새 트랙으로 바뀌고 이전 트랙은 멈춘다 | FR-09 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478f | 카메라가 꺼진 상태에서 카메라 장치를 바꾸면 장치를 열지 않고 선택만 기억한다 | FR-09 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-478g | 카메라 트랙이 외부 요인으로 끝나면(ended) 비디오를 비우고 구독자에게 알리며, stopAll은 모든 트랙을 멈춘다 | FR-04 | 웹 | `apps/web/src/lib/localMedia.test.ts` | 자동 |
+| TC-479 | offer를 만드는 쪽은 마이크·카메라·화면 순서의 sendrecv m-line 3개를 만들고, 응답하는 쪽은 만들지 않는다(중복 m-line 방지) | FR-07 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479b | ICE 서버는 서버가 준 STUN/TURN 자격증명 그대로 쓰고, 자격증명이 없는 항목에는 빈 필드를 만들지 않는다 | SEC-09 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479c | 인원 수에 맞춰 카메라 송신 비트레이트·해상도를 적용하고(2명 1.5Mbps, 6명 400kbps·1/2), 화면 송신은 1.5Mbps로 고정한다 | NFR-13 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479d | 마이크·카메라·화면 트랙 교체는 모든 연결의 해당 m-line에만 적용되고, 화면 트랙에는 contentHint=detail을 둔다 | FR-08, FR-12 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479e | 동시 offer 충돌: 양보하는 쪽(ID가 더 큰 쪽)은 상대 offer를 받아들이고, 양보하지 않는 쪽은 무시한다 | FR-07 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479f | 충돌이 없으면 offer에 answer를 만들어 보내고 응답 쪽이 m-line에 송신 트랙을 붙이며, 모르는 상대의 시그널은 연결을 만든다 | FR-07 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479g | 잘못된 시그널(예외를 던지는 후보·설명)은 삼키고 다른 연결에 영향을 주지 않으며, 닫힌 뒤의 시그널은 무시한다 | FR-20, SEC-07 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479h | ICE disconnected는 4초 기다린 뒤에도 그대로면 재시작하고, 그 사이 복구되면 재시작하지 않으며, failed는 즉시 재시작하되 3회까지만 한다 | NFR-03 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479i | 경로 판정은 연결 직후 한 번만 보고하고(같은 값 반복 없음), 통계가 비어 있으면 최대 2번 더 재시도한 뒤 포기한다 | NFR-15 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-479j | close()와 removePeer()는 연결을 닫고 이벤트 핸들러를 떼어 이후 콜백이 아무 일도 하지 않게 한다 | FR-22 | 웹 | `apps/web/src/media/meshTransport.fake.test.ts` | 자동 |
+| TC-480 | 오류 계열은 role=alert, 중립 계열은 role=status이고 h1 제목·본문·버튼 영역이 있다 | UX-02, UX-03, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-481 | 상태 화면 문구가 7종 이상 정의돼 있고 모두 제목·본문이 비어 있지 않다 | UX-02 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-482 | 오류·거부 문구는 원인과 해결 방법(다음 행동)을 함께 담는다 — 행동 어휘가 없는 본문은 실패 | UX-03 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-483 | errorText는 모든 서버 오류 코드에 사용자 문구를 주고 코드·내부 정보를 노출하지 않는다 | UX-03, SEC-06 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-484 | index.css에 prefers-reduced-motion 규칙이 있고 animation·transition 시간을 사실상 0으로 만든다 | UX-11 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-485 | 터치 최소 크기 토큰은 44px이고 .btn·.input이 이를 쓰며, 포커스 링은 outline 2px 이상이다 | NFR-10, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-486 | index.html의 theme-color는 design 토큰 bg와 같고 lang=ko, viewport-fit=cover가 있다(G-7) | UX-08 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-487 | 앱 소스(테스트 제외)에 dangerouslySetInnerHTML·innerHTML·eval·document.write가 없다 | SEC-07 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-488 | target="_blank"인 모든 링크는 같은 태그에 rel="noopener noreferrer"를 가진다 | SEC-07 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-489 | 모든 아이콘 전용 버튼 소스는 aria-label을 갖는다(텍스트 없는 button 태그 정적 점검) | UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-489b | 접근성 속성·placeholder·title의 글자는 리터럴이 아니라 strings 키에서만 온다(영문 리터럴 포함, 정적 점검) | UX-01, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
+| TC-490 | ci.yml에 YAML 구문 사고(탭·따옴표 없는 스칼라의 ": "·따옴표 불균형)가 없고 점검기는 과거 사고 줄을 실제로 잡는다 | SEC-11, NFR-11 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
+| TC-491 | ci.yml: 검증 단계(lint·typecheck·test·check:docs·audit)가 npm ci 뒤에 있고 e2e·coturn job은 verify에 의존하며 coturn은 REQUIRE_COTURN으로 건너뜀을 막는다 | SEC-11, NFR-08 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
+| TC-492 | Dockerfile: 멀티 스테이지·고정 베이스·비루트·HEALTHCHECK·운영 의존성만·비밀값 미포함이고 점검기는 변이를 실제로 잡는다 | NFR-07, NFR-08, SEC-10 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
+| TC-493 | .dockerignore가 .env·.git·node_modules를 제외하고, compose는 시크릿을 보간으로만 받으며 이미지 태그가 고정되고 점검기는 변이를 잡는다 | SEC-10, SEC-09, NFR-07 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
+| TC-494 | eslint가 any·dangerouslySetInnerHTML·미사용 변수를 오류로 잡고 모든 워크스페이스 tsconfig가 strict 기반을 상속한다 | NFR-11, SEC-07 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
+| TC-495 | E2E 시험에 .only/.fixme가 없고 skip은 허용 목록·사유가 있으며 모든 시험은 ID 형식 제목과 단언을 가진다(검사기는 변이를 잡는다) | NFR-11, NFR-08 | 서버 | `apps/server/test/e2eGuard.test.ts` | 자동 |
+| TC-496 | E2E 독립성: Playwright는 workers=1·retries=0, 서버는 시험마다 빈 포트, 하드코딩 포트는 TURN 시험 한 곳뿐이며 세션 컨텍스트는 afterEach로 정리하고 IT-14는 50ms 폴링(DEC-015)을 유지한다 | NFR-11, NFR-08 | 서버 | `apps/server/test/e2eGuard.test.ts` | 자동 |
+| TC-497 | check-docs는 중복 TC·양식 위반·미정의 ID·인수 조건 누락·인덱스 누락·EVT 매핑 삭제·매트릭스 변조·요구 미연결을 실제로 실패시킨다(대조군 포함) | NFR-11, SEC-11 | 서버 | `apps/server/test/e2eGuard.test.ts` | 자동 |
+| TC-498 | 인수 계획의 IT-01~IT-30이 E2E 시험에 빠짐없이 있다 | NFR-11 | 서버 | `apps/server/test/e2eGuard.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

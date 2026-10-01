@@ -62,10 +62,9 @@ for (const size of SIZES) {
     await landing.goto(env.base);
     await landing.getByTestId('nickname').waitFor();
     await checkFooter(landing, `landing${size.width}`, size);
-    if (size.width === 1280) {
-      const vOver = await landing.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
-      expect(vOver, `landing1280 세로 넘침 ${vOver}px`).toBeLessThanOrEqual(0);
-    }
+    // 푸터 때문에 새 세로 스크롤이 생기지 않아야 한다(360×740에서 2px 넘치던 결함 DEF-001 재발 방지)
+    const vOver = await landing.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+    expect(vOver, `landing${size.width} 세로 넘침 ${vOver}px`).toBeLessThanOrEqual(0);
     // 대기실
     const lobby = await ctx.newPage();
     await lobby.goto(host.url);

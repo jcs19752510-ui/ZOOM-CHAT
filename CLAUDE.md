@@ -91,6 +91,8 @@
 - 커밋: `type(scope): 요약`, 한 커밋 한 의도, 비밀값·`.env`·산출물 금지. **개발·푸시 브랜치는 `PROD`**(사용자 지정, 2026-10-01). 다른 브랜치로 푸시 금지, 강제 푸시 금지, PR은 요청 시에만. `ccr-8ebb59a5-vgloup`는 이전 작업 기록용으로 남겨 두고 더 이상 푸시하지 않는다.
 
 ## 현재 진행 상태 (2026-10-01)
-- 하네스(HANESS_AUTO PROD) 복사 완료, 미수정 유지. 시작 질문 3종 답변 기록 완료(MCP 연동, Standard, P1).
-- 푸시 브랜치: `PROD`(사용자 지정).
-- Gate 0-A 승인됨(DEC-004). 개발 속도 우선 연속 진행 중. 제품 방향: Zoom에 익숙한 사용 흐름을 MVP 범위 안에서 구현(상표·로고 복제 금지, 비목표 유지).
+- 하네스(HANESS_AUTO PROD) 복사본 미수정 유지. 시작 질문 3종 답변 기록(MCP 연동, Standard, P1). MCP `tools:` 수정은 사용자 허락 전 보류.
+- 푸시 브랜치: `PROD`(사용자 지정). 제품 방향: Zoom에 익숙한 흐름을 MVP 범위 안에서 구현(상표·로고 복제 금지, 비목표 유지).
+- Gate 0-A~0-E, Phase 1~5 구현·검증 완료, Phase 6은 자동 검증분 완료(UAT·타 브라우저·법률·실서버는 미검증), Phase 7 문서 완료.
+- 남은 일(사용자 결정 필요): 배포 대상(규칙 E, 미배포), UAT 수행, 법적 검토, 운영자 연락처, MCP tools 수정 허락, 라이선스, DEC-005 보고 확인.
+- 명령: `npm ci` · `npm run dev` · `npm run lint` · `npm run typecheck` · `npm test` · `npm run test:e2e` · `npm run check:docs`. 상세는 `docs/03-engineering/dev-guide.md`.

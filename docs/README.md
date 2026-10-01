@@ -81,6 +81,7 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 | [05-qa/test-cases.md](05-qa/test-cases.md) | TC/IT/UAT/MC 목록(자동 생성) | 개발자 | 승인 | 0.2 |
 | [05-qa/integration-test.md](05-qa/integration-test.md) | E2E 시나리오와 결과 | 개발자 | 승인 | 0.1 |
 | [05-qa/performance-test.md](05-qa/performance-test.md) | 성능 시험 결과·mesh 한계 | 개발자 | 승인 | 0.1 |
+| [05-qa/measurement-guide.md](05-qa/measurement-guide.md) | mesh 6명·TURN 경유 실측 절차(측정 미수행) | 운영자·개발자 | 초안 | 0.1 |
 | [05-qa/compatibility-matrix.md](05-qa/compatibility-matrix.md) | 브라우저·기기 호환성(실기기 미검증) | 개발자 | 승인 | 0.1 |
 | [05-qa/uat.md](05-qa/uat.md) | 사용자 인수 테스트(**미수행**) | 기획자 | 양식 | 0.1 |
 | [05-qa/manual-checks.md](05-qa/manual-checks.md) | 수동·명령 점검 결과 | 개발자·보안 | 승인 | 0.1 |

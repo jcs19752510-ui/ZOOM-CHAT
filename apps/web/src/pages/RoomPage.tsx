@@ -16,7 +16,7 @@ type Phase =
   | { k: 'checking' }
   | { k: 'unsupported' }
   | { k: 'error' }
-  | { k: 'gone'; why: 'closed' | 'restarted' }
+  | { k: 'gone'; why: 'closed' | 'restarted' | 'operator' }
   | { k: 'waitHost' }
   | { k: 'full' }
   | { k: 'locked' }
@@ -130,7 +130,7 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
     controllerRef.current = null;
     mediaRef.current = null;
     setMedia(null);
-    setPhase(reason === 'kicked' ? { k: 'kicked' } : reason === 'expired' ? { k: 'expired' } : reason === 'closed' ? { k: 'gone', why: 'closed' } : reason === 'restarted' ? { k: 'gone', why: 'restarted' } : { k: 'left' });
+    setPhase(reason === 'kicked' ? { k: 'kicked' } : reason === 'expired' ? { k: 'expired' } : reason === 'closed' ? { k: 'gone', why: 'closed' } : reason === 'restarted' ? { k: 'gone', why: 'restarted' } : reason === 'operator' ? { k: 'gone', why: 'operator' } : { k: 'left' });
   }, []);
 
   const home = (
@@ -163,6 +163,18 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
         </StateScreen>
       );
     case 'gone':
+      if (phase.why === 'operator') {
+        return (
+          <StateScreen alert icon={<TriangleAlert size={36} />} title={S.state.gone.operatorTitle} body={S.state.gone.operator}>
+            <button type="button" className="btn-primary" data-testid="operator-closed" onClick={() => navigate('/')}>
+              {S.state.gone.newRoom}
+            </button>
+            <a className="btn-secondary" href="/contact" data-testid="operator-closed-contact">
+              {S.legalLinks.contact}
+            </a>
+          </StateScreen>
+        );
+      }
       return (
         <StateScreen alert icon={<TriangleAlert size={36} />} title={S.state.gone.title} body={phase.why === 'restarted' ? S.state.gone.restarted : S.state.gone.closed}>
           <button type="button" className="btn-primary" onClick={() => navigate('/')}>

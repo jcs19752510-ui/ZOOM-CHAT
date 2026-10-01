@@ -79,6 +79,8 @@
 | IT-40h | 360×740 대기실: 접힌 안내가 [회의 입장] 버튼을 밀어내는 양은 안내 높이(≤130px) 이내이고(04 §2.3.4 의도적 비용), 펼쳐도 스크롤로 닿을 수 있으며 입장이 막히지 않는다 | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | IT-40i | visibilitychange 없이 pageshow(뒤로가기 캐시 복원)만 와도 5초 안에 죽은 소켓을 감지해 같은 자리로 복구한다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | IT-40j | 프로브 응답이 NOT_JOINED(소켓이 자리에 안 묶임)면 소켓을 새로 열지 않고 같은 소켓으로 즉시 room:resume을 보낸다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-41 | 운영자가 방을 닫으면 모든 참가자가 "운영자가 이 회의를 종료했습니다"를 보고, 재연결을 시도하지 않으며, 같은 링크로는 다시 입장할 수 없다 | POL-19, EVT-34 | E2E | `e2e/operatorClose.spec.ts` | 자동 |
+| IT-42 | 운영자 종료 화면: 360px에서 버튼 터치 44px 이상, 키보드로 [새 회의 만들기]에 닿고, 새 회의 버튼은 랜딩으로 이동한다 | POL-19, UX-02 | E2E | `e2e/operatorClose.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -277,6 +279,15 @@
 | TC-363 | 대소문자·위치가 달라도 토큰을 찾고, 비정상 UA(공백·무관 문자열·매우 긴 문자열)는 오탐 없이 빠르게 끝난다 | UX-13 | 웹 | `apps/web/src/lib/inApp.edge.test.ts` | 자동 |
 | TC-363b | Android 웹뷰 표지(; wv))는 Android에서만 인정하고, iOS WebKit은 Safari/·CriOS·FxiOS·EdgiOS 중 하나라도 있으면 일반 브라우저로 본다 | UX-13 | 웹 | `apps/web/src/lib/inApp.edge.test.ts` | 자동 |
 | TC-364 | 모든 상태×소켓×프로브×피어 조합에서 불변식을 지킨다(비라이브 무동작, probe 결과 후엔 probe 액션 없음, 중복 액션 없음, timeout은 항상 kickSocket) | UX-14 | 웹 | `apps/web/src/state/foreground.table.test.ts` | 자동 |
+| TC-370 | 토큰 없음·틀림·길이 다름·형식 틀림은 모두 같은 401 FORBIDDEN이고 방은 닫히지 않으며, 올바른 토큰만 통과한다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-371 | admin 포트는 127.0.0.1에만 바인딩된다(같은 루프백 대역의 127.0.0.2로는 닿지 않고, 공개 포트는 닿는다) | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-372 | ADMIN_PORT·ADMIN_TOKEN이 없으면 admin 리스너가 없고, 한쪽만 있으면 서버가 시작되지 않는다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-373 | 형식 오류·없는 경로·잘못된 메서드·없는 방·거대 본문·거대 헤더·깨진 요청을 거절하고 서버는 계속 동작한다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-374 | 인증 실패가 몰리면 429로 막히고, 오류 응답에는 내부 정보(스택·경로·토큰)가 없다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-375 | 폐쇄 로그에는 방 ID 앞 6자와 인원수만 남고 토큰·전체 방 ID·IP는 없다 | POL-19, SEC-10 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-376 | 폐쇄하면 참가자 전원이 room:closed를 받고 소켓이 끊기며, 같은 토큰의 재접속·재입장은 거부되고, 다른 방은 영향이 없다 | POL-19, EVT-34 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-377 | 호스트 없는 대기 방(입장 전)과 끊김 유예 중인 참가자가 있는 방도 닫히고 타이머가 남지 않는다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-378 | RoomManager.closeByOperator: 방을 지우고 closedByOperator 이벤트(참가자 ID 목록)를 한 번 내며, 없는 방은 ROOM_NOT_FOUND | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

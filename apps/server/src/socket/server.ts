@@ -316,6 +316,19 @@ export function attachSocket(httpServer: HttpServer, deps: SocketDeps): { io: Se
         (host ? host.to(e.roomId) : io.to(e.roomId)).emit('host:muteAll', { v: 1, by: e.by });
         break;
       }
+      case 'closedByOperator': {
+        // 채널에 먼저 알린 뒤 끊는다. 방 상태는 이미 지워졌으므로 소켓 쪽 바인딩만 정리한다.
+        io.to(e.roomId).emit('room:closed', { v: 1 });
+        for (const id of e.participantIds) {
+          const target = sockets.get(key(e.roomId, id));
+          if (target) {
+            unbind(target);
+            target.disconnect(true);
+          }
+        }
+        io.in(e.roomId).disconnectSockets(true);
+        break;
+      }
       case 'kick': {
         const target = sockets.get(key(e.roomId, e.id));
         if (target) {

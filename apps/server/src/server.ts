@@ -1,6 +1,7 @@
 import http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { Logger } from 'pino';
+import { ADMIN_HOST, createAdminServer } from './http/admin';
 import { createApp } from './http/app';
 import { createLogger } from './logger';
 import { RoomManager, type RoomEvent } from './rooms/RoomManager';
@@ -9,6 +10,8 @@ import type { Config } from './config';
 
 export interface RunningServer {
   port: number;
+  /** admin 리스너 포트. ADMIN_PORT·ADMIN_TOKEN이 모두 설정된 때만 있다(POL-19). */
+  adminPort?: number;
   rooms: RoomManager;
   /** 모든 소켓을 서버 쪽에서 끊는다(네트워크 단절 재현용, 시험에서만 쓴다). */
   disconnectAll: () => void;
@@ -30,6 +33,16 @@ export async function startServer(config: Config, logger: Logger = createLogger(
   const { io, onRoomEvent } = attachSocket(httpServer, { config, rooms, logger, now });
   sink = onRoomEvent;
 
+  const closeAll = async (): Promise<void> => {
+    rooms.dispose();
+    if (adminServer?.listening) {
+      adminServer.closeAllConnections();
+      await new Promise<void>((resolve) => adminServer?.close(() => resolve()));
+    }
+    await io.close();
+    if (httpServer.listening) await new Promise<void>((resolve) => httpServer.close(() => resolve()));
+  };
+
   await new Promise<void>((resolve, reject) => {
     httpServer.once('error', reject);
     httpServer.listen(config.PORT, resolve);
@@ -37,14 +50,37 @@ export async function startServer(config: Config, logger: Logger = createLogger(
   const port = (httpServer.address() as AddressInfo).port;
   logger.info({ port, env: config.NODE_ENV }, 'server listening');
 
+  let adminServer: http.Server | undefined;
+  if (config.ADMIN_PORT !== undefined && config.ADMIN_TOKEN !== undefined) {
+    const admin = createAdminServer({
+      token: config.ADMIN_TOKEN,
+      closeRoom: (roomId) => {
+        const r = rooms.closeByOperator(roomId);
+        return r.ok ? { participants: r.participants } : null;
+      },
+      logger,
+      now,
+    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        admin.once('error', reject);
+        admin.listen(config.ADMIN_PORT, ADMIN_HOST, resolve);
+      });
+    } catch (e) {
+      await closeAll();
+      throw e;
+    }
+    adminServer = admin;
+    logger.info({ adminPort: config.ADMIN_PORT }, 'admin listening (loopback)');
+  }
+
   return {
     port,
+    ...(adminServer ? { adminPort: (adminServer.address() as AddressInfo).port } : {}),
     rooms,
     disconnectAll: () => io.disconnectSockets(true),
     close: async () => {
-      rooms.dispose();
-      await io.close();
-      if (httpServer.listening) await new Promise<void>((resolve) => httpServer.close(() => resolve()));
+      await closeAll();
     },
   };
 }

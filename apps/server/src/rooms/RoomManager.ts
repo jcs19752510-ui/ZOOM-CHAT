@@ -34,7 +34,8 @@ export type RoomEvent =
   | { type: 'hostChanged'; roomId: string; hostId: string }
   | { type: 'locked'; roomId: string; locked: boolean }
   | { type: 'kick'; roomId: string; id: string }
-  | { type: 'muteAll'; roomId: string; by: string };
+  | { type: 'muteAll'; roomId: string; by: string }
+  | { type: 'closedByOperator'; roomId: string; participantIds: string[] };
 
 export interface RoomManagerOptions {
   maxParticipants: number;
@@ -275,6 +276,16 @@ export class RoomManager {
       this.opts.onEvent({ type: 'participantUpdated', roomId, id: p.id, patch: { screen: false } });
     }
     return { ok: true };
+  }
+
+  /** 운영자 폐쇄(POL-19): 호스트 권한과 무관하게 방을 즉시 지운다. 같은 방 ID는 재사용되지 않으므로 별도 차단 목록은 두지 않는다. */
+  closeByOperator(roomId: string): Result<{ participants: number }> {
+    const room = this.rooms.get(roomId);
+    if (!room) return fail('ROOM_NOT_FOUND');
+    const participantIds = [...room.participants.keys()];
+    this.closeRoom(room);
+    this.opts.onEvent({ type: 'closedByOperator', roomId, participantIds });
+    return { ok: true, participants: participantIds.length };
   }
 
   dispose(): void {

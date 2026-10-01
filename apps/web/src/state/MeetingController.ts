@@ -25,7 +25,7 @@ export interface Toast {
   kind: 'info' | 'warn';
 }
 export type MeetingStatus = 'idle' | 'joining' | 'live' | 'reconnecting' | 'ended';
-export type EndReason = 'left' | 'kicked' | 'expired' | 'closed' | 'restarted';
+export type EndReason = 'left' | 'kicked' | 'expired' | 'closed' | 'restarted' | 'operator';
 
 export interface MeetingState {
   status: MeetingStatus;
@@ -237,6 +237,8 @@ export class MeetingController {
       this.toast(S.room.micMutedByHost, 'warn');
     });
     sock.on('room:kicked', () => this.end('kicked'));
+    // end()가 leaving을 세우고 소켓을 닫으므로 뒤따르는 disconnect가 재연결·resume을 시작하지 않는다.
+    sock.on('room:closed', () => this.end('operator'));
     sock.on('disconnect', () => {
       if (this.leaving || this.state.status === 'ended') return;
       this.set({ status: 'reconnecting', reconnectingSince: Date.now(), reconnectCause: this.kicking ? 'foreground' : 'network' });

@@ -65,6 +65,16 @@
 | IT-36 | 조용히 죽은 소켓은 화면 복귀 후 5초 안에 재연결 배너(복귀 문구)가 보이고, 복구되면 같은 자리로 돌아온다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
 | IT-36b | 정상 연결에서 복귀(visibilitychange·pageshow)해도 재연결 배너가 뜨지 않고 통화가 유지된다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
 | IT-36c | 서버가 연결을 끊은 뒤 복귀 이벤트가 겹쳐도 같은 자리로 돌아온다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-37 | ${size.width}px: 악성·초장문 운영자 값이 와도 href에 위험 스킴·이벤트 속성이 없고 alert이 실행되지 않으며 가로 스크롤이 생기지 않는다 | SEC-07, POL-19, NFR-10 | E2E | `e2e/legalAdversarial.spec.ts` | 자동 |
+| IT-37b | 서버가 이상한 응답(HTML 200·429·500·빈 본문·배열·거대 JSON·지연)을 보내도 본문은 읽히고 슬롯은 실패 안내로 수렴하며 로딩은 aria-busy다 | SEC-06, UX-03 | E2E | `e2e/legalAdversarial.spec.ts` | 자동 |
+| IT-38 | ${size.width}px: 키보드만으로 문서 이동·뒤로가기, 터치 대상 44px 이상, 포커스 표시, CSP 위반·콘솔 오류 없음 | NFR-10, POL-17 | E2E | `e2e/legalAdversarial.spec.ts` | 자동 |
+| IT-39 | 서버가 이미 자리를 정리했는데(PARTICIPANT_GONE) 복귀하면, 재연결 상태에 갇히지 않고 새 소켓 한 번으로 만료 화면에 도달한다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40 | 죽은 소켓 상태에서 복귀 이벤트가 연속으로 쏟아져도 소켓은 한 번만 다시 열리고 같은 자리로 돌아오며 이후 추가 연결이 없다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40b | 정상 연결에서 복귀 이벤트가 연속으로 와도 소켓을 다시 열지 않는다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40c | play()가 NotAllowedError가 아닌 이유(AbortError)로 실패하면 자동재생 배너를 띄우지 않는다 | UX-15 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40d | 같은 실행에서 안내를 닫았어도, 이후 권한 실패 화면에서는 안내가 강제로 다시 펼쳐진다(닫기 없음) | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40e | 안내의 복사 버튼: 랜딩은 사이트 주소, 대기실·지원 불가 화면은 초대 링크를 복사하고 안내에는 외부 링크·target이 없다 | UX-13 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
+| IT-40f | 화면이 꺼진 동안 카메라 트랙이 끝났으면(ended) 복귀 시 카메라 버튼이 꺼지고 경고 토스트가 뜨며 상대 화면에도 반영된다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -229,6 +239,29 @@
 | TC-346c | 로딩은 aria-busy, 실패는 안내 문구와 다시 불러오기 버튼(문서 본문 영향 없음 문구 포함) | POL-17 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
 | TC-346d | parseDate는 존재하는 날짜만 통과시킨다(윤년·월말) | POL-20 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
 | TC-346e | parseMeta는 서버 응답의 모양이 다르면 null이다(시스템 경계 검증) | SEC-06 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-347 | 위험 스킴·공백/개행/널·혼동 문자·@ 다중·속성 주입·200자 초과는 시작 실패, 정상 값은 통과한다 | SEC-07, POL-19 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-347b | 위험 스킴·제어문자·유니코드 혼동·속성 주입 문자열은 href가 없거나 안전한 mailto:/https:뿐이고, 렌더 결과에 이벤트 핸들러 속성이 없다 | SEC-07, POL-19 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-347c | 교차 검증: 서버 config가 받아들이는 모든 값을 웹 contactLink에 넣어도 href는 mailto:/https:로만 시작한다(서버·웹 두 겹) | SEC-07 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-347d | 경계: 정상 mailto/https는 링크가 되고, 대문자 HTTPS는 https로 정규화되며, URL 자격 정보(userinfo)·제어 문자가 든 값은 링크가 아니라 텍스트로만 표시된다(표시 텍스트 ≠ 대상 방지, DEF-003 수정; 참조) | SEC-07 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-347e | 책임자·시행일·호스트 값에 악성 문자열이 와도 어떤 슬롯도 a 태그·이벤트 속성을 만들지 않는다 | SEC-07 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-348 | STUN/TURN URL에 자격 정보·쿼리·IPv6·대소문자·중복이 섞여도 호스트명만 나가고 비밀값은 응답에 없다 | POL-17, SEC-10 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348b | 속도 제한 경계: 고정 시계에서 60번째까지 200, 61번째 429(RATE_LIMITED, 캐시 헤더 없음), 1초 뒤 1회 회복, X-Forwarded-For 위조로 우회 불가(TRUST_PROXY=0) | POL-17, SEC-02 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348c | 429 상태에서도 다른 경로(/healthz)는 영향받지 않고, meta 429는 방 상태 조회 한도(같은 제한기)와 공유된다는 점을 문서화한다 | POL-17 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348d | LEGAL_EFFECTIVE_DATE·PRIVACY_OFFICER 경계: 존재하지 않는 날짜·형식 오류는 시작 실패, 100자 책임자는 통과·101자는 실패, HTML 값은 JSON 문자열로만 나간다 | POL-20 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348e | production에서 OPERATOR_CONTACT가 없으면 warn이 정확히 1번, 있으면 0번이며 기동은 막지 않는다 | POL-19 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348f | 응답 헤더: JSON content-type, nosniff, CSP script-src self, 쿠키 없음, HEAD/OPTIONS/POST 처리 | SEC-08 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-348g | parseMeta: 추가 필드는 버리고, 타입 오류(숫자·객체·배열 혼입·null 프로토타입)·v 불일치는 null이다 | SEC-06 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-348h | getMeta: 200이지만 JSON이 아님·빈 본문·배열·거대 문자열·429·500은 모두 실패 결과이며 예외를 던지지 않는다 | SEC-06 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-349 | KeyedRateLimiter: 정확히 10분 미사용은 유지, 10분+1ms부터 삭제 대상, 5천 키가 정리되어 size가 실제로 줄고, 같은 키는 새 버킷 | POL-18 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349b | 별도 프로세스: 제한기를 만들어 쓴 뒤 스스로 종료하고, 서버를 띄웠다 close한 뒤에도 프로세스가 매달리지 않는다(변이 대조: ref 타이머는 매달린다) | POL-18 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349c | /api/meta 조회·429·CORS 403·허용 안 된 소켓 Origin·404 흐름의 로그에도 IP·위조 Origin 값·XFF가 남지 않는다(양성 대조군 포함) | POL-18, SEC-10 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349d | 사용 중인 키는 정리 주기가 몇 번 지나도 사라지지 않는다(계속 쓰면 seen이 갱신) — 제한 우회 방지 | POL-18, SEC-02 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349e | AttemptLimiter 경계: 차단 종료 시각 정각에는 삭제, 직전에는 유지; 창 정각(windowMs)에 실패 기록은 창 밖으로 취급 | POL-18, SEC-02 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349f | 실제 setInterval 타이머는 unref이고 dispose는 여러 번 불러도 안전하며 dispose 후 sweep 주기가 멈춘다 | POL-18 | 서버 | `apps/server/test/unit15Adversarial.test.ts` | 자동 |
+| TC-349g | 법령명·조문·항·호·시행일·기한(N일 이내)·과태료 금액을 단정해 쓰지 않는다 | SEC-13 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-349h | 연령(14세)·국외 이전·제3자 제공·유출 통지·열람/삭제·면책·신고 처리 의무처럼 법적 판단이 걸린 문단은 같은 문단에 "확인 필요"(또는 법률 검토 후 확정) 표기가 있다 | SEC-13 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-349i | 초안 표기는 3개 문서 어디서나 같은 상수에서 나오고(status=draft), 운영자 정보 슬롯은 서버 값이 없을 때 빈칸이 아니라 눈에 띄는 미정 문구가 된다 | SEC-13 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
+| TC-349j | 앱 서버 로그 비식별 문구에 영상 중계(TURN) 서버 로그에는 IP·사용자명이 남을 수 있다는 단서가 있고, 비밀번호를 "암호화"라고 표현하지 않는다 | POL-17, POL-18 | 웹 | `apps/web/src/legalAdversarial.test.ts` | 자동 |
 | TC-360 | 카카오톡·인스타그램·페이스북·라인·네이버·다음·일반 웹뷰 UA는 앱 안 브라우저로 판정한다 | UX-13 | 웹 | `apps/web/src/lib/inApp.test.ts` | 자동 |
 | TC-360b | 일반 Chrome·Edge·Firefox·Safari·삼성 인터넷·iOS Chrome/Firefox/Edge UA와 빈 문자열은 오탐하지 않는다 | UX-13 | 웹 | `apps/web/src/lib/inApp.test.ts` | 자동 |
 | TC-361 | 라이브가 아니면 아무것도 하지 않는다 | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
@@ -237,6 +270,9 @@
 | TC-361d | 프로브 결과별 후속 동작: 시간 초과는 kickSocket, 자리에 안 묶였으면 resumeNow, 정상이면 ICE 문제가 있을 때만 restartIce | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
 | TC-362 | ended 트랙만 비우고 잃은 종류를 알려 주며, 살아 있는 트랙은 유지한다 | UX-14 | 웹 | `apps/web/src/lib/media.test.ts` | 자동 |
 | TC-362b | 잃은 트랙이 없으면 알림도 상태 변경도 없다 | UX-14 | 웹 | `apps/web/src/lib/media.test.ts` | 자동 |
+| TC-363 | 대소문자·위치가 달라도 토큰을 찾고, 비정상 UA(공백·무관 문자열·매우 긴 문자열)는 오탐 없이 빠르게 끝난다 | UX-13 | 웹 | `apps/web/src/lib/inApp.edge.test.ts` | 자동 |
+| TC-363b | Android 웹뷰 표지(; wv))는 Android에서만 인정하고, iOS WebKit은 Safari/·CriOS·FxiOS·EdgiOS 중 하나라도 있으면 일반 브라우저로 본다 | UX-13 | 웹 | `apps/web/src/lib/inApp.edge.test.ts` | 자동 |
+| TC-364 | 모든 상태×소켓×프로브×피어 조합에서 불변식을 지킨다(비라이브 무동작, probe 결과 후엔 probe 액션 없음, 중복 액션 없음, timeout은 항상 kickSocket) | UX-14 | 웹 | `apps/web/src/state/foreground.table.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

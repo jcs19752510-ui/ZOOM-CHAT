@@ -8,7 +8,7 @@ export function parseLegalPath(path: string): LegalKind | null {
 }
 
 // 서버 config의 이메일 규칙과 같다. 링크 주입(`javascript:...@x.com`)을 막는 마지막 방어선이다(R-1).
-const EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/;
+const EMAIL = /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/;
 
 export type ContactLink = { kind: 'mail'; text: string; href: string } | { kind: 'web'; text: string; href: string } | { kind: 'text'; text: string };
 
@@ -18,10 +18,10 @@ export type ContactLink = { kind: 'mail'; text: string; href: string } | { kind:
  */
 export function contactLink(value: string): ContactLink {
   if (EMAIL.test(value)) return { kind: 'mail', text: value, href: `mailto:${value}` };
-  if (/^https:\/\//i.test(value) && !/\s/.test(value)) {
+  if (/^https:\/\/[^/]/i.test(value) && ![...value].some((c) => c.charCodeAt(0) <= 0x20 || c.charCodeAt(0) === 0x7f)) {
     try {
       const u = new URL(value);
-      if (u.protocol === 'https:' && u.hostname) return { kind: 'web', text: value, href: u.href };
+      if (u.protocol === 'https:' && u.hostname && !u.username && !u.password) return { kind: 'web', text: value, href: u.href };
     } catch {
       // 형식 오류는 텍스트로 표시한다
     }

@@ -6,7 +6,7 @@ import type { Config } from '../config';
  * stun/turn URI는 `URL` 파서가 호스트를 돌려주지 않아 직접 자른다. 포트·쿼리·자격 정보는 버린다.
  */
 export function iceHost(uri: string): string | null {
-  const m = /^(?:stuns?|turns?):(?:\/\/)?(\[[0-9A-Fa-f:.]+\]|[^\s/?:#@[\]]+)(?::\d+)?(?:[/?#].*)?$/.exec(uri.trim());
+  const m = /^(?:stuns?|turns?):(?:\/\/)?(\[[0-9A-Fa-f:.]+\]|[^\s/?:#@[\]]+)(?::\d+)?(?:[/?#].*)?$/i.exec(uri.trim());
   return m?.[1] ?? null;
 }
 

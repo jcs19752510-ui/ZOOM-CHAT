@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import { defineConfig } from '@playwright/test';
 
 // 로컬 샌드박스에는 미리 설치된 Chromium이 있고, CI에서는 `npx playwright install chromium`으로 받는다.
-const preinstalled = fs.readdirSync('/opt/pw-browsers', { withFileTypes: true }).find((d) => d.isDirectory() && /^chromium-\d+$/.test(d.name));
+const browsersDir = '/opt/pw-browsers';
+const preinstalled = fs.existsSync(browsersDir)
+  ? fs.readdirSync(browsersDir, { withFileTypes: true }).find((d) => d.isDirectory() && /^chromium-\d+$/.test(d.name))
+  : undefined;
 const executablePath = process.env.PW_CHROMIUM_PATH ?? (preinstalled ? `/opt/pw-browsers/${preinstalled.name}/chrome-linux/chrome` : undefined);
 
 export default defineConfig({

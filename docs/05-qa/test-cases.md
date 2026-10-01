@@ -1,3 +1,24 @@
+> **이 문서의 용도** — 누가: 개발자, 기획자 / 언제: 어떤 요구가 어떤 테스트로 확인되는지 볼 때 / 무엇을: 모든 TC/IT/UAT/MC와 연결된 요구를 한눈에 보게 한다. **표는 테스트 코드에서 자동 생성**한다.
+
+# 테스트 케이스 목록
+
+| 항목 | 내용 |
+|---|---|
+| 버전 | 0.1 |
+| 작성일 | 2026-10-01 |
+| 상태 | 승인 (구현·검증 반영, DEC-004) |
+| 주도 | ② 개발자 |
+
+## 변경 이력
+| 버전 | 날짜 | 내용 |
+|---|---|---|
+| 0.1 | 2026-10-01 | 최초 작성, 표는 자동 생성 |
+
+
+- 요구 대비 TC 매핑(요구 → 테스트)은 [`../traceability.md`](../traceability.md), 테스트 → 요구는 아래 표다.
+- 갱신: `node scripts/check-docs.mjs --gen`
+- 유형: 서버(단위·통합·보안), 공유(단위), 웹(단위), E2E(Playwright), UAT(사용자 수행, 미수행), MC(수동·명령 점검)
+
 <!-- BEGIN GENERATED -->
 | ID | 제목 | 연결 요구 | 유형 | 파일 | 실행 |
 |---|---|---|---|---|---|
@@ -104,6 +125,7 @@
 | TC-122 | Origin 와일드카드와 형식 오류를 거부한다 | SEC-08 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-123 | TURN_URLS는 TURN_SECRET 없이 쓸 수 없다 | SEC-09 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-124 | 기본값: 방당 6명, 방 100개, 유예 20초, 빈 방 10분 | FR-07, NFR-04 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-125 | 운영 모드에서는 .env.example의 예시 비밀값을 거부한다 | SEC-10 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-130 | 서명·만료·종류를 모두 검증한다 | SEC-03 | 서버 | `apps/server/test/security.test.ts` | 자동 |
 | TC-131 | username=만료:참가자, credential=HMAC-SHA1(base64), 만료=now+TTL | SEC-09 | 서버 | `apps/server/test/security.test.ts` | 자동 |
 | TC-132 | TURN을 설정하지 않으면 자격증명이 만들어지지 않는다(고정 비밀번호 없음) | SEC-09 | 서버 | `apps/server/test/security.test.ts` | 자동 |

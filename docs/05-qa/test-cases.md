@@ -52,6 +52,7 @@
 | IT-28 | 입장·퇴장 알림은 aria-live 영역에 표시된다 | UX-12, FR-13 | E2E | `e2e/ux.spec.ts` | 자동 |
 | IT-29 | 6명이 오래 통화해도 모든 원격 영상이 계속 흐르고 페이지 오류가 없다 (SOAK_MINUTES 지정 시에만 실행) | NFR-03, NFR-04, NFR-13 | E2E | `e2e/soak.spec.ts` | 자동 |
 | IT-30 | CPU를 4배 느리게 한 저사양 기기 모사에서도 3명 통화가 연결되고 영상이 계속 흐른다 | NFR-02, NFR-13 | E2E | `e2e/soak.spec.ts` | 자동 |
+| IT-31 | ${size.width}px: 랜딩·대기실에 법률 푸터(링크 3개·새 탭·접근 이름·44px·Tab 도달·가로 스크롤 없음)가 있고 회의실에는 없다 | POL-17, POL-19, NFR-10, UX-10 | E2E | `e2e/legalfooter.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -173,6 +174,18 @@
 | TC-301d | ADMIN_PORT와 ADMIN_TOKEN은 함께만 허용하고 PORT와 같을 수 없으며 토큰은 32자 이상 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-301e | 운영 모드에서는 ADMIN_TOKEN 예시 값도 거부한다 | SEC-10 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-302 | metrics:path는 direct/relay만 허용하고 모르는 키(식별자 등)는 거부한다 | NFR-15, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
+| TC-303 | OPERATOR_CONTACT 경계값: 200자 통과·201자 거부, 공백 포함·스킴만 있는 값 거부 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-303b | LEGAL_EFFECTIVE_DATE 경계값(윤년·월말·0값)과 PRIVACY_OFFICER 100자 경계 | POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-303c | ADMIN_PORT·ADMIN_TOKEN 경계값: 포트 1·65535 통과, 0·65536·비정수·문자 거부, 토큰 31자 거부·32자 통과 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-303d | 운영 모드 예시값: 정상 운영 값은 통과하고 change-me 접두 ADMIN_TOKEN만 거부, 개발 모드는 허용 | SEC-10, POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-303e | 환경변수를 전혀 주지 않아도 기동 설정이 만들어지고 5종은 undefined다(키 자체가 없음) | POL-19, POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-304 | metrics:path 경계·예외 입력: 빈값·대소문자·공백·잘못된 타입·버전·추가 식별자 키를 모두 거부한다 | NFR-15, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
+| TC-305 | legalLinks는 04 §3.5와 정확히 일치한다(키 5개, aria는 함수) | UX-01, POL-17 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
+| TC-305b | inApp은 04 §3.5와 정확히 일치한다(steps 2개) | UX-01, UX-13 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
+| TC-305c | autoplay·background는 04 §3.5와 일치하고 mediaLost는 3종 입력별 문구를 만든다 | UX-01, UX-14, UX-15 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
+| TC-305d | state.gone 운영자 종료 문구와 기존 키 보존, legal UI 크롬 키가 04 §3.5와 일치한다 | UX-01, UX-03 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
+| TC-305e | 새 문구 키의 모든 문자열 값은 비어 있지 않다(빈 문구 방지) | UX-01 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
+| TC-306 | 푸터 링크 경로는 문구가 아닌 코드에 있고 LegalFooter는 링크 3개를 /privacy /terms /contact 순서로, _blank+noopener noreferrer로 연다(소스 정적 점검) | UX-01, POL-17 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
 | TC-330 | 필수 보안 옵션이 있고 고정 자격증명·무인증이 없다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
 | TC-330b | denied-peer-ip가 사설·루프백·링크로컬·CGNAT·멀티캐스트 IPv4/IPv6 대역을 모두 포함한다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
 | TC-330c | "::"로 시작하는 deny 범위가 없다 (D-1 회귀 방지: 공인 IPv4 peer까지 거부됨) | SEC-12 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |

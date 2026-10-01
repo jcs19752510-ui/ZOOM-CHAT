@@ -35,4 +35,18 @@ describe('schemas (SEC-04, SEC-06)', () => {
     expect(MetricsPathRequestSchema.safeParse({ v: 1, path: 'relay', peerId: 'abcdefgh' }).success).toBe(false);
     expect(MetricsPathRequestSchema.safeParse({ v: 2, path: 'relay' }).success).toBe(false);
   });
+  it('TC-304 [NFR-15,SEC-06] metrics:path 경계·예외 입력: 빈값·대소문자·공백·잘못된 타입·버전·추가 식별자 키를 모두 거부한다', () => {
+    const ok = { v: 1, path: 'relay' };
+    for (const bad of [
+      undefined, null, 'relay', 42, [], {},
+      { v: 1 }, { path: 'relay' }, { v: 1, path: undefined }, { v: 1, path: null }, { v: 1, path: '' }, { v: 1, path: ' relay' }, { v: 1, path: 'relay ' },
+      { v: 1, path: 'RELAY' }, { v: 1, path: 'Direct' }, { v: 1, path: ['relay'] }, { v: 1, path: { type: 'relay' } }, { v: 1, path: 1 },
+      { v: '1', path: 'relay' }, { v: 0, path: 'relay' }, { v: 2, path: 'direct' }, { v: null, path: 'relay' },
+      { ...ok, peerId: 'abcdefgh' }, { ...ok, from: 'x' }, { ...ok, to: 'abcdefgh' }, { ...ok, ip: '1.2.3.4' }, { ...ok, ts: 1 },
+    ]) {
+      expect(MetricsPathRequestSchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
+    }
+    // 통과한 값은 알려진 두 키만 남는다
+    expect(MetricsPathRequestSchema.parse({ v: 1, path: 'direct' })).toEqual({ v: 1, path: 'direct' });
+  });
 });

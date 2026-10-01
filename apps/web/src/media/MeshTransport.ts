@@ -131,6 +131,10 @@ export class MeshTransport implements MediaTransport {
         this.events.remoteStream(id, 'screen', peer.screenStream);
       }
     };
+    // 송신 파라미터(비트레이트·해상도)는 협상이 끝난 뒤에야 바꿀 수 있으므로, 안정 상태가 될 때마다 다시 적용한다.
+    pc.onsignalingstatechange = () => {
+      if (pc.signalingState === 'stable') this.applyAllTo(peer);
+    };
     pc.oniceconnectionstatechange = () => this.onIceState(peer);
     pc.onconnectionstatechange = () => {
       const s = pc.connectionState;
@@ -175,6 +179,7 @@ export class MeshTransport implements MediaTransport {
     peer.pc.ontrack = null;
     peer.pc.oniceconnectionstatechange = null;
     peer.pc.onconnectionstatechange = null;
+    peer.pc.onsignalingstatechange = null;
     peer.pc.close();
     this.peers.delete(id);
   }
@@ -238,6 +243,11 @@ export class MeshTransport implements MediaTransport {
   applyQuality(totalParticipants: number): void {
     this.total = Math.max(1, totalParticipants);
     for (const peer of this.peers.values()) this.applyQualityTo(peer);
+  }
+
+  private applyAllTo(peer: Peer): void {
+    this.applyQualityTo(peer);
+    if (peer.screen) void this.configureSender(peer.screen.sender, SCREEN_MAX_BITRATE, 1);
   }
 
   private applyQualityTo(peer: Peer): void {

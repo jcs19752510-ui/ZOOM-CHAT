@@ -76,15 +76,30 @@ export async function closeAll(): Promise<void> {
   while (contexts.length) await contexts.pop()?.close();
 }
 
-async function newMember(browser: Browser, viewport?: { width: number; height: number }): Promise<Member> {
+/** 시험용: 페이지가 만드는 모든 RTCPeerConnection을 window.__pcs에 모아 송신 파라미터 등을 읽을 수 있게 한다. */
+export const CAPTURE_PCS = (): void => {
+  const Orig = window.RTCPeerConnection;
+  const pcs: RTCPeerConnection[] = [];
+  (window as unknown as { __pcs: RTCPeerConnection[] }).__pcs = pcs;
+  const Wrapped = function (this: unknown, ...args: ConstructorParameters<typeof RTCPeerConnection>) {
+    const pc = new Orig(...args);
+    pcs.push(pc);
+    return pc;
+  } as unknown as typeof RTCPeerConnection;
+  Wrapped.prototype = Orig.prototype;
+  window.RTCPeerConnection = Wrapped;
+};
+
+async function newMember(browser: Browser, viewport?: { width: number; height: number }, initScript?: () => void): Promise<Member> {
   const context = await browser.newContext({ permissions: ['camera', 'microphone'], ...(viewport ? { viewport } : {}) });
+  if (initScript) await context.addInitScript(initScript);
   contexts.push(context);
   return { context, page: await context.newPage() };
 }
 
 /** 호스트: 랜딩에서 닉네임 입력 → 새 회의 → 대기실 → 입장 */
-export async function hostMeeting(browser: Browser, env: Env, nickname = '호스트', opts: { password?: string; viewport?: { width: number; height: number } } = {}): Promise<Member & { url: string; roomId: string }> {
-  const m = await newMember(browser, opts.viewport);
+export async function hostMeeting(browser: Browser, env: Env, nickname = '호스트', opts: { password?: string; viewport?: { width: number; height: number }; initScript?: () => void } = {}): Promise<Member & { url: string; roomId: string }> {
+  const m = await newMember(browser, opts.viewport, opts.initScript);
   await m.page.goto(env.base);
   await m.page.getByTestId('nickname').fill(nickname);
   if (opts.password) {

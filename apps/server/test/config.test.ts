@@ -126,4 +126,11 @@ describe('환경변수 검증 (NFR-08)', () => {
       expect(loadConfig({ ...baseEnv, OPERATOR_CONTACT: ok }).OPERATOR_CONTACT, ok).toBe(ok);
     }
   });
+
+  it('TC-301f [POL-19,SEC-10] 운영 모드에서 예시 값(change-me...)을 쓴 변수 이름이 오류 메시지에 정확히 나온다(ADMIN_TOKEN을 SESSION_SECRET으로 잘못 지목하지 않음, DEF-005)', () => {
+    const prod = { ...baseEnv, NODE_ENV: 'production', SESSION_SECRET: 'x'.repeat(40) };
+    expect(() => loadConfig({ ...prod, ADMIN_PORT: '3999', ADMIN_TOKEN: `change-me-${'a'.repeat(30)}` })).toThrow(/ADMIN_TOKEN/);
+    expect(() => loadConfig({ ...prod, ADMIN_PORT: '3999', ADMIN_TOKEN: `change-me-${'a'.repeat(30)}` })).not.toThrow(/SESSION_SECRET/);
+    expect(() => loadConfig({ ...prod, SESSION_SECRET: `change-me-${'a'.repeat(30)}` })).toThrow(/SESSION_SECRET/);
+  });
 });

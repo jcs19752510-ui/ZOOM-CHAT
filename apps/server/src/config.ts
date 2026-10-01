@@ -62,9 +62,11 @@ const EnvSchema = z
   })
   .refine((e) => e.ADMIN_PORT === undefined || e.ADMIN_PORT !== e.PORT, { message: 'ADMIN_PORT는 PORT와 달라야 합니다', path: ['ADMIN_PORT'] })
   // .env.example의 예시 값을 그대로 운영에 쓰는 실수를 막는다(SEC-10)
-  .refine((e) => !(e.NODE_ENV === 'production' && (e.SESSION_SECRET.startsWith('change-me') || e.TURN_SECRET?.startsWith('change-me') || e.ADMIN_TOKEN?.startsWith('change-me'))), {
-    message: '운영에서는 예시 비밀값(change-me...)을 쓸 수 없습니다. 새 난수로 바꾸세요',
-    path: ['SESSION_SECRET'],
+  .superRefine((e, ctx) => {
+    if (e.NODE_ENV !== 'production') return;
+    for (const key of ['SESSION_SECRET', 'TURN_SECRET', 'ADMIN_TOKEN'] as const) {
+      if (e[key]?.startsWith('change-me')) ctx.addIssue({ code: 'custom', message: '운영에서는 예시 비밀값(change-me...)을 쓸 수 없습니다. 새 난수로 바꾸세요', path: [key] });
+    }
   });
 
 export type Config = z.infer<typeof EnvSchema>;

@@ -81,6 +81,8 @@
 | IT-40j | 프로브 응답이 NOT_JOINED(소켓이 자리에 안 묶임)면 소켓을 새로 열지 않고 같은 소켓으로 즉시 room:resume을 보낸다 | UX-14 | E2E | `e2e/foreground-extra.spec.ts` | 자동 |
 | IT-41 | 운영자가 방을 닫으면 모든 참가자가 "운영자가 이 회의를 종료했습니다"를 보고, 재연결을 시도하지 않으며, 같은 링크로는 다시 입장할 수 없다 | POL-19, EVT-34 | E2E | `e2e/operatorClose.spec.ts` | 자동 |
 | IT-42 | 운영자 종료 화면: 360px에서 버튼 터치 44px 이상, 키보드로 [새 회의 만들기]에 닿고, 새 회의 버튼은 랜딩으로 이동한다 | POL-19, UX-02 | E2E | `e2e/operatorClose.spec.ts` | 자동 |
+| IT-43 | 운영자 종료 화면(1280px): alert 역할·제목, Tab 순서(새 회의 → 문의·신고), 포커스 표시, 가로 스크롤 없음, 모든 카메라·마이크 트랙 중지, 복귀 이벤트가 와도 소켓·장치를 다시 열지 않는다 | POL-19, UX-02 | E2E | `e2e/operatorClose-extra.spec.ts` | 자동 |
+| IT-44 | 끊김 유예 중(소켓 없음)인 참가자가 있는 방을 폐쇄하면 복귀한 참가자는 재연결·무한 재시도 없이 종료 안내를 보고 방은 다시 생기지 않는다 | POL-19 | E2E | `e2e/operatorClose-extra.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -201,6 +203,7 @@
 | TC-301c | LEGAL_EFFECTIVE_DATE는 존재하는 YYYY-MM-DD, PRIVACY_OFFICER는 100자 이하 | POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-301d | ADMIN_PORT와 ADMIN_TOKEN은 함께만 허용하고 PORT와 같을 수 없으며 토큰은 32자 이상 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-301e | 운영 모드에서는 ADMIN_TOKEN 예시 값도 거부한다 | SEC-10 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-301f | 운영 모드에서 예시 값(change-me...)을 쓴 변수 이름이 오류 메시지에 정확히 나온다(ADMIN_TOKEN을 SESSION_SECRET으로 잘못 지목하지 않음, DEF-005) | POL-19, SEC-10 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-302 | metrics:path는 direct/relay만 허용하고 모르는 키(식별자 등)는 거부한다 | NFR-15, SEC-06 | 공유 | `packages/shared/src/schemas.test.ts` | 자동 |
 | TC-303 | OPERATOR_CONTACT 경계값: 200자 통과·201자 거부, 공백 포함·스킴만 있는 값 거부 | POL-19 | 서버 | `apps/server/test/config.test.ts` | 자동 |
 | TC-303b | LEGAL_EFFECTIVE_DATE 경계값(윤년·월말·0값)과 PRIVACY_OFFICER 100자 경계 | POL-20 | 서버 | `apps/server/test/config.test.ts` | 자동 |
@@ -288,6 +291,21 @@
 | TC-376 | 폐쇄하면 참가자 전원이 room:closed를 받고 소켓이 끊기며, 같은 토큰의 재접속·재입장은 거부되고, 다른 방은 영향이 없다 | POL-19, EVT-34 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
 | TC-377 | 호스트 없는 대기 방(입장 전)과 끊김 유예 중인 참가자가 있는 방도 닫히고 타이머가 남지 않는다 | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
 | TC-378 | RoomManager.closeByOperator: 방을 지우고 closedByOperator 이벤트(참가자 ID 목록)를 한 번 내며, 없는 방은 ROOM_NOT_FOUND | POL-19 | 서버 | `apps/server/test/adminClose.test.ts` | 자동 |
+| TC-379 | 인증 헤더 변형(스킴 대소문자·공백·중복·쿼리·쿠키·유사 헤더·유니코드·빈 값·같은 길이 다른 값)은 모두 401이고 방은 닫히지 않는다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-380 | 경로 변형(점 경로·%2e·이중 슬래시·대문자·끝 슬래시·잘못된 퍼센트·널 바이트·긴 ID·특수문자·공백·개행)은 200이 되지 않고 방은 유지되며 서버는 계속 동작한다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-381 | 메서드(OPTIONS/HEAD/GET/PUT/DELETE/PATCH)는 405(토큰 없으면 401)이고 CORS 헤더가 없으며, Expect: 100-continue·청크 본문·작은 본문은 정상 처리되고 큰 청크 본문은 413이다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-382 | 요청 밀수(CL/TE 혼합)·파이프라이닝·거대 헤더/요청줄은 두 번째 요청을 실행하지 않고 방을 닫지 못하며 서버는 계속 동작한다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-383 | 느린 연결(slowloris) 16개가 admin 연결 한도를 채워도 공개 포트와 방 상태는 영향이 없고, 느린 연결은 15초 안에 정리되어(DEF-002 수정) 정상 요청이 다시 처리된다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-384 | 속도 제한은 인증에 실패한 요청에만 적용된다: 틀린 토큰을 쏟아부으면 429가 되지만 올바른 토큰의 운영자는 잠기지 않는다 (DEF-003 수정) | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-385 | 시작 실패·노출: ADMIN_PORT가 이미 사용 중이면 서버가 시작되지 않고 공개 포트도 남지 않으며, 공개 포트로는 /admin 경로가 어떤 메서드·토큰으로도 방을 닫지 못한다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-386 | 경합: 같은 방에 폐쇄 2건 동시 → 정확히 1건만 200, 폐쇄와 동시에 입장·퇴장·재접속하는 참가자도 방이 되살아나지 않고 모든 소켓이 정리된다 | POL-19, EVT-34 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-387 | 참가자가 room:closed(또는 유사 이벤트)를 서버로 보내 같은 방 참가자에게 릴레이시키려 해도 서버는 전달하지 않고 방은 유지된다 | POL-19, SEC-04 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-388 | 폐쇄 한 번이 남기는 로그 전체를 캡처해 방 ID 앞 6자·인원수 외에 닉네임·토큰·IP·전체 방 ID가 없는지 확인한다(debug 수준) | POL-19, SEC-10 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-389 | 인증은 본문보다 먼저: 토큰 없는 큰 본문은 413이 아니라 401이고, 본문 1024B는 처리·1025B는 413, 헤더 한도 경계(약 4KB)가 지켜진다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-390 | 토큰이 없든·짧든·길든·같은 길이든 모든 요청이 32B 해시끼리 timingSafeEqual을 정확히 한 번 호출한다 | POL-19 | 서버 | `apps/server/test/adminTimingSafe.test.ts` | 자동 |
+| TC-391 | 폐쇄 후 끊김 유예·빈 방 타이머가 남지 않는다: 유예 중이던 참가자의 만료로 닫힌 방에 대한 이벤트가 더 나오지 않는다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-392 | 서버 종료(graceful shutdown)는 admin 리스너도 닫아 포트가 풀리고, 기동 후 admin 포트가 공개 포트와 다른 리스너임을 확인한다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-393 | closeRoom이 예외를 던져도 admin은 500 INTERNAL로 응답하고 프로세스(공개 포트 포함)는 죽지 않는다 (DEF-001 수정) | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

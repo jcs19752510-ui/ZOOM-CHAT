@@ -16,6 +16,8 @@ export interface MediaTransportEvents {
   remoteStream: (id: string, kind: RemoteKind, stream: MediaStream) => void;
   /** 상대와의 연결 상태 변화 */
   peerState: (id: string, state: PeerConnState) => void;
+  /** 연결이 서버(TURN)를 경유하는지 판정되었음. 경로가 바뀌면 다시 호출된다(NFR-15). */
+  pathType: (id: string, path: 'direct' | 'relay') => void;
 }
 
 /**

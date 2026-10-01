@@ -17,7 +17,7 @@ async function freePort(): Promise<number> {
 }
 
 /** 설정이 다른 서버를 따로 띄운다(정원 2명, 재시작 시험 등). 같은 포트로 다시 띄울 수도 있다. */
-export async function extraServer(overrides: Record<string, string> = {}, port?: number): Promise<{ server: RunningServer; base: string; port: number }> {
+export async function extraServer(overrides: Record<string, string> = {}, port?: number, logLines?: string[]): Promise<{ server: RunningServer; base: string; port: number }> {
   const p = port ?? (await freePort());
   const origin = `http://localhost:${p}`;
   const config = loadConfig({
@@ -31,7 +31,8 @@ export async function extraServer(overrides: Record<string, string> = {}, port?:
     LOG_LEVEL: 'silent',
     ...overrides,
   } as NodeJS.ProcessEnv);
-  const server = await startServer(config, createLogger('silent'));
+  // logLines는 로그 내용을 시험에서 확인할 때만 쓴다
+  const server = await startServer(config, logLines ? createLogger('info', { write: (l: string) => void logLines.push(l) }) : createLogger('silent'));
   return { server, base: origin, port: p };
 }
 

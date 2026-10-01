@@ -9,6 +9,7 @@ import {
   LockRequestSchema,
   MAX_MESSAGE_BYTES,
   MediaStateRequestSchema,
+  MetricsPathRequestSchema,
   ResumeRequestSchema,
   SignalRequestSchema,
   normalizeNickname,
@@ -59,7 +60,9 @@ const RATE_SPECS: Record<string, [number, number]> = {
   'host:lock': [5, 2],
   'host:kick': [5, 2],
   'host:muteAll': [5, 2],
+  'metrics:path': [10, 0.5],
 };
+const MAX_PATH_REPORTS_PER_SOCKET = 20;
 const STRIKE_LIMIT = 15; // 10초 안에 이만큼 거부되면 연결을 끊는다(POL-10)
 const STRIKE_WINDOW_MS = 10_000;
 
@@ -282,6 +285,16 @@ export function attachSocket(httpServer: HttpServer, deps: SocketDeps): { io: Se
     on('host:muteAll', EmptyRequestSchema, true, () => {
       const { roomId, pid } = me();
       return toAck(rooms.muteAll(roomId, pid));
+    });
+
+    // 경로 종류(enum 한 값)만 로그로 남긴다. 방·참가자·소켓·IP는 기록하지 않는다(NFR-15, DEC-012).
+    let pathReports = 0;
+    on('metrics:path', MetricsPathRequestSchema, true, (p) => {
+      if (pathReports < MAX_PATH_REPORTS_PER_SOCKET) {
+        pathReports++;
+        logger.info({ kpi: 'path', path: p.path }, 'peer path');
+      }
+      return { ok: true };
     });
 
     socket.on('disconnect', () => {

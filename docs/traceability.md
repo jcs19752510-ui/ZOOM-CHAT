@@ -58,13 +58,13 @@
 | NFR-13 | M | 품질 적응: 인원 수에 따라 해상도·비트레이트 상한을 낮춘다(수치는 … | - | SCR-03 | - | - | IT-20, IT-29, IT-30, TC-210, TC-211, UAT-06 |  |
 | SEC-01 | - | 방 ID는 crypto 기반 128비트 이상 난수(URL-safe). | POL-02 | - | - | EVT-30, EVT-31, EVT-32 | TC-101, TC-137, TC-245 |  |
 | SEC-02 | - | 방 비밀번호는 해시로만 보관, 입장 시도를 IP+방 기준 제한. | POL-11 | - | - | EVT-30, EVT-31, EVT-32 | IT-07, TC-06, TC-90, TC-91, TC-107, TC-133, TC-134, TC-136, TC-343b, TC-348b, TC-349d, TC-349e |  |
-| SEC-03 | - | 입장 시 서명된 단기 세션 토큰 발급, 이후 모든 소켓 이벤트·재접속… | POL-08 | - | - | EVT-30, EVT-31, EVT-32 | TC-30, TC-32, TC-50, TC-51, TC-52, TC-54, TC-130 |  |
+| SEC-03 | - | 입장 시 서명된 단기 세션 토큰 발급, 이후 모든 소켓 이벤트·재접속… | POL-08 | - | - | EVT-30, EVT-31, EVT-32 | TC-30, TC-32, TC-50, TC-51, TC-52, TC-54, TC-130, TC-405 |  |
 | SEC-04 | - | 발신자 ID는 서버 부여값만 신뢰(사칭 방지), 같은 방 참가자에게만… | POL-07 | - | - | EVT-30, EVT-31, EVT-32 | TC-40, TC-41, TC-42, TC-44, TC-138, TC-242, TC-243, TC-387 |  |
 | SEC-05 | - | 호스트 여부·모든 권한은 서버 상태로만 판단, 강퇴 세션 재입장 차단… | POL-03, POL-05, POL-06, POL-13 | - | FLOW-05 | EVT-30, EVT-31, EVT-32 | IT-05, TC-04, TC-18, TC-20, TC-35, TC-36, TC-60, TC-62 |  |
-| SEC-06 | - | 모든 소켓 이벤트에 zod 검증·크기 제한·이벤트별 rate limi… | POL-04, POL-07, POL-10, POL-15 | - | - | EVT-30, EVT-31, EVT-32 | IT-37b, TC-07, TC-31, TC-43, TC-80, TC-81, TC-96, TC-105, TC-106, TC-108, TC-135, TC-230, TC-231, TC-232, TC-236, TC-240, TC-241, TC-242, TC-243, TC-244, TC-245, TC-302, TC-304, TC-346e, TC-348g, TC-348h |  |
+| SEC-06 | - | 모든 소켓 이벤트에 zod 검증·크기 제한·이벤트별 rate limi… | POL-04, POL-07, POL-10, POL-15 | - | - | EVT-30, EVT-31, EVT-32 | IT-37b, TC-07, TC-31, TC-43, TC-80, TC-81, TC-96, TC-105, TC-106, TC-108, TC-135, TC-230, TC-231, TC-232, TC-236, TC-240, TC-241, TC-242, TC-243, TC-244, TC-245, TC-302, TC-304, TC-346e, TC-348g, TC-348h, TC-403, TC-404, TC-406 |  |
 | SEC-07 | - | 채팅 길이 제한, 텍스트로만 렌더링, 링크 `rel="noopener… | POL-07 | - | - | - | IT-04, IT-33, IT-33b, IT-37, TC-70, TC-71, TC-200, TC-201, TC-202, TC-203, TC-234, TC-235, TC-344, TC-345, TC-345b, TC-345c, TC-345d, TC-347, TC-347b, TC-347c, TC-347d, TC-347e |  |
 | SEC-08 | - | Origin 허용 목록(CORS+Socket.IO), CSP, Per… | - | SCR-13 | - | - | TC-95, TC-103, TC-104, TC-105, TC-109, TC-122, TC-340c, TC-348f |  |
-| SEC-09 | - | TURN 단기 HMAC 임시 자격증명, 고정 비밀번호 금지, 사설/루… | - | - | - | EVT-30, EVT-31, EVT-32 | IT-21, IT-22, TC-123, TC-131, TC-132, TC-132b, TC-330, TC-330b, TC-331, TC-332, TC-333, TC-334 | 정책·화면 대신 EVT/TC로 추적 |
+| SEC-09 | - | TURN 단기 HMAC 임시 자격증명, 고정 비밀번호 금지, 사설/루… | - | - | - | EVT-30, EVT-31, EVT-32 | IT-21, IT-22, IT-46, TC-123, TC-131, TC-132, TC-132b, TC-330, TC-330b, TC-331, TC-332, TC-333, TC-334 | 정책·화면 대신 EVT/TC로 추적 |
 | SEC-10 | - | 비밀값은 `.env`만, 로그에 개인정보·SDP·토큰 미기록. | POL-09, POL-16 | - | - | - | MC-05, TC-121, TC-125, TC-301e, TC-301f, TC-303d, TC-340c, TC-342, TC-342b, TC-348, TC-349c, TC-375, TC-388 |  |
 | SEC-11 | - | 공급망: `npm ci` + lockfile, 새 의존성은 사전 보고… | - | - | - | - | MC-02 | 정책·화면 대신 EVT/TC로 추적 |
 | UX-01 | M | UI는 한국어. 모든 문구는 strings 파일 한 곳에서 관리한다. | - | SCR-01, 공통 | - | - | TC-213, TC-305, TC-305b, TC-305c, TC-305d, TC-305e, TC-306, TC-341d |  |

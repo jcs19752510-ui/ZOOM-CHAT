@@ -99,6 +99,33 @@ test.describe('TURN 경유 (SEC-09)', () => {
     }
   });
 
+  test('IT-46 [NFR-15,KPI-05,SEC-09] TURN 릴레이로만 연결되면 각 참가자가 relay를 보고하고 direct 보고는 없다', async ({ browser }) => {
+    const secret = 'turn-shared-secret-turn-shared-secret';
+    await startTurn(secret);
+    const lines: string[] = [];
+    const s = await extraServer({ TURN_URLS: `turn:127.0.0.1:${TURN_PORT}?transport=udp`, TURN_SECRET: secret, TURN_TTL_SEC: '3600' }, undefined, lines);
+    try {
+      const env = { server: s.server, base: s.base };
+      const host = await hostMeeting(browser, env, '호스트', { initScript: FORCE_RELAY });
+      const ctx = await browser.newContext({ permissions: ['camera', 'microphone'] });
+      await ctx.addInitScript(FORCE_RELAY);
+      const page = await ctx.newPage();
+      await page.goto(host.url);
+      await page.getByTestId('lobby-nickname').fill('릴레이');
+      await page.getByTestId('join-button').click();
+      await page.getByTestId('room').waitFor();
+      await expectRemoteMedia(host.page, 1, 40_000);
+      await expectRemoteMedia(page, 1, 40_000);
+      const paths = (): unknown[] => lines.map((l) => JSON.parse(l) as Record<string, unknown>).filter((l) => l.msg === 'peer path').map((l) => l.path);
+      await expect.poll(() => paths().length, { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
+      await page.waitForTimeout(2000);
+      expect(paths()).toEqual(['relay', 'relay']);
+      await ctx.close();
+    } finally {
+      await s.server.close();
+    }
+  });
+
   test('IT-22 [SEC-09] TURN 공유 비밀이 다르면(자격증명 위조·불일치) 릴레이 연결이 만들어지지 않는다', async ({ browser }) => {
     await startTurn('turn-shared-secret-turn-shared-secret');
     const s = await extraServer({ TURN_URLS: `turn:127.0.0.1:${TURN_PORT}?transport=udp`, TURN_SECRET: 'a-different-secret-a-different-secret' });

@@ -83,6 +83,8 @@
 | IT-42 | 운영자 종료 화면: 360px에서 버튼 터치 44px 이상, 키보드로 [새 회의 만들기]에 닿고, 새 회의 버튼은 랜딩으로 이동한다 | POL-19, UX-02 | E2E | `e2e/operatorClose.spec.ts` | 자동 |
 | IT-43 | 운영자 종료 화면(1280px): alert 역할·제목, Tab 순서(새 회의 → 문의·신고), 포커스 표시, 가로 스크롤 없음, 모든 카메라·마이크 트랙 중지, 복귀 이벤트가 와도 소켓·장치를 다시 열지 않는다 | POL-19, UX-02 | E2E | `e2e/operatorClose-extra.spec.ts` | 자동 |
 | IT-44 | 끊김 유예 중(소켓 없음)인 참가자가 있는 방을 폐쇄하면 복귀한 참가자는 재연결·무한 재시도 없이 종료 안내를 보고 방은 다시 생기지 않는다 | POL-19 | E2E | `e2e/operatorClose-extra.spec.ts` | 자동 |
+| IT-45 | 일반(루프백) 통화에서 각 참가자가 direct를 한 번씩만 보고하고 로그에 식별자가 없다 | NFR-15, KPI-05 | E2E | `e2e/pathMetrics.spec.ts` | 자동 |
+| IT-46 | TURN 릴레이로만 연결되면 각 참가자가 relay를 보고하고 direct 보고는 없다 | NFR-15, KPI-05, SEC-09 | E2E | `e2e/turn.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -306,6 +308,13 @@
 | TC-391 | 폐쇄 후 끊김 유예·빈 방 타이머가 남지 않는다: 유예 중이던 참가자의 만료로 닫힌 방에 대한 이벤트가 더 나오지 않는다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
 | TC-392 | 서버 종료(graceful shutdown)는 admin 리스너도 닫아 포트가 풀리고, 기동 후 admin 포트가 공개 포트와 다른 리스너임을 확인한다 | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
 | TC-393 | closeRoom이 예외를 던져도 admin은 500 INTERNAL로 응답하고 프로세스(공개 포트 포함)는 죽지 않는다 (DEF-001 수정) | POL-19 | 서버 | `apps/server/test/adminAdversarial.test.ts` | 자동 |
+| TC-400 | 선택된 쌍의 후보 타입으로 direct(host/srflx/prflx)와 relay를 판정한다 | NFR-15 | 웹 | `apps/web/src/media/pathType.test.ts` | 자동 |
+| TC-401 | transport.selectedCandidatePairId가 있으면 그 쌍을 우선하고, 선택 안 된 다른 쌍은 무시한다 | NFR-15 | 웹 | `apps/web/src/media/pathType.test.ts` | 자동 |
+| TC-402 | 빈 통계·쌍 없음·nominated/succeeded 아님·후보 누락·알 수 없는 타입·이상한 항목은 null(보고 안 함)이다 | NFR-15 | 웹 | `apps/web/src/media/pathType.test.ts` | 자동 |
+| TC-403 | 정상 보고는 ack ok이고 로그는 kpi·path만 담으며 방 ID·IP·닉네임·참가자 ID·토큰이 없다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
+| TC-404 | 잘못된 값·추가 식별자 키·버전 불일치·타입 오류는 INVALID_PAYLOAD로 거부되고 로그가 남지 않으며 서버는 계속 동작한다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
+| TC-405 | 입장하지 않은 소켓은 NOT_JOINED로 거부되고 로그가 남지 않는다 | NFR-15, SEC-03 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
+| TC-406 | 같은 소켓의 짧은 시간 반복은 속도 제한(RATE_LIMITED)되어 로그가 버킷 용량(10)을 넘지 않는다 | NFR-15, SEC-06 | 서버 | `apps/server/test/metricsPath.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

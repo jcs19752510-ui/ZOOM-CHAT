@@ -1,4 +1,5 @@
 import type { IceCandidatePayload, IceServerConfig, SessionDescription } from '@meetlite/shared';
+import { classifyPath, type PathType } from './pathType';
 import type { MediaTransport, MediaTransportEvents, NetworkQuality, SignalMessage } from './MediaTransport';
 
 /** 인원별 영상 송신 상한(NFR-13, trd.md §5). mesh는 (인원-1)개 스트림을 올려야 하므로 인원이 늘면 낮춘다. */
@@ -26,6 +27,9 @@ interface Peer {
   screenStream: MediaStream;
   iceRestarts: number;
   disconnectTimer?: ReturnType<typeof setTimeout>;
+  lastPath?: PathType;
+  pathProbing: boolean;
+  pathTimer?: ReturnType<typeof setTimeout>;
 }
 
 /**
@@ -63,6 +67,7 @@ export class MeshTransport implements MediaTransport {
       cameraStream: new MediaStream(),
       screenStream: new MediaStream(),
       iceRestarts: 0,
+      pathProbing: false,
     };
     this.peers.set(id, peer);
     this.wire(peer);
@@ -153,6 +158,7 @@ export class MeshTransport implements MediaTransport {
     if (state === 'connected' || state === 'completed') {
       peer.iceRestarts = 0;
       this.events.peerState(peer.id, 'connected');
+      void this.probePath(peer, 0);
     } else if (state === 'disconnected') {
       this.events.peerState(peer.id, 'disconnected');
       // 잠깐 끊긴 것일 수 있으니 4초 기다린 뒤에도 그대로면 ICE를 다시 시작한다.
@@ -160,6 +166,32 @@ export class MeshTransport implements MediaTransport {
     } else if (state === 'failed') {
       this.events.peerState(peer.id, 'failed');
       this.restartPeer(peer);
+    }
+  }
+
+  /** 선택된 후보쌍으로 경로를 판정해 처음이거나 바뀐 경우에만 보고한다. 실패·미지원은 조용히 건너뛴다(NFR-15). */
+  private async probePath(peer: Peer, attempt: number): Promise<void> {
+    if (peer.pathProbing || typeof peer.pc.getStats !== 'function') return;
+    peer.pathProbing = true;
+    let path: PathType | null;
+    try {
+      const reports: unknown[] = [];
+      (await peer.pc.getStats()).forEach((r: unknown) => reports.push(r));
+      path = classifyPath(reports);
+    } catch {
+      path = null;
+    } finally {
+      peer.pathProbing = false;
+    }
+    if (this.closed || this.peers.get(peer.id) !== peer) return;
+    if (path) {
+      if (path !== peer.lastPath) {
+        peer.lastPath = path;
+        this.events.pathType(peer.id, path);
+      }
+    } else if (attempt < 2) {
+      // 선택 직후에는 통계에 아직 반영되지 않을 수 있다
+      peer.pathTimer = setTimeout(() => void this.probePath(peer, attempt + 1), 1000);
     }
   }
 
@@ -174,6 +206,7 @@ export class MeshTransport implements MediaTransport {
     const peer = this.peers.get(id);
     if (!peer) return;
     if (peer.disconnectTimer) clearTimeout(peer.disconnectTimer);
+    if (peer.pathTimer) clearTimeout(peer.pathTimer);
     peer.pc.onnegotiationneeded = null;
     peer.pc.onicecandidate = null;
     peer.pc.ontrack = null;

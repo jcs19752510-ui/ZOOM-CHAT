@@ -156,6 +156,10 @@ export class MeetingController {
         const prev = this.state.remote[id] ?? { state: 'connecting' as PeerConnState };
         this.set({ remote: { ...this.state.remote, [id]: { ...prev, [kind]: stream } } });
       },
+      pathType: (_id, path) => {
+        // 응답을 기다리지 않는다. 식별자 없이 경로 종류만 보낸다(NFR-15).
+        void this.signaling?.request('metrics:path', { v: 1, path }, 3000);
+      },
       peerState: (id, state) => {
         const prev = this.state.remote[id];
         if (prev && prev.state !== state) this.set({ remote: { ...this.state.remote, [id]: { ...prev, state } } });

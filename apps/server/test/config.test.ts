@@ -27,4 +27,10 @@ describe('환경변수 검증 (NFR-08)', () => {
     const c = loadConfig(baseEnv);
     expect([c.MAX_PARTICIPANTS, c.MAX_ROOMS, c.RECONNECT_GRACE_SEC, c.ROOM_EMPTY_TTL_MIN, c.TURN_TTL_SEC]).toEqual([6, 100, 20, 10, 3600]);
   });
+  it('TC-125 [SEC-10] 운영 모드에서는 .env.example의 예시 비밀값을 거부한다', () => {
+    const placeholder = 'change-me-change-me-change-me-change-me';
+    expect(() => loadConfig({ ...baseEnv, NODE_ENV: 'production', SESSION_SECRET: placeholder })).toThrow(/예시 비밀값/);
+    expect(() => loadConfig({ ...baseEnv, NODE_ENV: 'production', TURN_URLS: 'turn:t:3478', TURN_SECRET: 'change-me-turn-secret-change-me' })).toThrow(/예시 비밀값/);
+    expect(loadConfig({ ...baseEnv, NODE_ENV: 'development', SESSION_SECRET: placeholder }).SESSION_SECRET).toBe(placeholder);
+  });
 });

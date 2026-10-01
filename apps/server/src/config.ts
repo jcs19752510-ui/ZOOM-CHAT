@@ -38,7 +38,12 @@ const EnvSchema = z
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'silent']).default('info'),
     WEB_DIST: z.string().optional(),
   })
-  .refine((e) => !(e.TURN_URLS?.length && !e.TURN_SECRET), { message: 'TURN_URLS를 쓰려면 TURN_SECRET이 필요합니다', path: ['TURN_SECRET'] });
+  .refine((e) => !(e.TURN_URLS?.length && !e.TURN_SECRET), { message: 'TURN_URLS를 쓰려면 TURN_SECRET이 필요합니다', path: ['TURN_SECRET'] })
+  // .env.example의 예시 값을 그대로 운영에 쓰는 실수를 막는다(SEC-10)
+  .refine((e) => !(e.NODE_ENV === 'production' && (e.SESSION_SECRET.startsWith('change-me') || e.TURN_SECRET?.startsWith('change-me'))), {
+    message: '운영에서는 예시 비밀값(change-me...)을 쓸 수 없습니다. 새 난수로 바꾸세요',
+    path: ['SESSION_SECRET'],
+  });
 
 export type Config = z.infer<typeof EnvSchema>;
 

@@ -9,15 +9,17 @@ import { LegalFooter } from "./LegalFooter";
 export function PageShell({
   context,
   roomId,
+  forceOpenInApp,
   children,
 }: {
   context: "landing" | "lobby";
   roomId?: string;
+  forceOpenInApp?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className="flex min-h-full flex-col">
-      <InAppNotice context={context} {...(roomId ? { roomId } : {})} />
+      <InAppNotice context={context} {...(roomId ? { roomId } : {})} {...(forceOpenInApp ? { forceOpen: true } : {})} />
       {children}
       <LegalFooter />
     </div>

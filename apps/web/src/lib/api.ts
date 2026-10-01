@@ -1,4 +1,5 @@
-import type { CreateRoomResponse, RoomStatusResponse } from '@meetlite/shared';
+import type { CreateRoomResponse, MetaResponse, RoomStatusResponse } from '@meetlite/shared';
+import { parseMeta } from './legalMeta';
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; code: string };
 
@@ -18,3 +19,10 @@ export const createRoom = (password?: string): Promise<ApiResult<CreateRoomRespo
 
 export const getRoomStatus = (roomId: string): Promise<ApiResult<RoomStatusResponse>> =>
   call<RoomStatusResponse>(`/api/rooms/${encodeURIComponent(roomId)}`);
+
+export async function getMeta(): Promise<ApiResult<MetaResponse>> {
+  const res = await call<unknown>('/api/meta');
+  if (!res.ok) return res;
+  const meta = parseMeta(res.data);
+  return meta ? { ok: true, data: meta } : { ok: false, code: 'INTERNAL' };
+}

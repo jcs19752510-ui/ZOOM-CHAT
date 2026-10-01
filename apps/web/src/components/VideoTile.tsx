@@ -18,20 +18,36 @@ interface Props {
   screen?: boolean;
   thumb?: boolean;
   sinkId?: string;
+  /** 자동재생 정책으로 play()가 거부되면 true, 재생되면 false로 알린다(UX-15). 내 영상(muted)에는 쓰지 않는다. */
+  onPlayBlocked?: (el: HTMLVideoElement, blocked: boolean) => void;
 }
 
 type SinkElement = HTMLVideoElement & { setSinkId?: (id: string) => Promise<void> };
 
 const initialOf = (name: string): string => [...name.trim()][0]?.toUpperCase() ?? '?';
 
-export function VideoTile({ stream, name, peerId, self, host, micOn, camOn, reconnecting, peer, screen, thumb, sinkId }: Props) {
+export function VideoTile({ stream, name, peerId, self, host, micOn, camOn, reconnecting, peer, screen, thumb, sinkId, onPlayBlocked }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const { speaking } = useAudioLevel(stream, !screen && micOn);
 
   useEffect(() => {
     const el = ref.current;
-    if (el && el.srcObject !== stream) el.srcObject = stream;
-  }, [stream]);
+    if (!el) return;
+    if (el.srcObject !== stream) el.srcObject = stream;
+    if (!stream || self || !onPlayBlocked) return;
+    let alive = true;
+    el.play().then(
+      () => alive && onPlayBlocked(el, false),
+      (e: unknown) => {
+        // AbortError 등(스트림 교체로 인한 중단)은 정책 거부가 아니므로 배너를 띄우지 않는다.
+        if (alive && e instanceof DOMException && e.name === 'NotAllowedError') onPlayBlocked(el, true);
+      },
+    );
+    return () => {
+      alive = false;
+      onPlayBlocked(el, false);
+    };
+  }, [stream, self, onPlayBlocked]);
 
   useEffect(() => {
     const el = ref.current as SinkElement | null;

@@ -1,8 +1,8 @@
 import { createHmac } from 'node:crypto';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { newParticipantId, newRoomId } from '../src/security/ids';
 import { hashPassword, verifyPassword } from '../src/security/password';
-import { AttemptLimiter, TokenBucket } from '../src/security/rateLimit';
+import { AttemptLimiter, KeyedRateLimiter, TokenBucket } from '../src/security/rateLimit';
 import { signToken, verifyToken } from '../src/security/token';
 import { buildIceServers } from '../src/security/turn';
 import { ipKey } from '../src/security/ipKey';
@@ -87,6 +87,60 @@ describe('속도 제한 (SEC-06)', () => {
     l.recordSuccess('x');
     for (let i = 0; i < 4; i++) l.recordFailure('x');
     expect(l.isBlocked('x')).toBe(false);
+  });
+});
+
+describe('제한기 IP 키 정기 정리 (D-6, POL-18)', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('TC-343 [POL-18] 키 수가 적어도 5분 주기 정리가 10분 넘게 안 쓴 IP 키를 지운다(최대 약 15분 보관), 최근 키는 남는다', () => {
+    vi.useFakeTimers();
+    const l = new KeyedRateLimiter({ capacity: 5, refillPerSec: 1 }, Date.now);
+    l.allow('203.0.113.1');
+    vi.advanceTimersByTime(8 * 60_000);
+    l.allow('203.0.113.2');
+    expect(l.size).toBe(2);
+    vi.advanceTimersByTime(5 * 60_000); // 10분 시점 정리는 첫 키가 정확히 10분 미사용이라 아직 남긴다
+    expect(l.size).toBe(2);
+    vi.advanceTimersByTime(2 * 60_000); // 15분 시점 정리: 첫 키 15분 미사용(삭제), 둘째 키 7분(유지)
+    expect(l.size).toBe(1);
+    vi.advanceTimersByTime(15 * 60_000);
+    expect(l.size).toBe(0);
+    l.dispose();
+  });
+
+  it('TC-343b [POL-18,SEC-02] 정리 뒤에도 같은 키는 새 버킷으로 다시 제한되고, 차단 중인 키와 최근 실패 기록은 지우지 않는다', () => {
+    vi.useFakeTimers();
+    const k = new KeyedRateLimiter({ capacity: 1, refillPerSec: 0 }, Date.now);
+    expect([k.allow('a'), k.allow('a')]).toEqual([true, false]);
+    vi.advanceTimersByTime(16 * 60_000);
+    expect(k.size).toBe(0);
+    expect([k.allow('a'), k.allow('a')]).toEqual([true, false]);
+
+    const a = new AttemptLimiter(2, 10 * 60_000, 10 * 60_000, Date.now);
+    a.recordFailure('blocked');
+    a.recordFailure('blocked'); // 차단 시작
+    a.recordFailure('recent'); // 실패 1회(창 안)
+    a.recordFailure('old');
+    vi.advanceTimersByTime(4 * 60_000);
+    expect(a.size).toBe(3);
+    expect(a.isBlocked('blocked')).toBe(true);
+    vi.advanceTimersByTime(7 * 60_000); // 11분 경과: 차단·실패 창 모두 끝남
+    expect(a.size).toBe(0);
+    expect(a.isBlocked('blocked')).toBe(false);
+    k.dispose();
+    a.dispose();
+  });
+
+  it('TC-343c [POL-18] 정리 주기는 unref 타이머이고 dispose하면 멈춘다(프로세스 종료를 막지 않음)', () => {
+    vi.useFakeTimers();
+    const l = new KeyedRateLimiter({ capacity: 1, refillPerSec: 1 }, Date.now);
+    expect(vi.getTimerCount()).toBe(1);
+    l.dispose();
+    expect(vi.getTimerCount()).toBe(0);
+    const off = new KeyedRateLimiter({ capacity: 1, refillPerSec: 1 }, Date.now, 0);
+    expect(vi.getTimerCount()).toBe(0);
+    off.dispose();
   });
 });
 

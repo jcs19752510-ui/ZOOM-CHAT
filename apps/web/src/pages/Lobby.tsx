@@ -4,6 +4,7 @@ import { CopyLink } from '../components/CopyLink';
 import { PageShell } from '../components/PageShell';
 import { Mic, MicOff, TriangleAlert, Video, VideoOff } from '../components/icons';
 import { useAudioLevel } from '../lib/audioLevel';
+import { detectInApp } from '../lib/inApp';
 import { listDevices, type DeviceLists, type LocalMedia, type MediaErrorKind } from '../lib/media';
 import { S } from '../strings';
 
@@ -79,7 +80,7 @@ export function Lobby({ roomId, isHost, needsPassword, initialNickname, media, o
   };
 
   return (
-    <PageShell context="lobby" roomId={roomId}>
+    <PageShell context="lobby" roomId={roomId} forceOpenInApp={!!mediaProblem}>
     <main className="mx-auto flex w-full flex-1 max-w-5xl flex-col justify-center gap-6 px-4 py-6 md:flex-row md:items-center">
       <section className="w-full md:flex-1" aria-label={S.lobby.previewLabel}>
         <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-tile ring-1 ring-line" data-testid="preview">
@@ -112,6 +113,7 @@ export function Lobby({ roomId, isHost, needsPassword, initialNickname, media, o
             <div>
               <p className="font-semibold">{S.state.permission.title}</p>
               <p className="text-muted">{permissionText(mediaProblem)}</p>
+              {detectInApp(navigator.userAgent).inApp ? <p className="mt-1 text-muted">{S.inApp.permissionExtra}</p> : null}
               <button type="button" className="btn-secondary mt-2" onClick={start}>
                 {S.state.permission.retry}
               </button>

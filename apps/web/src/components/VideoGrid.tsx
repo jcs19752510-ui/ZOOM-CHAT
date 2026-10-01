@@ -8,10 +8,11 @@ interface Props {
   state: MeetingState;
   selfStream: MediaStream;
   sinkId?: string;
+  onPlayBlocked?: (el: HTMLVideoElement, blocked: boolean) => void;
 }
 
 /** 1~6명 자동 배치(UX-05), 화면공유 시 공유 화면을 크게 + 참가자 썸네일(UX-06). */
-export function VideoGrid({ state, selfStream, sinkId }: Props) {
+export function VideoGrid({ state, selfStream, sinkId, onPlayBlocked }: Props) {
   const narrow = useMediaQuery('(max-width: 639px)');
   const people = [...state.participants].sort((a, b) => a.joinSeq - b.joinSeq);
   const sharer = people.find((p) => p.screen);
@@ -35,6 +36,7 @@ export function VideoGrid({ state, selfStream, sinkId }: Props) {
         {...(remote ? { peer: remote.state } : {})}
         thumb={thumb}
         {...(sinkId ? { sinkId } : {})}
+        {...(onPlayBlocked ? { onPlayBlocked } : {})}
       />
     );
   };
@@ -51,7 +53,7 @@ export function VideoGrid({ state, selfStream, sinkId }: Props) {
               <p className="text-sm">{S.room.youSharing}</p>
             </div>
           ) : (
-            <VideoTile peerId={sharer.id} name={sharer.nickname} stream={screenStream} micOn camOn screen />
+            <VideoTile peerId={sharer.id} name={sharer.nickname} stream={screenStream} micOn camOn screen {...(onPlayBlocked ? { onPlayBlocked } : {})} />
           )}
         </div>
         <div className="flex shrink-0 gap-2 overflow-auto sm:w-48 sm:flex-col" aria-label={S.people.title}>

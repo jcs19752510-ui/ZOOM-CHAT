@@ -156,6 +156,16 @@ export class LocalMedia {
     return ok;
   }
 
+  /** 플랫폼이 백그라운드에서 끊어 버린(readyState==='ended') 트랙을 비우고 무엇이 사라졌는지 알려 준다(UX-14). */
+  reconcile(): { audioLost: boolean; videoLost: boolean } {
+    const audioLost = this.audio?.readyState === 'ended';
+    const videoLost = this.video?.readyState === 'ended';
+    if (audioLost) this.audio = null;
+    if (videoLost) this.video = null;
+    if (audioLost || videoLost) this.changed();
+    return { audioLost, videoLost };
+  }
+
   /** 미리보기·재생용 스트림(트랙 구성이 바뀔 때마다 새로 만든다) */
   stream(): MediaStream {
     const tracks = [this.audio, this.video].filter((t): t is MediaStreamTrack => !!t);

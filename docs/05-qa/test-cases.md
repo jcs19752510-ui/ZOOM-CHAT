@@ -53,6 +53,18 @@
 | IT-29 | 6명이 오래 통화해도 모든 원격 영상이 계속 흐르고 페이지 오류가 없다 (SOAK_MINUTES 지정 시에만 실행) | NFR-03, NFR-04, NFR-13 | E2E | `e2e/soak.spec.ts` | 자동 |
 | IT-30 | CPU를 4배 느리게 한 저사양 기기 모사에서도 3명 통화가 연결되고 영상이 계속 흐른다 | NFR-02, NFR-13 | E2E | `e2e/soak.spec.ts` | 자동 |
 | IT-31 | ${size.width}px: 랜딩·대기실에 법률 푸터(링크 3개·새 탭·접근 이름·44px·Tab 도달·가로 스크롤 없음)가 있고 회의실에는 없다 | POL-17, POL-19, NFR-10, UX-10 | E2E | `e2e/legalfooter.spec.ts` | 자동 |
+| IT-32 | ${size.width}px: 처리방침·약관·문의 3개 페이지가 열리고 초안 리본·미정 표시·문서 간 이동·가로 스크롤 없음을 만족한다 | POL-17, POL-19, POL-20, NFR-10 | E2E | `e2e/legal.spec.ts` | 자동 |
+| IT-32b | 랜딩 푸터 링크는 새 탭으로 법률 페이지를 열고 원래 탭은 그대로 남는다 | POL-17, POL-19 | E2E | `e2e/legal.spec.ts` | 자동 |
+| IT-33 | 운영자 값이 있으면 mailto 링크·책임자·시행일(2026년 10월 1일)·STUN 호스트가 보이고, https 연락처는 새 탭 + rel noopener noreferrer로 열린다 | POL-19, POL-20, POL-17, SEC-07 | E2E | `e2e/legal.spec.ts` | 자동 |
+| IT-33b | 서버 응답에 javascript:·data: 연락처가 섞여 와도 화면에 링크가 만들어지지 않고 텍스트로만 보인다(방어적 처리) | SEC-07, POL-19 | E2E | `e2e/legal.spec.ts` | 자동 |
+| IT-33c | /api/meta 호출이 실패하면 본문은 그대로 읽히고 슬롯에 안내와 다시 불러오기가 나오며, 재시도하면 복구된다 | POL-17, UX-03 | E2E | `e2e/legal.spec.ts` | 자동 |
+| IT-35 | 자동재생이 거부되면 방 단위 배너가 보이고, 탭하면 재생되며 배너가 사라지고 포커스가 회의 화면으로 간다 | UX-15 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-35b | 거부되지 않으면 배너가 없다(기존 동작 유지) | UX-15 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-35c | 인앱 UA: 랜딩·대기실에 접힌 안내가 보이고 입장을 막지 않으며, 닫으면 닉네임으로 포커스가 가고 일반 UA에는 없다 | UX-13 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-35d | 인앱 UA에서 카메라·마이크 권한이 거부되면 안내가 강제로 펼쳐지고 닫기 버튼이 없다 | UX-13 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-36 | 조용히 죽은 소켓은 화면 복귀 후 5초 안에 재연결 배너(복귀 문구)가 보이고, 복구되면 같은 자리로 돌아온다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-36b | 정상 연결에서 복귀(visibilitychange·pageshow)해도 재연결 배너가 뜨지 않고 통화가 유지된다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
+| IT-36c | 서버가 연결을 끊은 뒤 복귀 이벤트가 겹쳐도 같은 자리로 돌아온다 | UX-14 | E2E | `e2e/mobile-lifecycle.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -194,6 +206,37 @@
 | TC-332 | 사설·루프백·링크로컬·CGNAT·멀티캐스트 IPv4 peer는 403으로 거부된다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
 | TC-333 | IPv4-mapped IPv6(::ffff:*) peer는 어떤 경우에도 성공하지 않는다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
 | TC-334 | 같은 사용자의 동시 할당이 user-quota(12)를 넘으면 거부된다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnLive.test.ts` | 자동 |
+| TC-340 | 운영자 값이 설정되면 연락처·책임자·시행일과 STUN/TURN 호스트명을 돌려준다 | POL-19, POL-20, POL-17 | 서버 | `apps/server/test/meta.test.ts` | 자동 |
+| TC-340b | 값이 없으면 null(미정)이고 TURN이 없으면 turnHosts는 빈 배열이다(가짜 값 없음) | POL-19, POL-20 | 서버 | `apps/server/test/meta.test.ts` | 자동 |
+| TC-340c | 응답은 정해진 필드만 담고(비밀값·포트·쿼리·IP 없음) 60초 캐시, 허용 안 된 Origin은 403, 한도 초과는 429(캐시 헤더 없음) | POL-18, SEC-10, SEC-08 | 서버 | `apps/server/test/meta.test.ts` | 자동 |
+| TC-340d | ICE URI에서 호스트명만 뽑는다(스킴·포트·쿼리·IPv6 대괄호), 해석 불가는 버린다 | POL-17 | 서버 | `apps/server/test/meta.test.ts` | 자동 |
+| TC-341 | 처리방침은 필수 섹션 id를 모두 갖고 모든 문서의 제목·섹션·문단이 비어 있지 않다 | POL-17, SEC-13 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-341b | 슬롯 자리: 처리방침은 STUN/TURN·연락처·책임자·시행일, 문의·신고는 첫 섹션에 연락처, 약관은 연령 문구를 갖는다 | POL-17, POL-19 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-341c | 초안 상태에서는 "법률 자문이 아닌 초안" 고지가 있고, 확인하지 못한 조문 번호·법령 시행일을 단정해 쓰지 않는다 | SEC-13, POL-17 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-341d | 라우팅: /privacy /terms /contact(끝 슬래시 허용)만 문서로 인식한다(대소문자 구분) | UX-01 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-342 | 방 생성·입장·채팅·신호·강퇴·재접속·오류 흐름의 실제 로그에 IP·닉네임·채팅·토큰·비밀번호·SDP가 없고 기대 이벤트 줄은 있다 | POL-18, SEC-10 | 서버 | `apps/server/test/logPrivacy.test.ts` | 자동 |
+| TC-342b | 로거는 민감 키(token·password·sdp·text·nickname)를 [redacted]로 가린다(호출부 실수의 2차 방어선) | POL-18, SEC-10 | 서버 | `apps/server/test/logPrivacy.test.ts` | 자동 |
+| TC-343 | 키 수가 적어도 5분 주기 정리가 10분 넘게 안 쓴 IP 키를 지운다(최대 약 15분 보관), 최근 키는 남는다 | POL-18 | 서버 | `apps/server/test/security.test.ts` | 자동 |
+| TC-343b | 정리 뒤에도 같은 키는 새 버킷으로 다시 제한되고, 차단 중인 키와 최근 실패 기록은 지우지 않는다 | POL-18, SEC-02 | 서버 | `apps/server/test/security.test.ts` | 자동 |
+| TC-343c | 정리 주기는 unref 타이머이고 dispose하면 멈춘다(프로세스 종료를 막지 않음) | POL-18 | 서버 | `apps/server/test/security.test.ts` | 자동 |
+| TC-344 | OPERATOR_CONTACT 이메일은 javascript:·data: 같은 스킴을 숨긴 값을 통과시키지 않는다(R-1, 링크 주입 방지) | POL-19, SEC-07 | 서버 | `apps/server/test/config.test.ts` | 자동 |
+| TC-345 | contactLink: href는 mailto:(엄격한 이메일)와 https:만 만들고 javascript:·data: 등 그 밖의 값은 링크 없이 텍스트가 된다 | SEC-07, POL-19 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-345b | 렌더링 결과(HTML)에 javascript:·data: href가 없고, 외부 https 링크는 새 탭 + rel noopener noreferrer, 이메일은 mailto: | SEC-07, POL-19 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-345c | 책임자·시행일 값은 링크가 되지 않고 마크업은 이스케이프된다 | SEC-07 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-345d | 법률 페이지·푸터 소스에 dangerouslySetInnerHTML이 없고 href를 직접 조립하지 않는다(정적 점검) | SEC-07 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-346 | 값 있음: 연락처·책임자·시행일(YYYY년 M월 D일)·STUN 호스트가 표시된다 | POL-19, POL-20 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-346b | 미정(null): 빈칸·가짜 값 없이 "운영자가 아직 정하지 않았습니다" 등 눈에 띄는 문구, 시행일 형식 오류도 미정 취급 | POL-19, POL-20 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-346c | 로딩은 aria-busy, 실패는 안내 문구와 다시 불러오기 버튼(문서 본문 영향 없음 문구 포함) | POL-17 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-346d | parseDate는 존재하는 날짜만 통과시킨다(윤년·월말) | POL-20 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-346e | parseMeta는 서버 응답의 모양이 다르면 null이다(시스템 경계 검증) | SEC-06 | 웹 | `apps/web/src/legal.test.ts` | 자동 |
+| TC-360 | 카카오톡·인스타그램·페이스북·라인·네이버·다음·일반 웹뷰 UA는 앱 안 브라우저로 판정한다 | UX-13 | 웹 | `apps/web/src/lib/inApp.test.ts` | 자동 |
+| TC-360b | 일반 Chrome·Edge·Firefox·Safari·삼성 인터넷·iOS Chrome/Firefox/Edge UA와 빈 문자열은 오탐하지 않는다 | UX-13 | 웹 | `apps/web/src/lib/inApp.test.ts` | 자동 |
+| TC-361 | 라이브가 아니면 아무것도 하지 않는다 | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
+| TC-361b | 이미 끊김을 알면 즉시 재연결한다(소켓이 없으면 connectNow, 붙어 있으면 resumeNow) | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
+| TC-361c | 연결된 것처럼 보이면 프로브를 먼저 하고, 소켓이 이미 죽었으면 바로 끊고 다시 연결한다 | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
+| TC-361d | 프로브 결과별 후속 동작: 시간 초과는 kickSocket, 자리에 안 묶였으면 resumeNow, 정상이면 ICE 문제가 있을 때만 restartIce | UX-14 | 웹 | `apps/web/src/state/foreground.test.ts` | 자동 |
+| TC-362 | ended 트랙만 비우고 잃은 종류를 알려 주며, 살아 있는 트랙은 유지한다 | UX-14 | 웹 | `apps/web/src/lib/media.test.ts` | 자동 |
+| TC-362b | 잃은 트랙이 없으면 알림도 상태 변경도 없다 | UX-14 | 웹 | `apps/web/src/lib/media.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

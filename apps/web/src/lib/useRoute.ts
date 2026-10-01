@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** 라우트는 `/`(랜딩)와 `/r/:roomId` 두 개뿐이라 history API로 직접 처리한다. */
+/** 라우트는 `/`(랜딩), `/r/:roomId`, 법률 문서 3종(`/privacy` `/terms` `/contact`)뿐이라 history API로 직접 처리한다. */
 export function useRoute(): { path: string; navigate: (to: string, replace?: boolean) => void } {
   const [path, setPath] = useState(() => window.location.pathname);
   useEffect(() => {

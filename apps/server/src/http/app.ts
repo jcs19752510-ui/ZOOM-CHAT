@@ -11,6 +11,7 @@ import { hashPassword } from '../security/password';
 import { KeyedRateLimiter } from '../security/rateLimit';
 import { signToken } from '../security/token';
 import { clientIp } from './clientIp';
+import { buildMeta } from './meta';
 
 const HOST_CLAIM_TTL_MS = 60 * 60_000;
 
@@ -83,6 +84,17 @@ export function createApp({ config, rooms, logger, now = Date.now }: AppDeps): e
   const started = Date.now();
   app.get('/healthz', (_req, res) => {
     res.json({ status: 'ok', uptimeSec: Math.floor((Date.now() - started) / 1000) });
+  });
+
+  // 공개 정보만(연락처·시행일·STUN/TURN 호스트명). 비밀값·IP는 싣지 않는다(EVT-04).
+  if (config.NODE_ENV === 'production' && !config.OPERATOR_CONTACT) logger.warn('OPERATOR_CONTACT 미설정: 공개 전에 운영자 연락처를 정해야 합니다');
+  app.get('/api/meta', (req, res) => {
+    if (!statusLimiter.allow(clientIp(req, config.TRUST_PROXY))) {
+      res.status(429).json({ code: 'RATE_LIMITED' });
+      return;
+    }
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.json(buildMeta(config));
   });
 
   app.post('/api/rooms', async (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { PublicParticipant } from '@meetlite/shared';
 import { ChatPanel } from '../components/ChatPanel';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -13,6 +13,7 @@ import { Lock, Settings } from '../components/icons';
 import type { LocalMedia } from '../lib/media';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import type { EndReason, MeetingController } from '../state/MeetingController';
+import { useForeground } from '../state/useForeground';
 import { useMeeting } from '../state/useMeeting';
 import { S } from '../strings';
 
@@ -37,6 +38,33 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
   const [confirm, setConfirm] = useState<Confirm>(null);
   const [devicesOpen, setDevicesOpen] = useState(false);
   const [sinkId, setSinkId] = useState('');
+  const [blockedCount, setBlockedCount] = useState(0);
+  const blockedRef = useRef(new Set<HTMLVideoElement>());
+  const stageRef = useRef<HTMLElement>(null);
+  useForeground(controller);
+
+  const onPlayBlocked = useCallback((el: HTMLVideoElement, blocked: boolean): void => {
+    const set = blockedRef.current;
+    if (set.has(el) === blocked) return;
+    if (blocked) set.add(el);
+    else set.delete(el);
+    setBlockedCount(set.size);
+  }, []);
+
+  // 탭 한 번(사용자 제스처) 안에서 막힌 모든 요소의 play()를 호출해야 하므로 await 전에 모두 시작한다.
+  const resumePlayback = (): void => {
+    const els = [...blockedRef.current];
+    void Promise.all(els.map((el) => el.play().then(() => blockedRef.current.delete(el), () => undefined))).then(() => {
+      const left = blockedRef.current.size;
+      setBlockedCount(left);
+      if (left === 0) {
+        controller.toast(S.autoplay.started);
+        stageRef.current?.focus();
+      } else {
+        controller.toast(S.autoplay.stillBlocked, 'warn');
+      }
+    });
+  };
 
   useEffect(() => {
     if (state.status === 'ended' && state.endReason) onEnded(state.endReason);
@@ -92,7 +120,7 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
 
       {state.status === 'reconnecting' ? (
         <p role="status" className="bg-warning px-3 py-1.5 text-center text-sm font-semibold text-bg">
-          {S.room.reconnectingBanner}
+          {state.reconnectCause === 'foreground' ? S.background.returned : S.room.reconnectingBanner}
         </p>
       ) : state.quality === 'poor' ? (
         <p role="status" className="bg-warning px-3 py-1.5 text-center text-sm font-semibold text-bg" data-testid="poor-banner">
@@ -100,9 +128,18 @@ export function Room({ controller, media, roomId, onEnded }: Props) {
         </p>
       ) : null}
 
+      {blockedCount > 0 ? (
+        <div role="status" className="flex flex-wrap items-center justify-between gap-2 bg-raised px-3 py-2 text-sm text-text" data-testid="autoplay-banner">
+          <p>{S.autoplay.banner}</p>
+          <button type="button" className="btn-primary" data-testid="autoplay-button" onClick={resumePlayback}>
+            {S.autoplay.button}
+          </button>
+        </div>
+      ) : null}
+
       <div className="relative flex min-h-0 flex-1 gap-2 p-2">
-        <main className="relative min-h-0 min-w-0 flex-1" aria-label={S.room.stage}>
-          <VideoGrid state={state} selfStream={selfStream} {...(sinkId ? { sinkId } : {})} />
+        <main ref={stageRef} tabIndex={-1} className="relative min-h-0 min-w-0 flex-1 focus:outline-none" aria-label={S.room.stage}>
+          <VideoGrid state={state} selfStream={selfStream} onPlayBlocked={onPlayBlocked} {...(sinkId ? { sinkId } : {})} />
           {alone ? (
             <div className="absolute inset-x-0 bottom-3 mx-auto w-[calc(100%-1.5rem)] max-w-sm rounded-md border border-line bg-surface/95 p-3 text-center shadow-pop" data-testid="alone">
               <p className="font-semibold">{S.room.alone}</p>

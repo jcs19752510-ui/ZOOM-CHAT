@@ -2,6 +2,198 @@
  * 모든 화면 문구(UX-01). 컴포넌트는 문구를 직접 쓰지 않고 이 파일의 키만 참조한다.
  * 오류 문구는 원인과 해결 방법을 함께 안내한다(UX-03).
  */
+export type LegalSlot = 'contact' | 'officer' | 'effectiveDate' | 'networkHosts';
+export type LegalStatus = 'draft' | 'reviewed';
+export interface LegalSection {
+  id: string;
+  heading: string;
+  paragraphs: readonly string[];
+  /** 문단 뒤에 `GET /api/meta` 값이 들어갈 자리 */
+  slots?: readonly LegalSlot[];
+}
+export interface LegalDoc {
+  title: string;
+  sections: readonly LegalSection[];
+}
+
+/**
+ * 법률 문서 본문(POL-17·19·20). 법률 검토 전 초안이며 법률 자문이 아니다. 시스템 설계(03 §6.4)의 사실만 쓰고
+ * 조문 번호·시행일 같은 확인하지 못한 내용은 "확인 필요"로 둔다. 운영자 정보는 슬롯으로만 채운다.
+ */
+const privacyDoc: LegalDoc = {
+  title: '개인정보 처리방침',
+  sections: [
+    {
+      id: 'collected',
+      heading: '수집하는 정보',
+      paragraphs: [
+        'MeetLite는 회원가입이 없으며 이름·이메일·전화번호를 받지 않습니다.',
+        '회의에 입장할 때 입력하는 닉네임, 접속 과정에서 서버가 알게 되는 IP 주소, 방 비밀번호(설정한 경우)를 처리합니다. IP 주소는 개인정보에 해당할 수 있다고 보고 보수적으로 다룹니다(해당 여부는 확인 필요).',
+        '영상·음성·화면은 참가자의 브라우저끼리 직접 전송되며 서버에 저장하지 않습니다. 채팅은 같은 방 참가자에게 전달만 하고 서버에 저장하지 않습니다.',
+      ],
+    },
+    {
+      id: 'purpose',
+      heading: '이용 목적',
+      paragraphs: ['회의 방 운영(참가자 목록 표시), 방 정원·잠금·강퇴 같은 접속 통제, 서비스 남용 방지(요청 횟수 제한)에만 사용합니다.'],
+    },
+    {
+      id: 'retention',
+      heading: '보유 기간',
+      paragraphs: [
+        '닉네임과 방 정보는 서버 메모리에만 있으며 방이 삭제되면 함께 사라집니다. 마지막 참가자가 나가면 방은 바로 정리되고, 빈 방은 최대 10분 안에 정리됩니다.',
+        '강퇴된 참가자의 재입장을 막기 위해 IP를 일방향 해시로 바꾼 값을 방이 있는 동안만 메모리에 둡니다. 비밀번호는 암호화된 해시로만 보관합니다.',
+        '요청 횟수 제한을 위해 IP 주소 원문을 서버 메모리에 일시 보관합니다. 마지막 요청 뒤 10분이 지난 항목을 5분마다 지우므로 최대 약 15분 뒤에는 사라집니다. 디스크에 저장하지 않습니다.',
+        '서버 로그에는 IP 주소·닉네임·채팅·토큰을 남기지 않습니다. 로그 보관 기간은 서비스 배포 후 정해지며 확인 필요입니다.',
+      ],
+    },
+    {
+      id: 'destruction',
+      heading: '파기',
+      paragraphs: ['메모리의 정보는 방이 삭제되거나 서버가 종료될 때 자동으로 사라집니다. 로그는 로테이션 기준에 따라 삭제됩니다.'],
+    },
+    {
+      id: 'thirdParty',
+      heading: '제3자 제공·위탁',
+      paragraphs: [
+        '서버는 개인정보를 제3자에게 전송하지 않습니다.',
+        '다만 영상 연결을 위해 브라우저가 아래 STUN/TURN 서버에 접속하면서 이용자의 IP 주소가 해당 서버로 직접 전달됩니다. 이것이 법적으로 제3자 제공이나 위탁에 해당하는지는 확인 필요입니다. 같은 방 참가자에게도 연결 과정에서 IP 주소가 보일 수 있습니다(WebRTC의 특성).',
+      ],
+      slots: ['networkHosts'],
+    },
+    {
+      id: 'overseas',
+      heading: '국외 이전',
+      paragraphs: [
+        '위 STUN/TURN 서버가 해외 사업자의 서버이거나 해외에 있으면 IP 주소가 국외로 전달될 수 있습니다. 해당 여부와 서비스 서버의 소재지는 확인 필요입니다.',
+      ],
+    },
+    {
+      id: 'contact',
+      heading: '문의 및 개인정보 책임자',
+      paragraphs: ['개인정보와 관련한 문의는 아래 연락처로 보내 주세요. 책임자 지정 필요 여부는 법률 검토 후 결정합니다.'],
+      slots: ['contact', 'officer'],
+    },
+    {
+      id: 'rights',
+      heading: '이용자의 권리',
+      paragraphs: [
+        '서버는 개인을 식별해 계정 단위로 보관하는 정보가 없습니다. 위에서 설명한 메모리 정보는 방이 끝나면 사라집니다.',
+        '신고·문의 내용은 운영자가 확인하기 위해 보관할 수 있으며, 이 정보의 열람·삭제 요청 방법은 확인 필요입니다.',
+      ],
+    },
+    {
+      id: 'breach',
+      heading: '유출 사고 대응',
+      paragraphs: ['정보 유출이 의심되면 운영자가 정한 절차에 따라 원인을 확인하고 필요한 안내를 합니다. 구체적인 통지 의무와 기한은 확인 필요입니다.'],
+    },
+    {
+      id: 'effectiveDate',
+      heading: '시행일과 변경',
+      paragraphs: ['이 방침이 바뀌면 서비스 화면에 알립니다.'],
+      slots: ['effectiveDate'],
+    },
+  ],
+};
+
+const termsDoc: LegalDoc = {
+  title: '이용약관',
+  sections: [
+    {
+      id: 'service',
+      heading: '서비스',
+      paragraphs: ['MeetLite는 링크로 입장하는 웹 화상회의 도구입니다. 회원가입이 없고, 방마다 정해진 인원까지 함께 이용할 수 있습니다.'],
+    },
+    {
+      id: 'age',
+      heading: '이용 연령',
+      paragraphs: ['이 서비스는 만 14세 이상 이용자를 대상으로 하는 것을 전제로 한 초안입니다. 연령 기준과 확인 방식은 법률 검토 후 확정하며 확인 필요입니다.'],
+    },
+    {
+      id: 'responsibility',
+      heading: '이용자의 책임',
+      paragraphs: ['다른 사람의 권리를 침해하거나 불법·유해한 내용을 전송하지 않습니다. 회의 링크와 방 비밀번호를 누구와 공유할지는 호스트가 책임지고 관리합니다.'],
+    },
+    {
+      id: 'host',
+      heading: '호스트의 권한',
+      paragraphs: ['호스트는 방 잠금, 참가자 내보내기, 전체 음소거를 할 수 있습니다. 내보내진 참가자는 같은 방에 다시 입장할 수 없습니다.'],
+    },
+    {
+      id: 'prohibited',
+      heading: '금지 행위',
+      paragraphs: ['서비스 방해(과도한 요청 등), 무단 접근 시도, 자동화된 대량 이용, 다른 사람의 동의 없는 녹화나 유출을 금지합니다.'],
+    },
+    {
+      id: 'recording',
+      heading: '녹화',
+      paragraphs: ['MeetLite는 녹화 기능을 제공하지 않습니다. 이용자가 따로 녹화할 때는 관련 법령과 상대방의 동의를 지켜야 합니다.'],
+    },
+    {
+      id: 'reportAndClose',
+      heading: '신고와 회의 종료',
+      paragraphs: [
+        '문제가 있는 회의는 문의·신고 페이지의 연락처로 알릴 수 있습니다. 운영자는 필요하다고 판단하면 해당 회의를 종료할 수 있습니다.',
+        '유해 콘텐츠 신고 처리에 관한 법적 의무와 처리 기한은 확인 필요입니다.',
+      ],
+    },
+    {
+      id: 'interruption',
+      heading: '서비스 중단',
+      paragraphs: [
+        '점검이나 장애로 회의가 끝날 수 있습니다. 서버를 다시 시작하면 진행 중인 방은 모두 사라지며, 이때는 새 회의를 만들어야 합니다.',
+        '서비스 중단으로 생긴 손해에 대한 운영자의 책임 범위는 운영자가 정하며 법률 검토 후 확정합니다(확인 필요).',
+      ],
+    },
+    {
+      id: 'disclaimer',
+      heading: '면책',
+      paragraphs: ['이용자끼리 나눈 대화·영상의 내용은 서버에 저장되지 않으며 그 내용에 대해 운영자는 책임지지 않습니다. 면책 범위의 효력은 확인 필요입니다.'],
+    },
+    {
+      id: 'changes',
+      heading: '약관 변경과 문의',
+      paragraphs: ['약관이 바뀌면 서비스 화면에 알립니다. 문의는 아래 연락처로 보내 주세요.'],
+      slots: ['contact', 'effectiveDate'],
+    },
+  ],
+};
+
+const contactDoc: LegalDoc = {
+  title: '문의·신고',
+  sections: [
+    {
+      id: 'channel',
+      heading: '신고·문의 연락처',
+      paragraphs: ['문의나 신고는 아래 연락처로 보내 주세요.'],
+      slots: ['contact'],
+    },
+    {
+      id: 'whatToSend',
+      heading: '신고할 때 알려 주세요',
+      paragraphs: [
+        '회의 링크(주소), 문제가 있었던 일시, 어떤 문제였는지를 적어 주세요.',
+        '방 비밀번호는 보내지 마세요. 링크만 있으면 어느 방인지 알 수 있습니다.',
+      ],
+    },
+    {
+      id: 'inMeeting',
+      heading: '회의 중이라면',
+      paragraphs: ['호스트에게 참가자 내보내기나 방 잠그기를 요청할 수 있고, [나가기]를 눌러 바로 회의에서 나갈 수도 있습니다.'],
+    },
+    {
+      id: 'operatorAction',
+      heading: '운영자가 할 수 있는 조치',
+      paragraphs: ['운영자는 신고된 회의를 종료할 수 있습니다. 접수한 모든 건에 개별 회신을 약속하지는 않습니다.'],
+    },
+    {
+      id: 'handling',
+      heading: '처리',
+      paragraphs: ['접수한 내용을 확인한 뒤 필요한 조치를 합니다. 처리 기한은 운영자가 정해 안내합니다(미정).'],
+    },
+  ],
+};
+
 export const S = {
   app: { name: 'MeetLite', tagline: '설치 없이, 링크 하나로 바로 만나는 화상회의' },
   landing: {
@@ -223,6 +415,12 @@ export const S = {
     platformNote: '휴대폰은 화면을 끄거나 다른 앱으로 이동하면 통화를 멈출 수 있습니다. 회의 중에는 이 브라우저를 켜 둔 채로 유지해 주세요.',
   },
   legal: {
+    status: 'draft' as LegalStatus,
+    notAdvice: '이 문서는 법률 자문이 아닌 초안입니다. 적용되는 법령의 확인과 전문가 검토가 필요합니다.',
+    dateFormat: (y: number, m: number, d: number): string => `${y}년 ${m}월 ${d}일`,
+    privacy: privacyDoc,
+    terms: termsDoc,
+    contact: contactDoc,
     home: 'MeetLite 처음으로',
     navLabel: '문서 목록',
     tocLabel: '이 문서의 목차',

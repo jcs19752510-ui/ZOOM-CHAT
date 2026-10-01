@@ -118,4 +118,12 @@ describe('환경변수 검증 (NFR-08)', () => {
     const c = loadConfig(baseEnv);
     for (const k of ['OPERATOR_CONTACT', 'PRIVACY_OFFICER', 'LEGAL_EFFECTIVE_DATE', 'ADMIN_PORT', 'ADMIN_TOKEN'] as const) expect(c[k], k).toBeUndefined();
   });
+  it('TC-344 [POL-19,SEC-07] OPERATOR_CONTACT 이메일은 javascript:·data: 같은 스킴을 숨긴 값을 통과시키지 않는다(R-1, 링크 주입 방지)', () => {
+    for (const bad of ['javascript:alert(1)@x.com', 'JaVaScRiPt:alert(1)@x.com', 'data:text/html,<script>@x.com', 'vbscript:msgbox@x.com', 'mailto:ops@example.com', 'ops(1)@example.com', 'ops"x@example.com', 'ops<x>@example.com', 'a:b@example.com', 'ops@exa_mple.com', 'ops@example..com', 'ops@.example.com', 'javascript:alert(1)']) {
+      expect(() => loadConfig({ ...baseEnv, OPERATOR_CONTACT: bad }), JSON.stringify(bad)).toThrow(/OPERATOR_CONTACT/);
+    }
+    for (const ok of ['ops@example.com', 'first.last+tag@sub.example.co.kr', 'a_b%c-d@x-y.io']) {
+      expect(loadConfig({ ...baseEnv, OPERATOR_CONTACT: ok }).OPERATOR_CONTACT, ok).toBe(ok);
+    }
+  });
 });

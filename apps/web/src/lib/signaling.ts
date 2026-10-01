@@ -52,9 +52,9 @@ export class SignalingClient {
   }
 
   /** 이벤트를 보내고 ack를 기다린다. 응답이 없으면 NETWORK 오류로 돌려준다. */
-  request<K extends keyof ClientToServerEvents>(event: K, payload: PayloadOf<K>): Promise<AckOf<K> | { ok: false; code: 'NETWORK'; message: string }> {
+  request<K extends keyof ClientToServerEvents>(event: K, payload: PayloadOf<K>, timeoutMs: number = REQUEST_TIMEOUT_MS): Promise<AckOf<K> | { ok: false; code: 'NETWORK'; message: string }> {
     return new Promise((resolve) => {
-      const timer = setTimeout(() => resolve({ ok: false, code: 'NETWORK', message: 'timeout' }), REQUEST_TIMEOUT_MS);
+      const timer = setTimeout(() => resolve({ ok: false, code: 'NETWORK', message: 'timeout' }), timeoutMs);
       const emit = this.socket.emit.bind(this.socket) as (e: string, p: unknown, cb: (r: unknown) => void) => void;
       emit(event, payload, (res) => {
         clearTimeout(timer);

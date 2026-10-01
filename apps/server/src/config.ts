@@ -7,10 +7,12 @@ const csv = z
 // .env에 `KEY=`처럼 빈 값으로 둔 선택 항목은 "없음"으로 본다
 const optional = <T extends z.ZodTypeAny>(schema: T) => z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), schema.optional());
 
+// 이메일은 ASCII 로컬 파트만 허용한다. 느슨한 `[^\s@]+@`는 `javascript:alert(1)@x.com` 같은 값을 통과시켜 링크로 만들 때 위험하다(R-1).
+const EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/;
 const operatorContact = z
   .string()
   .max(200)
-  .refine((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) || /^https:\/\/[^\s/]+\S*$/.test(s), '이메일 주소 또는 https:// 주소여야 합니다');
+  .refine((s) => EMAIL.test(s) || /^https:\/\/[^\s/]+\S*$/.test(s), '이메일 주소 또는 https:// 주소여야 합니다');
 
 const EnvSchema = z
   .object({

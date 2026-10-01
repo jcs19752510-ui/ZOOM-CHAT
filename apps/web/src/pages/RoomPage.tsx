@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RoomStatusResponse } from '@meetlite/shared';
 import { CopyLink } from '../components/CopyLink';
+import { InAppNotice } from '../components/InAppNotice';
 import { StateScreen } from '../components/StateScreen';
 import { Lock, TriangleAlert, Users, VideoOff } from '../components/icons';
 import { getRoomStatus } from '../lib/api';
@@ -143,11 +144,14 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
       return <StateScreen title={S.state.loading.title} body={S.state.loading.body} />;
     case 'unsupported':
       return (
-        <StateScreen alert icon={<VideoOff size={36} />} title={S.state.unsupported.title} body={S.state.unsupported.body}>
-          <div className="w-full max-w-xs">
-            <CopyLink roomId={roomId} />
-          </div>
-        </StateScreen>
+        <div className="flex min-h-full flex-col">
+          <InAppNotice context="unsupported" roomId={roomId} forceOpen />
+          <StateScreen alert icon={<VideoOff size={36} />} title={S.state.unsupported.title} body={S.state.unsupported.body}>
+            <div className="w-full max-w-xs">
+              <CopyLink roomId={roomId} />
+            </div>
+          </StateScreen>
+        </div>
       );
     case 'error':
       return (
@@ -198,7 +202,7 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
       );
     case 'expired':
       return (
-        <StateScreen alert icon={<TriangleAlert size={36} />} title={S.state.expired.title} body={S.state.expired.body}>
+        <StateScreen alert icon={<TriangleAlert size={36} />} title={S.state.expired.title} body={`${S.state.expired.body} ${S.background.platformNote}`}>
           <button type="button" className="btn-primary" onClick={retry}>
             {S.state.expired.rejoin}
           </button>

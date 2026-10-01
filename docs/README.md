@@ -84,6 +84,7 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 | [05-qa/compatibility-matrix.md](05-qa/compatibility-matrix.md) | 브라우저·기기 호환성(실기기 미검증) | 개발자 | 승인 | 0.1 |
 | [05-qa/uat.md](05-qa/uat.md) | 사용자 인수 테스트(**미수행**) | 기획자 | 양식 | 0.1 |
 | [05-qa/manual-checks.md](05-qa/manual-checks.md) | 수동·명령 점검 결과 | 개발자·보안 | 승인 | 0.1 |
+| [05-qa/internal-test-guide.md](05-qa/internal-test-guide.md) | 내부 테스트 실행·기록 절차 | 내부 테스터·개발자 | 초안 | 0.1 |
 | [05-qa/release-checklist.md](05-qa/release-checklist.md) | 출시 Go/No-Go | 기획자·개발자 | 승인 | 0.1 |
 | [05-qa/defects.md](05-qa/defects.md) | 결함 대장(D-01~15 수정됨) | 개발자 | 승인 | 0.1 |
 | 05-qa/test-reports/ | [phase-1](05-qa/test-reports/phase-1.md) · [2](05-qa/test-reports/phase-2.md) · [3](05-qa/test-reports/phase-3.md) · [4](05-qa/test-reports/phase-4.md) · [5](05-qa/test-reports/phase-5.md) · [6](05-qa/test-reports/phase-6.md) · [7](05-qa/test-reports/phase-7.md) | 전원 | 승인 | 0.1 |

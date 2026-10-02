@@ -95,6 +95,7 @@ export class MeetingController {
   private qualityTimer: ReturnType<typeof setInterval> | undefined;
   private reconnectTimer: ReturnType<typeof setInterval> | undefined;
   private resumeRetryTimer: ReturnType<typeof setTimeout> | undefined;
+  private mediaSyncTimer: ReturnType<typeof setTimeout> | undefined;
   private poorCount = 0;
   private leaving = false;
   private selfIdFromJoin = '';
@@ -378,7 +379,12 @@ export class MeetingController {
 
   // ---------------------------------------------------------------- 로컬 미디어
   private pushMediaState(): void {
-    void this.signaling?.request('media:state', { v: 1, audio: this.state.micOn, video: this.state.camOn });
+    void this.signaling?.request('media:state', { v: 1, audio: this.state.micOn, video: this.state.camOn }).then((res) => {
+      // 속도 제한에 걸리면 서버가 마지막 상태를 모르게 되므로, 잠시 뒤 그때의 최신 상태로 다시 알린다(DEF-I-02).
+      if (res.ok || res.code !== 'RATE_LIMITED' || this.leaving || this.state.status === 'ended') return;
+      clearTimeout(this.mediaSyncTimer);
+      this.mediaSyncTimer = setTimeout(() => this.pushMediaState(), 1000);
+    });
   }
 
   toggleMic(): void {
@@ -500,6 +506,7 @@ export class MeetingController {
     clearInterval(this.qualityTimer);
     clearInterval(this.reconnectTimer);
     clearTimeout(this.resumeRetryTimer);
+    clearTimeout(this.mediaSyncTimer);
     this.screenTrack?.stop();
     this.screenTrack = null;
     this.transport?.close();

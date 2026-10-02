@@ -101,6 +101,34 @@
 | IT-58b | 360px에서 회의실 머리글의 링크 복사 버튼과 채팅 보내기 버튼도 가로 44px 이상이어야 한다 (DEF-W02·W03 수정) | NFR-10, UX-10 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-59 | 대기실: 닉네임 검증 오류는 입장하지 않고 안내하며, 미리보기 준비 중에는 입장 버튼이 꺼져 있고, 비밀번호 칸은 비밀번호 방의 참가자에게만 보인다 | FR-03, FR-04, FR-05, UX-03 | E2E | `e2e/webRetro.spec.ts` | 자동 |
 | IT-59b | 혼자 있을 때만 "아직 아무도 없어요" 빈 상태 카드와 링크 복사가 보이고, 참가자가 들어오면 사라진다 | FR-02, UX-02, FR-13 | E2E | `e2e/webRetro.spec.ts` | 자동 |
+| IT-60 | 방 생성 → 상태 조회 → 호스트 입장 → 참가자 입장이 실제 서버와 맞물리고 컨트롤러가 보낸 모든 요청이 서버 스키마를 통과한다 | FR-01, FR-03, FR-06, FR-23, NFR-12 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-61 | 신호(offer·ICE)는 서버를 거쳐 상대 transport에 도착하고 from은 서버가 부여한 참가자 ID다 | FR-07, SEC-04 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-62 | 서버가 발급한 ICE 서버(STUN + TURN 임시 자격증명)가 그대로 transport.start에 전달되고 자격증명이 HMAC 규칙과 일치한다 | SEC-09, FR-07 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-63 | 입장 거부·실패 코드 8종(WRONG_PASSWORD 포함)이 실제 서버에서 만들어지고 컨트롤러는 idle로 돌아와 같은 코드를 호출자에게 돌려준다 | FR-02, FR-05, FR-06, FR-07, FR-14, FR-15, FR-23, POL-06, SEC-02 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-64 | 정원이 찬 방의 입장은 ROOM_FULL이고 방 상태 조회의 full 플래그와 일치한다 | FR-07, POL-01 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-65 | 채팅은 서버가 채운 발신자 정보와 함께 모두에게 가고(HTML은 문자열 그대로) 길이·보이지 않는 글자·속도 제한 오류 코드가 컨트롤러에 그대로 전달된다 | FR-11, SEC-07, POL-07 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-66 | 잠금·전체 음소거·강퇴·호스트 승계가 서버 판정을 거쳐 양쪽 컨트롤러 상태·알림에 반영되고 비호스트의 요청은 호스트 전용 안내로 끝난다 | FR-14, FR-15, FR-16, FR-17, SEC-05 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-67 | 강퇴: 대상 컨트롤러는 kicked로 끝나고 재연결을 시도하지 않으며 남은 참가자 목록·transport에서 정리되고 같은 사람은 KICKED로 재입장이 막힌다 | FR-15, POL-06, SEC-05 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-68 | 서버가 소켓을 끊으면 컨트롤러가 재연결 상태를 거쳐 토큰으로 같은 자리(selfId·호스트)를 복구하고 ICE를 재시작한다 | FR-19, FR-20, NFR-03, SEC-03 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-69 | 재연결 실패 사유별 종료: 서버 재시작(방 없음)은 restarted, 서명 비밀이 바뀌면 expired, 서버가 이미 자리를 정리했으면 expired | FR-20, FR-21, NFR-06, SEC-03 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-70 | 경로 보고(direct·relay)는 서버 스키마를 통과해 식별자 없는 로그 한 줄로만 남는다 | NFR-15, KPI-05, POL-09 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-71 | /api/meta 실제 응답이 웹 parseMeta·getMeta를 통과하고(설정 있음/없음 모두) 호스트명만 담긴다 | POL-19, POL-17, POL-20, SEC-07 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-72 | 운영자 방 폐쇄: 모든 컨트롤러가 operator로 끝나고 재연결·재시도를 하지 않으며 방 상태 조회는 exists=false | POL-19, EVT-34, FR-21 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-74 | 입장 응답 코드 전부가 화면 전환 또는 입력 화면 문구로 연결되고, 매핑 없는 코드는 일반 오류 문구(원인 불명 안내)로 떨어진다 | UX-02, UX-03, FR-06, FR-07, FR-23 | E2E | `apps/web/src/integration/joinErrorMapping.test.ts` | 자동 |
+| IT-75 | 대기실에서 올바른 닉네임과 너무 짧은 비밀번호를 보내면 서버 스키마가 INVALID_PAYLOAD로 거부하는데 화면은 닉네임 안내가 아니라 비밀번호 원인을 알려야 한다 (DEF-I-01 재현) | UX-03, SEC-02, FR-05 | E2E | `apps/web/src/integration/joinErrorMapping.test.ts` | 자동 |
+| IT-76 | 컨트롤러가 내는 종료 사유 6종이 서로 다른 의도의 종료 화면으로 가고 restarted·operator는 본문이 다르다 | FR-21, FR-22, POL-19, UX-02 | E2E | `apps/web/src/integration/joinErrorMapping.test.ts` | 자동 |
+| IT-77 | errorText: 서버가 호스트 동작에서 돌려줄 수 있는 코드는 모두 비어 있지 않은 문구가 되고 FORBIDDEN·RATE_LIMITED는 전용 문구다 | FR-14, FR-15, FR-16, UX-03 | E2E | `apps/web/src/integration/joinErrorMapping.test.ts` | 자동 |
+| IT-78 | 입력 maxLength·검증식·안내 문구의 숫자가 LIMITS와 같다 | FR-03, FR-05, FR-11, POL-04, POL-07 | E2E | `apps/web/src/integration/limitsContract.test.ts` | 자동 |
+| IT-79 | 웹이 쓰는 정규화 함수는 서버가 쓰는 것과 같은 shared 구현이다(경계값에서 서버·웹 판정이 갈릴 수 없다) | POL-04, POL-07 | E2E | `apps/web/src/integration/limitsContract.test.ts` | 자동 |
+| IT-80 | 클라이언트→서버 이벤트 12종: shared 타입 = 서버 핸들러 = 서버 속도 제한 표 = 웹이 실제로 보내는 이벤트 | NFR-12, SEC-06 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-81 | 서버→클라이언트 이벤트 10종: shared 타입 = 서버가 내보내는 이벤트 = 웹이 듣는 이벤트 | NFR-12, SEC-04 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-82 | 서버·웹 소스가 쓰는 오류 코드 문자열은 모두 shared ERROR_CODES(또는 HTTP 전용 코드·NETWORK)에 있고 서버 message 표와 코드 목록이 일치한다 | NFR-12, SEC-08 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-83 | DOC-I-01: api-spec.md(단일 기준)에 오류 코드 19종·metrics:path·room:closed·/api/meta·admin 이벤트가 모두 적혀 있다 (11단계 문서화 대기, DEC-020) | NFR-12, SEC-08 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-84 | config 스키마의 환경변수는 .env.example에 모두(주석 포함) 있고 .env.example에 스키마에 없는 죽은 키가 없으며, 사본을 그대로 쓰면 개발 모드로 기동 설정이 통과한다 | NFR-08, SEC-10, POL-19, POL-20 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-85 | 기본 포트(3001)가 config 기본값·.env.example·Dockerfile(EXPOSE·HEALTHCHECK)·dev 프록시·runbook에서 같고, TURN 포트·릴레이 대역이 .env.example·compose 안내·coturn 설정에서 같다 | NFR-07, NFR-08, SEC-09 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-86 | 기본 정원(6명) mesh의 릴레이 할당 수(참가자당 5개, ICE 재시작 중첩 시 2배)가 coturn user-quota 안에 들어간다 | NFR-04, NFR-13, SEC-09 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-87 | 10종 이벤트를 실제로 모두 발생시켜 모든 페이로드가 v:1이고, 발신자 필드(from·by·id)는 서버가 부여한 참가자 ID이며, 이벤트 목록이 shared와 같다 | NFR-12, SEC-04, FR-13, FR-14, FR-15, FR-16, FR-17, POL-19 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-88 | 마이크를 짧은 시간에 연타해 서버 media:state 속도 제한(10회, 초당 5)에 걸려도 결국 컨트롤러 표시와 서버·다른 참가자가 보는 상태가 같아져야 한다 (DEF-I-02 재현) | FR-08, FR-13, SEC-06 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -197,18 +225,18 @@
 | TC-210 | 인원이 늘수록 비트레이트 상한이 낮아지고 해상도가 줄어든다 | NFR-13 | 웹 | `apps/web/src/media/MeshTransport.test.ts` | 자동 |
 | TC-211 | 6명 mesh의 총 업링크는 약 2Mbps 이하(5개 스트림 × 400kbps)다 | NFR-13, RISK-01 | 웹 | `apps/web/src/media/MeshTransport.test.ts` | 자동 |
 | TC-212 | 색상 코드는 design/tokens.ts 밖에 하드코딩하지 않는다 | UX-08 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
-| TC-212b | tokens.ts의 색 값이 design-system.md 색 표와 양방향으로 일치한다(독립 명세 대조) | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-212c | 반경·그림자·폰트 순서·터치 크기가 design-system.md 값과 일치한다 | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-212b | tokens.ts color values equal the design-system.md color table, both directions (no undocumented, missing or changed token) | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-212c | radius, shadow, font stack order and touch size equal the design-system.md values | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-213 | 화면에 보이는 한글 문구는 strings.ts에만 있다(컴포넌트·페이지에 직접 쓰지 않는다) | UX-01 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
 | TC-214 | 본문·보조 글자는 모든 배경에서 4.5:1 이상이다 | NFR-09, UX-08 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
 | TC-215 | 버튼(기본·호버) 위 흰 글자는 4.5:1 이상이다 | NFR-09, UX-08 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
 | TC-216 | 경고 배지(어두운 글자/경고색)와 아이콘·링크 색은 어두운 면 위에서 4.5:1 이상이다 | NFR-09, UX-08 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
-| TC-216b | 실제 클래스 사용(같은 묶음의 text-/bg-, hover·@apply 포함)에서 글자/배경 대비가 4.5:1 이상이다(오버레이·성공은 3:1) | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-216c | 배경 지정 없이 쓰인 글자색 토큰이 네 어두운 면 모두에서 대비를 통과한다 | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-216d | 배경 없는 text-white/text-bg 사용이 상태 화면·로비·법률 등 일반 페이지에 없다 | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-216b | every text-<token> that shares a class group with a bg-<token> (incl. hover: variants and @apply) has >=4.5:1 (>=3 for non-text success/speaking) | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-216c | every text color token used without an explicit bg in the same group passes against all four dark surfaces (4.5:1; 3:1 for success) | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-216d | a text-white (or text-bg) class group without any bg-<token> is limited to image/overlay contexts and never appears in StateScreen/Lobby/Landing/Legal pages | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-217 | 비텍스트 요소(포커스 링, 말하는 사람 강조, 성공 아이콘)는 3:1 이상이다 | NFR-09 | 웹 | `apps/web/src/design/design.test.ts` | 자동 |
-| TC-217b | 색 토큰 형식·유일성·면 밝기 순서(bg<surface<tile<raised<line)와 필수 토큰 존재 | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-217c | design-system.md 대비표 19행이 실제 토큰으로 재현된다(문서-코드 드리프트 방지) | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-217b | token palette sanity: every color token is #RRGGBB or rgba(), unique values, and surfaces are strictly ordered by luminance bg < surface < tile < raised < line | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-217c | every contrast row in design-system.md section 2 is reproduced by the real token colors within 0.1 (the doc cannot drift from the code), and every color used there is a token or white | NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-230 | 한글, 영문, 숫자, 공백, _-. 를 허용한다 | FR-03, POL-04, SEC-06 | 공유 | `packages/shared/src/text.test.ts` | 자동 |
 | TC-231 | 빈 값, 21자, 기호, 이모지, 제어/방향 문자를 거부한다 | FR-03, POL-04, SEC-06 | 공유 | `packages/shared/src/text.test.ts` | 자동 |
 | TC-232 | 20자는 허용하고 원문이 너무 길면 거부한다 | POL-04, SEC-06 | 공유 | `packages/shared/src/text.test.ts` | 자동 |
@@ -241,9 +269,9 @@
 | TC-305c | autoplay·background는 04 §3.5와 일치하고 mediaLost는 3종 입력별 문구를 만든다 | UX-01, UX-14, UX-15 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
 | TC-305d | state.gone 운영자 종료 문구와 기존 키 보존, legal UI 크롬 키가 04 §3.5와 일치한다 | UX-01, UX-03 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
 | TC-305e | 새 문구 키의 모든 문자열 값은 비어 있지 않다(빈 문구 방지) | UX-01 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
-| TC-305f | 사용자에게 보이는 숫자(채팅 500·닉네임 1~20·비밀번호 4~32)가 공유 상수와 일치한다 | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-305g | 이름을 받는 문구 함수가 이름을 정확히 한 번 넣고(적대적 문자열 포함) 개수·날짜 형식이 맞다 | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-305h | S의 모든 사용자 문구가 한글을 포함한다(브랜드명 예외) | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-305f | numbers shown to users match the shared limits (chat 500, nickname 1~20, password 4~32) | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-305g | name-taking message functions include the name verbatim (also hostile text, which stays a plain string for React to escape) and exactly once | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-305h | every user-facing string in S contains Hangul (UI is Korean-only), except the brand name and pure number/symbol formats | UX-01 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-306 | 푸터 링크 경로는 문구가 아닌 코드에 있고 LegalFooter는 링크 3개를 /privacy /terms /contact 순서로, _blank+noopener noreferrer로 연다(소스 정적 점검) | UX-01, POL-17 | 웹 | `apps/web/src/strings.test.ts` | 자동 |
 | TC-330 | 필수 보안 옵션이 있고 고정 자격증명·무인증이 없다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
 | TC-330b | denied-peer-ip가 사설·루프백·링크로컬·CGNAT·멀티캐스트 IPv4/IPv6 대역을 모두 포함한다 | SEC-12, SEC-09 | 서버 | `apps/server/test/coturnConfig.test.ts` | 자동 |
@@ -654,46 +682,46 @@
 | TC-479y | 카메라 트랙을 바꾸면 현재 인원 기준 송신 상한을 다시 적용한다 | NFR-13 | 웹 | `apps/web/src/media/unit07Transport.test.ts` | 자동 |
 | TC-479z | ICE 서버 변환은 값이 없는 username·credential 키를 만들지 않는다(빈 문자열 포함, 엄격 비교) | SEC-09 | 웹 | `apps/web/src/media/unit07Transport.test.ts` | 자동 |
 | TC-480 | 오류 계열은 role=alert, 중립 계열은 role=status이고 h1 제목·본문·버튼 영역이 있다 | UX-02, UX-03, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-480b | 상태 화면 틀: main 전체 높이·가운데, 카드 w-full max-w-md·surface/line/shadow 토큰 | UX-02, NFR-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-480c | 버튼 영역은 flex-wrap으로 줄바꿈되고 children이 거짓값이면 렌더하지 않는다 | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-480d | 아이콘 래퍼는 aria-hidden·muted이고 아이콘이 없으면 없다, h1은 정확히 하나 | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-480e | 제목·본문은 HTML이 아닌 이스케이프된 텍스트이고 alert=false는 status다 | UX-02, SEC-07 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-480b | main fills the viewport and centers the card; the card is full-width capped (max-w-md) so 360px screens do not overflow; uses surface/line/shadow tokens | UX-02, NFR-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-480c | the action area wraps (flex-wrap) and centers so two buttons fit a 360px card, and renders only when children are truthy (null/undefined/false/0/empty string render nothing) | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-480d | icon wrapper is aria-hidden and muted, absent when no icon; the body paragraph is the muted token; exactly one h1 | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-480e | title and body are rendered as escaped text, never as HTML; explicit alert=false is a status region | UX-02, SEC-07 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-481 | 상태 화면 문구가 7종 이상 정의돼 있고 모두 제목·본문이 비어 있지 않다 | UX-02 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-481b | RoomPage의 StateScreen 11종 변형이 S.state 키만 쓴다(리터럴 없음) | UX-02 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-481c | 오류 계열 화면은 alert, 중립 계열(loading/waitHost/left)은 alert가 아니다 | UX-02, UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-481d | loading 외 모든 상태 화면이 다음 행동(버튼·링크 복사)을 제공한다 | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-481e | 모든 S.state 그룹을 실제 UI가 참조하고 도달 가능한 상태 화면이 7종 이상이다 | UX-02 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-481f | S.state 문구에 자리표시자·공백 오류가 없고 본문은 문장부호로 끝난다 | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-481b | RoomPage renders 10 StateScreen variants whose title/body come only from S.state (no literals), covering loading/unsupported/error/gone(2)/waitHost/full/locked/kicked/expired/left | UX-02 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-481c | error-class screens announce as alert (unsupported/error/gone/full/locked/kicked/expired); neutral screens (loading/waitHost/left) do not | UX-02, UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-481d | every screen except loading offers at least one next-action button (retry / home / new room) with a strings label | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-481e | every S.state group is referenced by real UI code (a screen text that nothing renders would silently reduce the 7+ state screens) | UX-02 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-481f | every state-screen body/title string in S.state has no raw placeholder, double space or trailing whitespace, and bodies end with a sentence mark | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-482 | 오류·거부 문구는 원인과 해결 방법(다음 행동)을 함께 담는다 — 행동 어휘가 없는 본문은 실패 | UX-03 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-482b | 실패·차단을 알리는 모든 S 문구(손 목록이 아닌 전수 스캔)가 해결 행동을 함께 담는다 | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-482b | every S string that reports a failure/blocked state (any group, not just a hand list) also contains an action word; the scan finds at least 20 such strings | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-483 | errorText는 모든 서버 오류 코드에 사용자 문구를 주고 코드·내부 정보를 노출하지 않는다 | UX-03, SEC-06 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-483b | errorText 매핑이 코드별로 정확하고 그 외(프로토타입 키 포함)는 actionFailed이며 chat.invalid 회귀를 막는다 | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-483b | errorText maps each server code exactly: RATE_LIMITED->lobby.rateLimited, FORBIDDEN->room.forbidden, INVALID_PAYLOAD->lobby.invalidNickname, everything else (incl. prototype keys) -> room.actionFailed | UX-03 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-484 | index.css에 prefers-reduced-motion 규칙이 있고 animation·transition 시간을 사실상 0으로 만든다 | UX-11 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-484b | 컴파일된 .btn/.input/.min-h-touch/.min-w-touch가 44px로 풀린다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484c | 컴파일된 버튼 색(기본·위험·보조·호버)이 토큰에서 온다 | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484d | 컴파일된 :focus-visible이 토큰 색 2px 실선이고 어디서도 outline을 제거하지 않는다 | UX-10, NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484e | 컴파일된 reduced-motion @media가 모든 요소의 animation·transition·smooth scroll을 사실상 0으로 만든다 | UX-11 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484f | 컴파일 CSS의 모든 색이 토큰 값이고 body가 bg/text 토큰·한글 폰트 스택·keep-all을 쓴다 | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484g | tsx에서 쓰는 bg-/text-/border-/shadow-/rounded-/min-h-/min-w- 클래스가 모두 컴파일 규칙을 갖는다(오타·content 글롭 누락 방지) | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-484h | tsx가 outline-none/outline-0으로 포커스 링을 없애지 않고(tabIndex -1 컨테이너 제외) 양수 tabIndex가 없다 | UX-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484b | compiled .btn/.btn-*/.input/.min-h-touch/.min-w-touch resolve to 44px (tailwind config + index.css, not just source strings) | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484c | compiled button colors come from tokens: primary=accent, danger=danger, secondary=raised, hover variants=hover tokens | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484d | compiled :focus-visible is a solid >=2px outline in the focus token color, and nothing in the CSS removes outlines | UX-10, NFR-09 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484e | the compiled prefers-reduced-motion block is a real @media at-rule that zeroes animation, transition and smooth scroll for every element | UX-11 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484f | every color in compiled CSS is a token value (no stray literal colors) and body uses the bg/text tokens | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484g | every bg-/text-/border-/ring-/outline-/from-/to-/shadow-/rounded-/min-h-/min-w- class used in a tsx string has a compiled rule using the tailwind config own content globs (typo like bg-surfce, or a purged tsx glob, would silently render nothing) | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-484h | no tsx removes the focus outline (outline-none/outline-0) except a tabIndex={-1} programmatic focus container, and no positive tabIndex exists | UX-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-485 | 터치 최소 크기 토큰은 44px이고 .btn·.input이 이를 쓰며, 포커스 링은 outline 2px 이상이다 | NFR-10, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-485b | 모든 button/select/input/textarea가 .btn*/.input 또는 min-h-touch를 쓴다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-485c | 컨트롤이 h-N/max-h-N 등으로 높이 44px 아래로 줄지 않는다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-485d | 44px보다 좁은 컨트롤은 문서화된 데스크톱 전용 장치 메뉴 칩(28px) 둘뿐이다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-485e | 작은 체크박스는 min-h-touch 라벨 줄 안에 있을 때만 허용된다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-485f | 칩을 제외한 aria-label 아이콘 버튼은 폭 44px 이상이다 | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-485b | every <button>/<select>/<input>/<textarea> uses .btn*/.input or min-h-touch (44px height); the scan finds the known controls | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-485c | no control shrinks its height under 44px with h-N/max-h-N/min-h-[Npx<44] utilities | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-485d | the only sub-44px-wide controls are the two device-menu chevrons documented as the desktop-only chip exception (accessibility-spec 2.5.8): hidden below sm, min-h-touch, 28px wide | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-485e | a checkbox is allowed to be small only when it sits inside a <label> row that has min-h-touch (the row is the touch target) | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-485f | every aria-label icon button other than the documented chevrons is at least 44px wide (min-w-touch or .btn*) | NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-486 | index.html의 theme-color는 design 토큰 bg와 같고 lang=ko, viewport-fit=cover가 있다(G-7) | UX-08 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-486b | viewport가 확대를 막지 않는다(user-scalable=no·maximum-scale 없음) | UX-10, NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-486c | index.html에 인라인 script/style이 없고 #root 1개·모듈 진입·no-referrer·제목이 있다(CSP 호환) | SEC-07 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-486d | html 제목과 앱 이름 문구가 일치한다 | UX-01 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-486e | public/ 매니페스트의 색이 있다면 bg 토큰과 같다 | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
-| TC-486f | vite 개발 프록시(/api·/healthz·/socket.io ws)가 서버 기본 포트를 가리키고 소스맵 없음·es2022 | SEC-07 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-486b | viewport allows pinch zoom (no user-scalable=no / maximum-scale<5) and declares width=device-width | UX-10, NFR-10 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-486c | index.html has no inline script/style, one #root, a module entry script, a no-referrer policy, and a non-empty title (strict CSP-compatible) | SEC-07 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-486d | the html title and the app name string agree | UX-01 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-486e | public/ has no stray color definitions to bypass the token file (manifest theme_color, if any, equals the bg token) | UX-08 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
+| TC-486f | vite dev config proxies /api, /healthz and /socket.io(ws) to the server default port, with no source maps and es2022 target | SEC-07 | 웹 | `apps/web/src/design/designAudit.test.ts` | 자동 |
 | TC-487 | 앱 소스(테스트 제외)에 dangerouslySetInnerHTML·innerHTML·eval·document.write가 없다 | SEC-07 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
 | TC-488 | target="_blank"인 모든 링크는 같은 태그에 rel="noopener noreferrer"를 가진다 | SEC-07 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
 | TC-489 | 모든 아이콘 전용 버튼 소스는 aria-label을 갖는다(텍스트 없는 button 태그 정적 점검) | UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
 | TC-489b | 접근성 속성·placeholder·title의 글자는 리터럴이 아니라 strings 키에서만 온다(영문 리터럴 포함, 정적 점검) | UX-01, UX-10 | 웹 | `apps/web/src/components/stateScreen.test.ts` | 자동 |
-| TC-489c | lucide-react 진입점은 icons.tsx 하나이고 25개 아이콘이 모두 서로 다른 SVG로 렌더된다 | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
-| TC-489d | UI의 모든 아이콘이 aria-hidden이거나 strings aria-label이거나 StateScreen icon으로만 쓰인다 | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-489c | icons.tsx is the single lucide-react entry point (no other source imports lucide-react) and exports 25 renderable SVG icons | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
+| TC-489d | every icon element used in UI code is decorative (aria-hidden="true"), labelled through a strings aria-label, or passed through StateScreen icon (whose wrapper hides it) | UX-10 | 웹 | `apps/web/src/components/stateScreenGap.test.ts` | 자동 |
 | TC-490 | ci.yml에 YAML 구문 사고(탭·따옴표 없는 스칼라의 ": "·따옴표 불균형)가 없고 점검기는 과거 사고 줄을 실제로 잡는다 | SEC-11, NFR-11 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
 | TC-491 | ci.yml: 검증 단계(lint·typecheck·test·check:docs·audit)가 npm ci 뒤에 있고 e2e·coturn job은 verify에 의존하며 coturn은 REQUIRE_COTURN으로 건너뜀을 막는다 | SEC-11, NFR-08 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |
 | TC-492 | Dockerfile: 멀티 스테이지·고정 베이스·비루트·HEALTHCHECK·운영 의존성만·비밀값 미포함이고 점검기는 변이를 실제로 잡는다 | NFR-07, NFR-08, SEC-10 | 서버 | `apps/server/test/infraGuard.test.ts` | 자동 |

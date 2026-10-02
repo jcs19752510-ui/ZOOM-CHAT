@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { RoomStatusResponse } from '@meetlite/shared';
+import { LIMITS, type RoomStatusResponse } from '@meetlite/shared';
 import { CopyLink } from '../components/CopyLink';
 import { InAppNotice } from '../components/InAppNotice';
 import { StateScreen } from '../components/StateScreen';
@@ -118,7 +118,8 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
       case 'TOO_MANY_ATTEMPTS':
         return S.lobby.tooManyAttempts;
       case 'INVALID_PAYLOAD':
-        return S.lobby.invalidNickname;
+        // 서버는 어느 필드가 틀렸는지 알려 주지 않으므로, 비밀번호가 규칙을 벗어났을 때만 비밀번호 안내를 낸다.
+        return password && (password.length < LIMITS.passwordMin || password.length > LIMITS.passwordMax) ? S.lobby.invalidPassword : S.lobby.invalidNickname;
       case 'RATE_LIMITED':
         return S.lobby.rateLimited;
       default:

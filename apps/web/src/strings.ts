@@ -234,6 +234,7 @@ export const S = {
     wrongPassword: '비밀번호가 맞지 않습니다. 호스트에게 비밀번호를 다시 확인해 주세요.',
     tooManyAttempts: '비밀번호를 여러 번 틀려 잠시 입장할 수 없습니다. 10분 뒤에 다시 시도해 주세요.',
     invalidNickname: '닉네임은 1~20자이고 한글·영문·숫자·공백·_ - . 만 쓸 수 있습니다.',
+    invalidPassword: '비밀번호는 4~32자여야 합니다. 호스트에게 받은 비밀번호를 다시 확인해 주세요.',
     rateLimited: '요청이 너무 많습니다. 잠시 뒤에 다시 시도해 주세요.',
     hostBadge: '호스트로 입장합니다',
     permissionNote: '카메라와 마이크 권한을 허용하면 미리보기가 나타납니다.',

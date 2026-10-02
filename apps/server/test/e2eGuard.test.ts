@@ -46,7 +46,7 @@ describe('unit-14 E2E 소스 위생 (소급 6단계)', () => {
       if (/\b(test|describe|it)\.only\(/.test(t)) problems.push(`${f} .only 금지`);
       if (/\.fixme\(|test\.describe\.skip\(/.test(t)) problems.push(`${f} fixme/describe.skip 금지`);
       const skips = [...t.matchAll(/test\.skip\(([^;]*)\);/g)];
-      if (skips.length && !['turn.spec.ts', 'soak.spec.ts'].includes(f)) problems.push(`${f} 허용 목록 밖의 test.skip`);
+      if (skips.length && !['turn.spec.ts', 'soak.spec.ts', 'system.spec.ts'].includes(f)) problems.push(`${f} 허용 목록 밖의 test.skip`);
       for (const s of skips) if (!/,\s*'[^']{8,}'/.test(s[1] as string)) problems.push(`${f} test.skip에 사유 문자열 없음`);
       for (const s of t.matchAll(/test\.fail\(([^;]*)\);/g)) if (!/,\s*'[^']{8,}'/.test(s[1] as string)) problems.push(`${f} test.fail에 사유 문자열 없음`);
     }

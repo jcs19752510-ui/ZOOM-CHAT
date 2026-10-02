@@ -25,7 +25,7 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
     setBusy(true);
     const res = await createRoom(usePassword ? password : undefined);
     setBusy(false);
-    if (!res.ok) return setError(res.code === 'RATE_LIMITED' ? S.lobby.rateLimited : S.state.error.body);
+    if (!res.ok) return setError(res.code === 'RATE_LIMITED' ? S.lobby.rateLimited : res.code === 'SERVER_BUSY' ? S.lobby.serverBusy : S.state.error.body);
     saveNickname(nick);
     saveHostClaim(res.data.roomId, res.data.hostClaim);
     navigate(`/r/${res.data.roomId}`);

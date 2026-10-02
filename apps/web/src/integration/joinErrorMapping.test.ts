@@ -77,6 +77,7 @@ const JOIN_EXPECT: Record<string, { screen?: () => string; message?: () => strin
   TOO_MANY_ATTEMPTS: { message: () => S.lobby.tooManyAttempts },
   INVALID_PAYLOAD: { message: () => S.lobby.invalidNickname },
   RATE_LIMITED: { message: () => S.lobby.rateLimited },
+  SERVER_BUSY: { message: () => S.lobby.serverBusy }, // DEF-S-02 수정
 };
 
 describe('F1 오류 코드 → 대기실 결과 전수 (ERROR_CODES 19종 + NETWORK)', () => {
@@ -98,7 +99,7 @@ describe('F1 오류 코드 → 대기실 결과 전수 (ERROR_CODES 19종 + NETW
       m.unmount();
     }
     // 일반 문구로 떨어지는 코드는 "입장 시도에서 사용자 조작으로 만들어지지 않는" 코드뿐이어야 한다
-    expect([...generic].sort()).toEqual(['ALREADY_JOINED', 'CANNOT_KICK_SELF', 'FORBIDDEN', 'INTERNAL', 'NETWORK', 'NOT_JOINED', 'PARTICIPANT_GONE', 'SCREEN_BUSY', 'SERVER_BUSY', 'TARGET_NOT_FOUND', 'TOKEN_INVALID']);
+    expect([...generic].sort()).toEqual(['ALREADY_JOINED', 'CANNOT_KICK_SELF', 'FORBIDDEN', 'INTERNAL', 'NETWORK', 'NOT_JOINED', 'PARTICIPANT_GONE', 'SCREEN_BUSY', 'TARGET_NOT_FOUND', 'TOKEN_INVALID']);
     expect(S.state.error.body.length).toBeGreaterThan(10);
   });
 

@@ -122,11 +122,12 @@ export class MeetingController {
     this.signaling = signaling;
     try {
       await signaling.connect();
-    } catch {
+    } catch (e) {
       signaling.close();
       this.signaling = null;
       this.set({ status: 'idle' });
-      return { ok: false, code: 'NETWORK' };
+      // 서버가 IP당 연결 상한으로 거부하면 사용자 인터넷 문제가 아니므로 구분해 안내한다(DEF-S-02).
+      return { ok: false, code: e instanceof Error && e.message === 'too many connections' ? 'SERVER_BUSY' : 'NETWORK' };
     }
     const res = await signaling.request('room:join', {
       v: 1,

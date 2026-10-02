@@ -129,6 +129,21 @@
 | IT-86 | 기본 정원(6명) mesh의 릴레이 할당 수(참가자당 5개, ICE 재시작 중첩 시 2배)가 coturn user-quota 안에 들어간다 | NFR-04, NFR-13, SEC-09 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-87 | 10종 이벤트를 실제로 모두 발생시켜 모든 페이로드가 v:1이고, 발신자 필드(from·by·id)는 서버가 부여한 참가자 ID이며, 이벤트 목록이 shared와 같다 | NFR-12, SEC-04, FR-13, FR-14, FR-15, FR-16, FR-17, POL-19 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-88 | 마이크를 짧은 시간에 연타해 서버 media:state 속도 제한(10회, 초당 5)에 걸려도 결국 컨트롤러 표시와 서버·다른 참가자가 보는 상태가 같아져야 한다 (DEF-I-02 재현) | FR-08, FR-13, SEC-06 | E2E | `apps/web/src/integration/clientServerWire.test.ts` | 자동 |
+| IT-90 | 전체 여정: 링크→3조작 입장→서로 영상→채팅→화면공유→호스트 도구→재연결→호스트 승계→전원 퇴장→방 삭제 (기본 한도, 콘솔·CSP 오류 0) | FR-01, FR-02, FR-03, FR-04, FR-07, FR-08, FR-11, FR-12, FR-13, FR-14, FR-15, FR-16, FR-17, FR-20, FR-22, NFR-01, NFR-07, SEC-01, POL-05 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-91 | 성능 스모크(운영 프로세스, 기본 한도): 첫 영상까지 8회, 6명 전원 mesh 완성 시간, 서버 RSS·CPU | NFR-02, NFR-04, NFR-13, NFR-08, KPI-03 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-92 | 서버 상한 동시 도달: 방 수 상한·IP당 연결 상한에서 서버는 정상, 기존 통화는 유지, 해제되면 다시 가능 | NFR-04, POL-15, SEC-06, UX-03 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-92b | 서버 방 수 상한으로 방 만들기가 거부되면 "인터넷 연결"이 아닌 서버가 붐빈다는 원인으로 안내해야 한다 (결함 재현: DEF-S-02) | UX-03, POL-15 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-92c | IP당 동시 연결 상한으로 입장이 거부되면 "인터넷 연결"이 아닌 원인(이 네트워크의 연결이 너무 많음 등)으로 안내해야 한다 (결함 재현: DEF-S-02) | UX-03, POL-15, SEC-06 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-93 | 운영 프로세스 SIGTERM(graceful) → 참가자는 재연결 중을 거쳐 "서비스 재시작" 안내 → 새 프로세스에서 새 회의가 바로 된다 | NFR-06, NFR-08, FR-21 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-94 | 운영 프로세스 보안 헤더·교차 Origin 거부, 실제 통화 뒤 로그에 토큰·채팅·닉네임·SDP·IP가 없다 | NFR-08, SEC-10, SEC-08, SEC-03, POL-09 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-95 | 엣지: 호스트가 끊겨 유예가 지나면 승계되고 돌아온 원 호스트는 만료 안내, 빈 방 만료, 호스트 입장 전 방은 TTL 뒤 사라진다 | FR-17, FR-18, FR-20, FR-22, POL-02, POL-05, POL-13 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-96 | 지표 계측 현황: 입장 성공(participant joined)과 연결 경로(direct/relay) 로그는 있다 | KPI-01, KPI-05, NFR-15, POL-09 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-97 | 입장이 거부되면 거부 사유가 로그 이벤트로 남아 입장 성공률(성공÷시도)을 계산할 수 있어야 한다 (결함 재현: DEF-S-01) | KPI-01 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-98 | 재접속 결과(성공/유예 초과)가 로그 이벤트로 남아 재연결 성공률을 계산할 수 있어야 한다 (결함 재현: DEF-S-01) | KPI-04, FR-20, NFR-03 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-99 | 같은 네트워크(공인 IP)의 참가자를 내보낸 뒤에도 호스트·다른 참가자는 같은 링크로 다시 입장할 수 있어야 한다 (결함 재현: DEF-S-03) | FR-15, POL-06, FR-17 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-100 | TURN 릴레이로만 연결된 통화 중 서버가 SIGTERM으로 재시작되면 재시작 안내를 보고, 같은 TURN 비밀로 새 회의도 릴레이로 연결된다(경로 로그는 relay만) | SEC-09, NFR-15, NFR-06, FR-07, FR-21 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-101 | TURN이 설정된 일반(릴레이 강제 아님) 3명 통화에서 직접 연결이 성공해도 TURN 할당이 몇 개 열리는지 센다 — total-quota 산정 가정(참가자 N(N-1)개) 검증 | NFR-04, SEC-09, NFR-15 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-102 | 운영 프로세스: 화면공유·채팅·잠금이 진행 중인 방을 운영자가 닫으면 모두 종료 안내, 재연결·재입장 없음, admin 포트는 루프백에서만 열리고 로그에 토큰이 없다 | POL-19, SEC-05, SEC-10, FR-12, FR-11 | E2E | `e2e/system.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |

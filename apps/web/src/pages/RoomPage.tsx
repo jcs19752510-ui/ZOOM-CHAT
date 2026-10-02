@@ -122,6 +122,8 @@ export function RoomPage({ roomId, navigate }: { roomId: string; navigate: (to: 
         return password && (password.length < LIMITS.passwordMin || password.length > LIMITS.passwordMax) ? S.lobby.invalidPassword : S.lobby.invalidNickname;
       case 'RATE_LIMITED':
         return S.lobby.rateLimited;
+      case 'SERVER_BUSY':
+        return S.lobby.serverBusy;
       default:
         return S.state.error.body;
     }

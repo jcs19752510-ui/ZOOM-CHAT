@@ -4,7 +4,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| 버전 | 0.1 |
+| 버전 | 0.2 |
 | 작성일 | 2026-10-01 |
 | 상태 | 최신 유지 대상 (문서가 추가·변경될 때 같은 커밋에서 갱신) |
 | 주도 | ① 기획자(PM) |
@@ -13,6 +13,7 @@
 | 버전 | 날짜 | 내용 |
 |---|---|---|
 | 0.1 | 2026-10-01 | 최초 작성, 전체 문서 등록 |
+| 0.2 | 2026-10-02 | 11단계: 관리자 매뉴얼(`06-ops/admin-manual.md`)과 하네스 11단계 산출물 등록, runbook·user-guide·api-spec·infra-deploy·security·privacy·release-checklist 개정 버전 반영 |
 
 
 ## 읽는 순서
@@ -55,8 +56,8 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 | 문서 | 용도 | 주도 | 상태 | 버전 |
 |---|---|---|---|---|
 | [03-engineering/trd.md](03-engineering/trd.md) | 구성·시퀀스·상태 모델·성능·한계 | 아키텍트 | 승인 | 0.1 |
-| [03-engineering/api-spec.md](03-engineering/api-spec.md) | REST·소켓 이벤트(EVT) 명세 | 개발자 | 승인 | 0.1 |
-| [03-engineering/infra-deploy.md](03-engineering/infra-deploy.md) | 배포 구성·후보 비교(**대상 미결**) | 아키텍트 | 승인 | 0.1 |
+| [03-engineering/api-spec.md](03-engineering/api-spec.md) | REST·소켓·admin 이벤트(EVT) 명세, 인증·오류 코드 19종·속도 제한·버전 정책(API 문서) | 개발자 | 초안(0.2 검토 대기) | 0.2 |
+| [03-engineering/infra-deploy.md](03-engineering/infra-deploy.md) | 배포 구성·후보 비교·10단계 실측 사실(**대상 미결**) | 아키텍트 | 승인 | 0.2 |
 | [03-engineering/observability.md](03-engineering/observability.md) | 로그·지표·알람 | 개발자 | 승인 | 0.1 |
 | [03-engineering/dev-guide.md](03-engineering/dev-guide.md) | 개발 환경·규칙·의존성(사후 보고) | 개발자 | 승인 | 0.1 |
 | [03-engineering/plan.md](03-engineering/plan.md) | Phase 진행과 남은 일 | 아키텍트 | 승인 | 0.1 |
@@ -66,9 +67,9 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 ### D. 보안·개인정보 (`04-security/`)
 | 문서 | 용도 | 주도 | 상태 | 버전 |
 |---|---|---|---|---|
-| [04-security/security.md](04-security/security.md) | 위협 모델·대응·남은 위험 | 보안 | 승인 | 0.1 |
+| [04-security/security.md](04-security/security.md) | 위협 모델·대응·남은 위험 | 보안 | 승인 | 0.2 |
 | [04-security/security-checklist.md](04-security/security-checklist.md) | 출시 전 보안 점검표(증거 포함) | 보안 | 승인 | 0.1 |
-| [04-security/privacy.md](04-security/privacy.md) | 데이터 처리·흐름·제3자 | 보안 | 승인 | 0.1 |
+| [04-security/privacy.md](04-security/privacy.md) | 데이터 처리·흐름·제3자 | 보안 | 승인 | 0.2 |
 | [04-security/incident-response.md](04-security/incident-response.md) | 사고 대응 | 보안 | 승인 | 0.1 |
 | [04-security/legal-drafts/privacy-policy-draft.md](04-security/legal-drafts/privacy-policy-draft.md) | 처리방침 초안(법률 검토 전) | 보안 | 초안 | 0.1 |
 | [04-security/legal-drafts/terms-draft.md](04-security/legal-drafts/terms-draft.md) | 이용약관 초안(법률 검토 전) | 보안·기획 | 초안 | 0.1 |
@@ -88,20 +89,21 @@ FR(기능) · NFR(비기능) · UX · SEC(보안) · POL(정책) · SCR(화면) 
 | [05-qa/internal-test-guide.md](05-qa/internal-test-guide.md) | 내부 테스트 실행·기록 절차 | 내부 테스터·개발자 | 초안 | 0.1 |
 | [05-qa/phone-test-guide.md](05-qa/phone-test-guide.md) | 스마트폰 2대 시험 안내(HTTPS 터널) | 운영자 | 초안 | 0.1 |
 | [05-qa/test-reports/internal-test-20261001.md](05-qa/test-reports/internal-test-20261001.md) | 내부 테스트 수행 결과(클라우드 자동화 범위) | 승인자·개발자 | 초안 | 0.1 |
-| [05-qa/release-checklist.md](05-qa/release-checklist.md) | 출시 Go/No-Go | 기획자·개발자 | 승인 | 0.1 |
+| [05-qa/release-checklist.md](05-qa/release-checklist.md) | 출시 Go/No-Go | 기획자·개발자 | 승인 | 0.2 |
 | [05-qa/defects.md](05-qa/defects.md) | 결함 대장(D-01~15 수정됨) | 개발자 | 승인 | 0.1 |
 | 05-qa/test-reports/ | [phase-1](05-qa/test-reports/phase-1.md) · [2](05-qa/test-reports/phase-2.md) · [3](05-qa/test-reports/phase-3.md) · [4](05-qa/test-reports/phase-4.md) · [5](05-qa/test-reports/phase-5.md) · [6](05-qa/test-reports/phase-6.md) · [7](05-qa/test-reports/phase-7.md) | 전원 | 승인 | 0.1 |
 
 ### F. 운영/출시 (`06-ops/`)
 | 문서 | 용도 | 주도 | 상태 | 버전 |
 |---|---|---|---|---|
-| [06-ops/runbook.md](06-ops/runbook.md) | 운영·배포·장애 대응 | 개발자·보안 | 승인 | 0.1 |
-| [06-ops/user-guide.md](06-ops/user-guide.md) | 이용 가이드·FAQ | 기획자 | 승인 | 0.1 |
+| [06-ops/runbook.md](06-ops/runbook.md) | 운영 인수인계: 개요·환경변수·배포/롤백(검증된 순서)·보관 대상·모니터링·장애·보안 인지사항·제약 | 개발자·보안 | 초안(0.3 검토 대기) | 0.3 |
+| [06-ops/admin-manual.md](06-ops/admin-manual.md) | 관리자(운영자) 매뉴얼: 환경변수 표·방 폐쇄·로그·한계·미구현 | 개발자·보안 | 초안 | 0.1 |
+| [06-ops/user-guide.md](06-ops/user-guide.md) | 사용자 매뉴얼: 처음 쓰는 이용자용 따라 하기·FAQ·접근성 | 기획자 | 초안(0.2 검토 대기) | 0.2 |
 | [06-ops/CHANGELOG.md](06-ops/CHANGELOG.md) | 변경 기록·릴리스 노트 양식 | 개발자 | 승인 | 0.1 |
 
 ### 기타
 | 문서 | 처리 |
 |---|---|
 | [traceability.md](traceability.md) | 요구 ↔ 정책·화면·플로우·EVT·테스트 매트릭스(자동 생성) |
-| [harness/](harness/) | HANESS_AUTO 복사본 가이드(**수정 금지**). 단 `harness/decisions.md`는 이 프로젝트의 결정 로그(DEC-001~005) |
+| [harness/](harness/) | HANESS_AUTO 복사본 가이드(`HANESS-README.md`·`USAGE-GUIDE.md`는 **수정 금지**). 단 `harness/decisions.md`는 이 프로젝트의 결정 로그(DEC-001~028), `harness/0x-*.md`~`11-documentation.md`는 이 프로젝트의 단계별 산출물이다. 11단계: [harness/11-documentation.md](harness/11-documentation.md)(산출 문서 목록·증거·미확인) |
 | 구 체계 초안 | `docs/plan.md`, `docs/security.md`는 새 문서로 대체되어 삭제했다 |

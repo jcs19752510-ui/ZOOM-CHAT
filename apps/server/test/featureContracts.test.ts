@@ -80,7 +80,7 @@ describe('F1 오류 코드 목록: shared ↔ 서버 ↔ 웹', () => {
     expect(stray).toEqual([]);
   });
 
-  it.fails('IT-83 [NFR-12,SEC-08] DOC-I-01: api-spec.md(단일 기준)에 오류 코드 19종·metrics:path·room:closed·/api/meta·admin 이벤트가 모두 적혀 있다 (11단계 문서화 대기, DEC-020)', () => {
+  it('IT-83 [NFR-12,SEC-08] DOC-I-01: api-spec.md(단일 기준)에 오류 코드 19종·metrics:path·room:closed·/api/meta·admin 이벤트가 모두 적혀 있다 (11단계에서 정정, DEC-020)', () => {
     const api = read('docs/03-engineering/api-spec.md');
     const missing = [...ERROR_CODES, ...c2s, ...s2c, '/api/meta', '/admin/rooms'].filter((n) => !api.includes(n));
     expect(missing).toEqual([]);

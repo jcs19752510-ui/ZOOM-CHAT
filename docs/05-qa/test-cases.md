@@ -123,7 +123,7 @@
 | IT-80 | 클라이언트→서버 이벤트 12종: shared 타입 = 서버 핸들러 = 서버 속도 제한 표 = 웹이 실제로 보내는 이벤트 | NFR-12, SEC-06 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-81 | 서버→클라이언트 이벤트 10종: shared 타입 = 서버가 내보내는 이벤트 = 웹이 듣는 이벤트 | NFR-12, SEC-04 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-82 | 서버·웹 소스가 쓰는 오류 코드 문자열은 모두 shared ERROR_CODES(또는 HTTP 전용 코드·NETWORK)에 있고 서버 message 표와 코드 목록이 일치한다 | NFR-12, SEC-08 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
-| IT-83 | DOC-I-01: api-spec.md(단일 기준)에 오류 코드 19종·metrics:path·room:closed·/api/meta·admin 이벤트가 모두 적혀 있다 (11단계 문서화 대기, DEC-020) | NFR-12, SEC-08 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
+| IT-83 | DOC-I-01: api-spec.md(단일 기준)에 오류 코드 19종·metrics:path·room:closed·/api/meta·admin 이벤트가 모두 적혀 있다 (11단계에서 정정, DEC-020) | NFR-12, SEC-08 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-84 | config 스키마의 환경변수는 .env.example에 모두(주석 포함) 있고 .env.example에 스키마에 없는 죽은 키가 없으며, 사본을 그대로 쓰면 개발 모드로 기동 설정이 통과한다 | NFR-08, SEC-10, POL-19, POL-20 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-85 | 기본 포트(3001)가 config 기본값·.env.example·Dockerfile(EXPOSE·HEALTHCHECK)·dev 프록시·runbook에서 같고, TURN 포트·릴레이 대역이 .env.example·compose 안내·coturn 설정에서 같다 | NFR-07, NFR-08, SEC-09 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |
 | IT-86 | 기본 정원(6명) mesh의 릴레이 할당 수(참가자당 5개, ICE 재시작 중첩 시 2배)가 coturn user-quota 안에 들어간다 | NFR-04, NFR-13, SEC-09 | E2E | `apps/server/test/featureContracts.test.ts` | 자동 |

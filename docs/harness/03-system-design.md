@@ -1,6 +1,6 @@
 # 03 시스템 설계서 (소급) — MeetLite 하네스 4단계 이후 담당자가 현재 아키텍처를 이해하고, 신규 요구(POL-17~20, SEC-12~13, UX-13~15, NFR-14~15)를 어떤 모듈·파일에 어떻게 구현할지 결정하는 데 쓰는 문서
 
-- 문서명: 03-system-design / 버전: v2 / 작성일: 2026-10-01 / 상태: 초안 → 검증 PASS(`verify-log_03-system-design.md`) / 주도: ④ 시스템 아키텍트
+- 문서명: 03-system-design / 버전: v3 / 작성일: 2026-10-01 / 상태: 초안 → 검증 PASS(`verify-log_03-system-design.md`) / 주도: ④ 시스템 아키텍트
 - **소급 문서(DEC-006, DEC-007)**: 서비스는 이미 구현·검증되어 있다. 1~7장의 "현재 구조"는 **코드를 직접 읽어** 쓴 것이며 기존 TRD·API 명세·위협 모델과 어긋나면 코드가 정본이다. 구현 여부는 `[구현]` / `[신규설계]`(미구현, 이 문서가 설계)로 구분한다. 이 단계에서 프로젝트 코드·`docs/01~06`은 수정하지 않았다.
 - **이 단계에서 직접 실행해 확인한 것**: coturn 4.6.1(로컬 `turnserver`)과 4.9.0(도커 이미지)에 **저장소의 실제 `turnserver.conf`를 적용**하고 최소 TURN 클라이언트로 CreatePermission을 시험했다(6.3절). 그 결과 **현재 설정은 공인 IPv4 peer를 전부 거부하는 결함이 있다**(8.3절 D-1). 그 외 항목(법령 원문, coturn CVE 원문, Google STUN 약관)은 확인하지 못했고 "확인 필요"로 남겼다.
 - 변경 이력은 9장.
@@ -223,13 +223,15 @@ erDiagram
 
 ### 3.3 제한기·연결 맵 [구현]
 
+**IP 키의 단위(11단계 정정, 9단계 DEF-09-01)**: 아래 표의 "IP" 키는 원본 주소가 아니라 `clientIp()`(`http/clientIp.ts`)가 정규화한 값이다 — **IPv4는 주소 그대로, IPv4-mapped IPv6(`::ffff:a.b.c.d`)는 IPv4로, 그 밖의 IPv6는 /64 접두(상위 4그룹)**. 강퇴 차단 키(`ipKey`)도 같은 값의 HMAC 해시다. 프록시 뒤에서는 `TRUST_PROXY`번째 `X-Forwarded-For`(오른쪽부터)를 쓴다.
+
 | 이름 | 위치 | 키 | 규칙 | 정리 |
 |---|---|---|---|---|
 | `createLimiter` | `http/app.ts` | IP | 방 생성 10회/분(용량 10, 분당 보충 10) × `RATE_LIMIT_SCALE` | 키 5만 초과 시 10분 미사용 키 삭제 |
 | `statusLimiter` | `http/app.ts` | IP | 방 상태 조회 60회/분 | 동일 |
 | `joinByIp` | `socket/server.ts` | IP | 입장 시도 용량 30, 초당 0.5 | 동일 |
 | `passwordAttempts` | `socket/server.ts` | `IP|roomId` | 10분 안에 5회 실패 → 10분 차단 | 성공 시 삭제, 5만 초과 시 정리 |
-| `ipConnections` | `socket/server.ts` | IP | 동시 소켓 `IP_MAX_CONNECTIONS`(기본 20) | 연결 종료 시 감소 |
+| `ipConnections` | `socket/server.ts` | IP | 동시 소켓 `IP_MAX_CONNECTIONS`(기본 20). **Socket.IO 연결(CONNECT) 완료 뒤에만 센다 — CONNECT 패킷 없이 엔진 WebSocket만 여는 연결은 세지 않는다**(9단계 DEF-09-02, 미수정 → 프록시 `limit_conn` 필요, runbook §12) | 연결 종료 시 감소 |
 | 이벤트별 `TokenBucket` | 소켓마다 | 이벤트명 | `RATE_SPECS`(예: `signal:send` 120/40, `chat:send` 5/1.67, `room:join` 5/0.1) | 소켓 수명 |
 | strike | 소켓마다 | — | 10초 안에 15회 거부(rate limit·잘못된 페이로드·미입장) → 연결 종료(POL-10) | — |
 | `sockets` | `socket/server.ts` | `roomId:pid` | 참가자 ID에 묶인 현재 소켓. 재접속 시 이전 소켓을 끊고 교체 | 연결 종료 시 삭제 |
@@ -285,8 +287,8 @@ REST(EVT-01~03)와 소켓(EVT-10~29), 토큰(EVT-30~32), 오류 코드 19종은 
 |---|---|---|---|---|
 | EVT-04 | REST `GET /api/meta` | 응답 `MetaResponse`(3.6). `Cache-Control: public, max-age=60`. 기존 `/api` CORS 규칙 그대로 | 인증 없음(공개 정보만). `statusLimiter` 재사용(IP당 60회/분) | 429 `RATE_LIMITED` |
 | EVT-33 | 소켓 C→S `metrics:path` | `{v:1, path:'direct'\|'relay'}` strict → ack `{ok:true}` | 입장한 소켓만. 버킷 용량 10, 초당 0.5. 서버는 `{path}`만 `info 'peer path'`로 로그 | `NOT_JOINED`, `INVALID_PAYLOAD`, `RATE_LIMITED`(strike 대상, 기존 규칙) |
-| EVT-34 | 소켓 S→C `room:closed` | `{v:1, reason:'operator'}` 전송 직후 서버가 그 방의 소켓을 모두 끊는다 | 서버 내부 발생 | — |
-| EVT-35 | Admin HTTP `POST /admin/rooms/:roomId/close` | **`127.0.0.1`에만 바인딩한 별도 리스너**(`ADMIN_PORT`). 헤더 `Authorization: Bearer <ADMIN_TOKEN>`(양쪽을 SHA-256으로 해시한 뒤 `timingSafeEqual`로 비교해 길이도 새지 않게 함). 응답 200 `{closed:true, participants:n}`, 404 `{code:'ROOM_NOT_FOUND'}`, 401 `{code:'FORBIDDEN'}`, 400 `{code:'INVALID_PAYLOAD'}`(roomId 형식) | `ADMIN_PORT`와 `ADMIN_TOKEN`이 **둘 다** 설정된 때만 리스너를 연다. 공개 리스너·프록시 경로에 노출하지 않는다 | 위 표 |
+| EVT-34 | 소켓 S→C `room:closed` | **`{v:1}`만**(사유 필드 없음 — 04의 사유 비표시 원칙, DEC-020이 `reason:'operator'`를 폐기). 전송 직후 서버가 그 방의 소켓을 모두 끊는다 | 서버 내부 발생 | — |
+| EVT-35 | Admin HTTP `POST /admin/rooms/:roomId/close` | **`127.0.0.1`에만 바인딩한 별도 리스너**(`ADMIN_PORT`). 헤더 `Authorization: Bearer <ADMIN_TOKEN>`(양쪽을 SHA-256으로 해시한 뒤 `timingSafeEqual`로 비교해 길이도 새지 않게 함). 응답 200 `{closed:true, participants:n}`, 404 `{code:'ROOM_NOT_FOUND'}`, 401 `{code:'FORBIDDEN'}`, 400 `{code:'INVALID_PAYLOAD'}`(roomId 형식). 구현에서 추가된 응답(DEC-020·021): 404 `NOT_FOUND`(다른 경로), 405 `METHOD_NOT_ALLOWED`, 413 `PAYLOAD_TOO_LARGE`, 429 `RATE_LIMITED`(인증 **실패** 요청만 계수), 500 `INTERNAL`(전체는 `api-spec.md` §7) | `ADMIN_PORT`와 `ADMIN_TOKEN`이 **둘 다** 설정된 때만 리스너를 연다. 공개 리스너·프록시 경로에 노출하지 않는다 | 위 표 |
 
 - `room:closed`를 받은 클라이언트는 `end('operator')`로 정리하고 SCR-19 계열 화면(`gone`, 사유 `operator`)을 보인다. 그 뒤 이어지는 소켓 `disconnect`는 `leaving=true`라 재연결을 시도하지 않는다.
 - 이전 서버(롤백) 또는 이전 클라이언트와의 호환: 모르는 이벤트 `metrics:path`는 서버에 핸들러가 없으면 ack가 오지 않으므로 클라이언트는 이 보고를 **기다리지 않는 fire-and-forget**으로 보내고 실패를 무시한다. 이전 클라이언트가 `room:closed`를 모르면 이후 소켓 종료만 보게 되어 일반 재연결 경로(`ROOM_NOT_FOUND` → `restarted` 화면)로 떨어진다(허용).
@@ -426,6 +428,7 @@ REST(EVT-01~03)와 소켓(EVT-10~29), 토큰(EVT-30~32), 오류 코드 19종은 
 - **인증 없음(비목표: 회원가입/로그인)**. 신원은 서버가 발급한 참가자 ID와 세션 토큰이 전부이며 닉네임은 표시용이다(중복 시 접미사로 유일화).
 - **신뢰 경계**: ① 인터넷↔서버(모든 입력 불신: Origin 허용목록, zod strict, 크기·빈도 제한), ② 참가자↔참가자(서로 불신: 발신자 ID는 서버 부여값만, 같은 방에만 릴레이, 채팅은 텍스트로만 렌더링), ③ 서버↔coturn(공유 비밀 HMAC), ④ 운영자 채널(신규 admin: 루프백 + 토큰).
 - **인가**: 모든 권한은 서버 메모리의 `Room.hostId`·`banned`로만 판단한다(`kick/lock/muteAll`은 `RoomManager`가 `hostId===byId`를 확인). 클라이언트가 보내는 호스트 여부는 쓰지 않는다.
+- **IP 통제 단위(11단계 정정)**: IP 기반 통제(속도 제한, 비밀번호 시도 5회/10분, 강퇴 차단, 방 생성 제한, 동시 연결 상한)는 IPv4 주소, **IPv6 /64 접두**(IPv4-mapped는 IPv4)를 단위로 한다(9단계 DEF-09-01 수정, DEC-027). **결과**: 같은 /64의 사용자는 함께 제한·차단될 수 있다(과차단 수용, 보안 > 편의). 동시 연결 상한은 Socket.IO 연결 완료 뒤에만 적용되어 엔진 연결 폭주는 막지 못한다(DEF-09-02 미수정, 프록시 `limit_conn`). `TRUST_PROXY>0`인 서버를 프록시 없이 직접 노출하면 `X-Forwarded-For` 위조로 모든 IP 통제가 우회된다(OBS-09-06).
 - **세션**: 입장 시 서버가 서명 토큰을 발급하고, 소켓은 `room:join`/`room:resume` 성공 시 서버가 정한 `pid`에 묶인다. 이후 이벤트의 신원은 이 소켓 바인딩이다. **이벤트마다 토큰을 다시 검증하지는 않는다**(CLAUDE.md 보안 규칙 문구와의 차이, 6.2 3행).
 
 ### 6.2 CLAUDE.md '보안 규칙' 대조 (코드 확인)
@@ -436,7 +439,7 @@ REST(EVT-01~03)와 소켓(EVT-10~29), 토큰(EVT-30~32), 오류 코드 19종은 
 | 2 | 방 비밀번호 argon2id/bcrypt 해시만 보관, IP+방 기준 시도 제한 | `password.ts` bcrypt(SHA-256 선처리, 비용 10), `passwordAttempts` 키 `IP\|roomId` 5회/10분 | 충족 |
 | 3 | 서명된 단기 세션 토큰, **이후 모든 소켓 이벤트를 토큰으로 검증**, 재접속은 토큰으로만 | 토큰 HMAC·만료 4시간(`token.ts`). 재접속은 `room:resume` 토큰만. 이벤트별 검증은 **소켓 바인딩(서버 부여 `pid`)** 으로 대체(ADR-0003) | **부분 — 문구와 구현 차이.** 소켓이 서버 측에 묶여 위조 불가라 보호 수준은 동등하다고 판단하나, 규칙 문구 그대로는 아니므로 ⑤ 보안 담당 확인 필요. "단기" 4시간의 적정성도 같이 확인 |
 | 4 | 발신자 ID는 서버 부여값만, 같은 방에만 릴레이 | `signal:send`: `isMember`+`from: pid`, 채팅 `io.to(roomId)`, 스키마 strict(`from` 거부) | 충족 |
-| 5 | 모든 권한 서버 상태로 판단, 강퇴 세션 재입장 차단 | `RoomManager` 권한 검사, `banned.ids/ipKeys`, 강퇴된 참가자는 삭제되어 `resume`이 `PARTICIPANT_GONE` | 충족(CGNAT 오차단은 D-4) |
+| 5 | 모든 권한 서버 상태로 판단, 강퇴 세션 재입장 차단 | `RoomManager` 권한 검사, `banned.ids/ipKeys`, 강퇴된 참가자는 삭제되어 `resume`이 `PARTICIPANT_GONE` | 충족(CGNAT·같은 /64 오차단은 D-4, 9단계에서 IPv6 /64 정규화 반영) |
 | 6 | zod + 크기 + 이벤트별 rate limit, IP당 동시 연결·전체 방 수 상한 | `on()` 공통 래퍼, `RATE_SPECS`, `maxHttpBufferSize 32KB`, `ipConnections`, `MAX_ROOMS` | 충족 |
 | 7 | 채팅 최대 길이, 텍스트로만 렌더링, 링크 `rel="noopener noreferrer"` | `sanitizeChatText`, eslint로 `dangerouslySetInnerHTML` 금지, `ChatPanel` 링크 `target=_blank rel="noopener noreferrer"` | 충족 |
 | 8 | Origin 허용 목록(CORS+Socket.IO), CSP, Permissions-Policy, HTTPS 전제, 오류에 내부 정보 금지 | `allowRequest`(Origin 없으면 거부), `/api` CORS 목록, helmet CSP, `camera=(self), microphone=(self), display-capture=(self)`, 클라 `isSecureContext` 확인, 오류 핸들러 | 충족. CSP의 Google Fonts 허용은 불필요하게 넓다(D-3) |
@@ -548,7 +551,7 @@ DEC-001에 따라 Slack/Teams 알림 MCP는 연결되어 있지 않으며 에이
 
 ### 7.4 롤백 전략
 
-- 단위: 이미지 태그 교체(runbook §2). 데이터 마이그레이션이 없다.
+- 단위: 이미지 태그 교체(runbook §5, 11단계에서 §2→§5로 개편 — stop→rename→run, 롤백 두 경로). 데이터 마이그레이션이 없다.
 - **순방향·역방향 호환**: 신규 환경변수는 선택, 신규 소켓 이벤트·REST는 추가만, `v:1` 유지 → 새 이미지가 구 `.env`로, 구 이미지가 새 `.env`로 뜬다. 롤백 시 구 서버는 `metrics:path`를 무시(ack 없음, 클라이언트는 기다리지 않음)하고 `/api/meta`는 404가 되어 법률 페이지 슬롯이 "불러오지 못했습니다"를 보인다(허용, 문서 노출은 정적 문구라 유지).
 - 정적 파일 캐시: `express.static`이 `maxAge 1h`이고 `index.html`은 `sendFile` 기본값이라, 롤백 직후 최대 1시간은 신 번들(해시 파일)과 구 서버 조합이 생길 수 있다. 위 호환 규칙이 이를 안전하게 한다.
 - coturn 설정 롤백: 이전 `turnserver.conf` 파일로 되돌리고 coturn만 재시작(앱 무영향, 진행 중 릴레이만 끊김).
@@ -620,6 +623,7 @@ DEC-001에 따라 Slack/Teams 알림 MCP는 연결되어 있지 않으며 에이
 | 2026-10-01 | v0 | 최초 작성: 구현 코드 직접 읽기, 신규 요구 설계, coturn 실측(D-1 발견) | 하네스 3단계 소급 적용(DEC-006) |
 | 2026-10-01 | v1 | 1차 검증 반영: 끊어진 절 참조 수정, 법률 문구를 `strings.ts`의 `S.legal`로 변경(TC-213 충돌), 제한기 IP 보유(D-6) 추가, compose 서술 정정, UX-14 프로브 `NOT_JOINED` 처리 추가 | 규칙 B 1차 |
 | 2026-10-01 | v2 | 2차 검증 반영: coturn L2 실행 조건(`COTURN_LIVE`), `stun:` URI 호스트 추출 규칙, 기동 `warn` 위치(`createApp`), unit-0 문구 범위(`S.contact` 제거), `ADMIN_PORT`↔`PORT` 검증, admin 토큰 비교 방식, 근거 서술 정정 | 규칙 B 2차, 3차에서 결함 0건 확인 |
+| 2026-10-02 | v3 | 11단계 정정(내용 재설계 아님): §3.3 IP 키 단위(IPv6 /64, IPv4-mapped→IPv4)와 동시 연결 상한이 엔진 연결에 미적용임을 명시(DEF-09-01·02), §4.2 EVT-34 `room:closed`를 `{v:1}`로 정정(DEC-020), EVT-35 응답 추가, §6.1 IP 통제 단위·오차단·프록시 직접 노출 금지 추가, §6.2 5행 | 9단계 결과(DEC-027), 11단계 문서화 |
 
 ## 5인 검토 (CLAUDE.md 규칙)
 

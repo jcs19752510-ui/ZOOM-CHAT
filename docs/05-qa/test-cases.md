@@ -132,8 +132,8 @@
 | IT-90 | 전체 여정: 링크→3조작 입장→서로 영상→채팅→화면공유→호스트 도구→재연결→호스트 승계→전원 퇴장→방 삭제 (기본 한도, 콘솔·CSP 오류 0) | FR-01, FR-02, FR-03, FR-04, FR-07, FR-08, FR-11, FR-12, FR-13, FR-14, FR-15, FR-16, FR-17, FR-20, FR-22, NFR-01, NFR-07, SEC-01, POL-05 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-91 | 성능 스모크(운영 프로세스, 기본 한도): 첫 영상까지 8회, 6명 전원 mesh 완성 시간, 서버 RSS·CPU | NFR-02, NFR-04, NFR-13, NFR-08, KPI-03 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-92 | 서버 상한 동시 도달: 방 수 상한·IP당 연결 상한에서 서버는 정상, 기존 통화는 유지, 해제되면 다시 가능 | NFR-04, POL-15, SEC-06, UX-03 | E2E | `e2e/system.spec.ts` | 자동 |
-| IT-92b | 서버 방 수 상한으로 방 만들기가 거부되면 "인터넷 연결"이 아닌 서버가 붐빈다는 원인으로 안내해야 한다 (결함 재현: DEF-S-02) | UX-03, POL-15 | E2E | `e2e/system.spec.ts` | 자동 |
-| IT-92c | IP당 동시 연결 상한으로 입장이 거부되면 "인터넷 연결"이 아닌 원인(이 네트워크의 연결이 너무 많음 등)으로 안내해야 한다 (결함 재현: DEF-S-02) | UX-03, POL-15, SEC-06 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-92b | 서버 방 수 상한으로 방 만들기가 거부되면 "인터넷 연결"이 아닌 서버가 붐빈다는 원인으로 안내해야 한다 (DEF-S-02 수정 확인) | UX-03, POL-15 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-92c | IP당 동시 연결 상한으로 입장이 거부되면 "인터넷 연결"이 아닌 원인(이 네트워크의 연결이 너무 많음 등)으로 안내해야 한다 (DEF-S-02 수정 확인) | UX-03, POL-15, SEC-06 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-93 | 운영 프로세스 SIGTERM(graceful) → 참가자는 재연결 중을 거쳐 "서비스 재시작" 안내 → 새 프로세스에서 새 회의가 바로 된다 | NFR-06, NFR-08, FR-21 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-94 | 운영 프로세스 보안 헤더·교차 Origin 거부, 실제 통화 뒤 로그에 토큰·채팅·닉네임·SDP·IP가 없다 | NFR-08, SEC-10, SEC-08, SEC-03, POL-09 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-95 | 엣지: 호스트가 끊겨 유예가 지나면 승계되고 돌아온 원 호스트는 만료 안내, 빈 방 만료, 호스트 입장 전 방은 TTL 뒤 사라진다 | FR-17, FR-18, FR-20, FR-22, POL-02, POL-05, POL-13 | E2E | `e2e/system.spec.ts` | 자동 |
@@ -144,6 +144,8 @@
 | IT-100 | TURN 릴레이로만 연결된 통화 중 서버가 SIGTERM으로 재시작되면 재시작 안내를 보고, 같은 TURN 비밀로 새 회의도 릴레이로 연결된다(경로 로그는 relay만) | SEC-09, NFR-15, NFR-06, FR-07, FR-21 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-101 | TURN이 설정된 일반(릴레이 강제 아님) 3명 통화에서 직접 연결이 성공해도 TURN 할당이 몇 개 열리는지 센다 — total-quota 산정 가정(참가자 N(N-1)개) 검증 | NFR-04, SEC-09, NFR-15 | E2E | `e2e/system.spec.ts` | 자동 |
 | IT-102 | 운영 프로세스: 화면공유·채팅·잠금이 진행 중인 방을 운영자가 닫으면 모두 종료 안내, 재연결·재입장 없음, admin 포트는 루프백에서만 열리고 로그에 토큰이 없다 | POL-19, SEC-05, SEC-10, FR-12, FR-11 | E2E | `e2e/system.spec.ts` | 자동 |
+| IT-110 | 화면 UI를 거치지 않고 소켓으로 직접 보낸 악성 채팅(javascript:·속성 탈출·HTML·방향 제어 문자)도 텍스트로만 그려지고, 링크는 http(s)+noopener뿐이며 CSP가 인라인 스크립트·eval·외부 연결을 실제로 막는다 | SEC-07, SEC-08 | E2E | `e2e/security09.spec.ts` | 자동 |
+| IT-111 | 다른 Origin의 웹 페이지가 브라우저에서 이 서버의 API·소켓을 쓰려 하면 CORS·Origin 허용 목록에 막히고, 서버의 응답 헤더가 클릭재킹·MIME 스니핑·카메라 권한 위임을 막는다 | SEC-08, SEC-04 | E2E | `e2e/security09.spec.ts` | 자동 |
 | TC-01 | 정원을 넘는 입장은 ROOM_FULL로 거부된다 | FR-07, POL-01 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-02 | 재접속 유예 중인 참가자도 정원을 차지한다 | POL-01, FR-20 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
 | TC-03 | 호스트가 입장하기 전에는 다른 사람이 입장할 수 없다 | FR-23, POL-13 | 서버 | `apps/server/test/roomManager.test.ts` | 자동 |
@@ -802,6 +804,17 @@
 | TC-523c | 언마운트하면 두 구독을 모두 해제해 이후 신호가 컨트롤러에 가지 않는다 | UX-14 | 웹 | `apps/web/src/state/useForeground.hook.test.ts` | 자동 |
 | TC-524 | 오류 화면의 "다시 시도"는 즉시 "확인 중" 화면으로 돌아가고 방 상태를 다시 물어 성공하면 대기실로 넘어간다 | FR-06, UX-02 | 웹 | `apps/web/src/pages/roomPageRetry.test.ts` | 자동 |
 | TC-524b | 호스트 대기 중 호스트가 들어오면(폴링) 같은 방 상태 확인이 다시 실행되어 대기실로 넘어간다 | FR-23 | 웹 | `apps/web/src/pages/roomPageRetry.test.ts` | 자동 |
+| TC-530 | 비밀번호 오답 5회로 차단된 뒤에도 같은 IPv6 /64의 이웃 주소로는 오답 시도가 계속된다(기대: /64 단위로 차단) — DEF-09-01 | SEC-02, SEC-06, POL-11 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-531 | 강퇴된 사용자가 같은 IPv6 /64의 이웃 주소로 다시 입장한다(기대: 거부 KICKED) — DEF-09-01 | SEC-05, POL-06 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-532 | 방 생성 속도 제한(IP당 10회/분)이 같은 IPv6 /64의 서로 다른 주소 25개로 우회된다(기대: 429) — DEF-09-01 | SEC-06 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-533 | IP_MAX_CONNECTIONS=3일 때 네임스페이스 CONNECT 없이 엔진 WebSocket만 여는 연결 40개가 모두 열린다(기대: 상한 근처에서 거부) — DEF-09-02 | SEC-06 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-534 | 한 IP의 소켓 12개가 동시에 보낸 오답이 5회 제한을 넘어 모두 검증된다(기대: 5회까지만 검증) — DEF-09-03 | SEC-02, POL-11 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-535 | NODE_ENV를 지정하지 않아도 .env.example의 예시 비밀값(change-me...)은 거부된다 — DEF-09-04 | SEC-10, NFR-08 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-536 | 위조 세션 토큰(예시 비밀값 서명·빈 서명·본문 변조·호스트 클레임 종류 바꿔치기·3조각)은 resume에서 모두 거부되고, 세션 토큰은 hostClaim으로 쓸 수 없다 | SEC-03, SEC-04 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-537 | 1MB 소켓 프레임은 연결이 1009로 끊기고, 바이너리 첨부 10개 초과 선언은 거부되며, 이후에도 서버는 정상 응답한다 | SEC-06, SEC-08 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-538 | 한 IP가 입장하지 않을 방을 상한(MAX_ROOMS=10)까지 만들면 다른 IP의 정상 방 생성이 503이 된다(기대: 영향 없음) — DEF-09-05 | SEC-06, POL-15, NFR-04 | 서버 | `apps/server/test/security09.test.ts` | 자동 |
+| TC-539 | IPv6는 /64 단위로 묶고, IPv4와 IPv4-mapped는 IPv4로 돌려준다 | SEC-02, SEC-05, SEC-06 | 서버 | `apps/server/test/normalizeIp.test.ts` | 자동 |
+| TC-539b | 해석할 수 없는 값은 그대로 두어 한 키로 묶이지 않게 한다 | SEC-06 | 서버 | `apps/server/test/normalizeIp.test.ts` | 자동 |
 | UAT-01 | 가입·설치 없이 링크 클릭 후 3번 이내 조작(닉네임 입력, 권한 허용, [입장])으로 입장해 서로 영상이 보인다 | NFR-01, FR-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-02 | 스마트폰(iPhone Safari, Android Chrome)에서 링크로 입장해 영상·소리·채팅이 동작한다 | NFR-05, NFR-10, FR-07 | 사용자 수행 | `05-qa/uat.md` | 미수행 |
 | UAT-03 | 카메라/마이크 권한을 일부러 차단했을 때 안내 문구만 보고 스스로 해결할 수 있다 | UX-03, FR-04 | 사용자 수행 | `05-qa/uat.md` | 미수행 |

@@ -202,12 +202,11 @@ export function attachSocket(httpServer: HttpServer, deps: SocketDeps): { io: Se
         if (!passwordOk && room.passwordHash) {
           const attemptKey = `${socket.data.ip}|${p.roomId}`;
           if (passwordAttempts.isBlocked(attemptKey)) return err('TOO_MANY_ATTEMPTS');
+          // 검증(await) 동안 같은 IP의 동시 시도가 제한을 통과하지 못하도록 실패를 먼저 센다. 성공하면 기록을 지운다(DEF-09-03).
+          passwordAttempts.recordFailure(attemptKey);
           passwordOk = !!p.password && (await verifyPassword(p.password, room.passwordHash));
           if (passwordOk) passwordAttempts.recordSuccess(attemptKey);
-          else {
-            passwordAttempts.recordFailure(attemptKey);
-            return err('WRONG_PASSWORD');
-          }
+          else return err('WRONG_PASSWORD');
         }
 
         // await 이후이므로 모든 조건을 동기 구간(rooms.join)에서 다시 확인한다.

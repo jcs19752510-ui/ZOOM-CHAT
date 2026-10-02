@@ -94,6 +94,7 @@ export class MeetingController {
   private toastSeq = 1;
   private qualityTimer: ReturnType<typeof setInterval> | undefined;
   private reconnectTimer: ReturnType<typeof setInterval> | undefined;
+  private resumeRetryTimer: ReturnType<typeof setTimeout> | undefined;
   private poorCount = 0;
   private leaving = false;
   private selfIdFromJoin = '';
@@ -268,7 +269,11 @@ export class MeetingController {
     if (!res.ok) {
       if (res.code === 'ROOM_NOT_FOUND') this.end('restarted');
       else if (res.code === 'TOKEN_INVALID' || res.code === 'PARTICIPANT_GONE') this.end('expired');
-      // NETWORK 등 일시 오류는 다음 'connect'에서 다시 시도한다.
+      // NETWORK 등 일시 오류: 소켓이 계속 연결돼 있으면 새 'connect'가 없으므로 직접 다시 시도한다(서버 유예 시간 안에).
+      clearTimeout(this.resumeRetryTimer);
+      this.resumeRetryTimer = setTimeout(() => {
+        if (!this.leaving && this.state.status === 'reconnecting' && this.signaling?.socket.connected) void this.resume();
+      }, 2000);
       return;
     }
     const liveIds = new Set(res.participants.map((x) => x.id));
@@ -494,6 +499,7 @@ export class MeetingController {
     this.leaving = true;
     clearInterval(this.qualityTimer);
     clearInterval(this.reconnectTimer);
+    clearTimeout(this.resumeRetryTimer);
     this.screenTrack?.stop();
     this.screenTrack = null;
     this.transport?.close();
